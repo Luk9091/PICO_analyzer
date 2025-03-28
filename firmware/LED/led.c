@@ -2,7 +2,7 @@
 #include <hardware/gpio.h>
 
 
-#if defined (BUILD_PICO)
+#ifdef BUILD_PICO
 #define GPIO_INBUILD_LED    25
 
 void LED_init(){
@@ -22,8 +22,7 @@ void LED_toggle(){
     gpio_put(GPIO_INBUILD_LED, !gpio_get(GPIO_INBUILD_LED));
 }
 
-
-#elif defined (BUILD_PICO_W)
+#else
 #include <pico/cyw43_arch.h>
 
 void LED_init(){

@@ -4,10 +4,8 @@
 #include <string.h>
 #include <hardware/irq.h>
 
-#if defined(COMMUNICATION_VIA_USB)
-    #include <tusb.h>
-    #include <hardware/structs/usb.h>
-#endif
+#include <tusb.h>
+#include <hardware/structs/usb.h>
 
 #include "dma.h"
 #include "led.h"
@@ -51,7 +49,6 @@ void communication_run(uint dma_1, uint dma_2, uint *data){
 
 
 
-#if defined(COMMUNICATION_VIA_USB)
 void tud_cdc_rx_cb(uint8_t itf){
     char readMsg[CFG_TUD_CDC_RX_BUFSIZE];
 
@@ -127,34 +124,6 @@ void communication_sendProcedure(uint dma_1, uint dma_2, uint *data){
     tud_cdc_write_clear();
     LED_off();
 }
-
-#elif defined(COMMUNICATION_VIA_UART)
-#define UART_ID uart0
-int dmaUART;
-void communication_init(){
-    stdio_uart_init();
-}
-
-
-void communication_sendProcedure(uint dma, uint *data){
-    uint index = 0;
-    uint sampleIndex = 0;
-
-    while(1){
-        sampleIndex = dma_getCurrentIndex(dma, data);
-        if (index != sampleIndex){
-            for (uint i = 0; i < 2; i++){
-                uart_putc_raw(UART_ID, (convert_t){.u32 = data[index]}.quoter[i]);
-            }
-            index++;
-        }
-    }
-}
-
-
-#endif
-
-
 
 
 

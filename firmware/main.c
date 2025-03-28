@@ -33,12 +33,10 @@ uint sm;
 uint offset;
 
 
-uint getMainFreq(){
+inline uint getMainFreq(){
     uint freq = frequency_count_mhz(CLOCKS_FC0_SRC_VALUE_PLL_SYS_CLKSRC_PRIMARY);
     return freq;
 }
-
-
 
 uint reverseBit(uint64_t data){
     uint reverseData = 0;
@@ -49,38 +47,8 @@ uint reverseBit(uint64_t data){
     return reverseData;
 }
 
-// void gpio_trigInput_callback(uint gpio, uint32_t events){
-//     while(pio_sm_get_rx_fifo_level(pio, sm)){
-//         sampleData[sampleIndex] = pio_sm_get(pio, sm);
-//         sampleIndex++;
-//     }
-// }
-
-
-
-int64_t disableStream_timerCallback(alarm_id_t id, __unused void *userData){
-    gpio_put(ENABLE_GPIO, 0);
-    return 0;
-}
-
-
-// void sendAllDataAtOnes(uint dma){
-//     uint dmaIndex = dma_getCurrentIndex(dma);
-//     for(uint i; i < dmaIndex; i = i + 16){
-//         printf("%3u\t%04X,%04X,%04X,%04X,%04X,%04X,%04X,%04X,%04X,%04X,%04X,%04X,%04X,%04X,%04X,%04X\n", i/16,
-//             sampleData[0 + i], sampleData[1 + i], sampleData[2 + i], sampleData[3 + i],
-//             sampleData[4 + i], sampleData[5 + i], sampleData[6 + i], sampleData[7 + i],
-//             sampleData[8 + i], sampleData[9 + i], sampleData[10+ i], sampleData[11+ i],
-//             sampleData[12+ i], sampleData[13+ i], sampleData[14+ i], sampleData[15+ i]
-//         );
-//     }
-// }
-
 
 int main(){
-    // set_sys_clock_khz(200000, true);
-    // systick_hw->csr = 0x05;
-
     gpio_init_mask(read_mask);
     gpio_init(ENABLE_GPIO);
     gpio_init(TRIGGER_GPIO);
