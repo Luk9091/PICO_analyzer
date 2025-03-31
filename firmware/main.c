@@ -81,6 +81,6 @@ int main(){
         communication_run(dma_1, dma_2, sampleData);
         DMA_setEnable(dma_1, false);
         DMA_setEnable(dma_2, false);
-    }
+    } // comments
 
 }
