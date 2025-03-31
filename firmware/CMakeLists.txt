@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.27.4)
 
 # Select board:
 # set(PICO_BOARD pico_w)
