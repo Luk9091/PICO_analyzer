@@ -4,7 +4,6 @@
 
 #include <hardware/dma.h>
 #define DATA_SIZE       (1024)
-#define DATA_BIT_SIZE   10
 
 
 
