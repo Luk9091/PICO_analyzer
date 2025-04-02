@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.25)
 
 # Select board:
-# set(PICO_BOARD pico_w)
+set(PICO_BOARD pico_w)
 
 include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
 include($ENV{PICO_SDK_PATH}/tools/CMakeLists.txt)
@@ -27,6 +27,7 @@ include_directories(${PROJECT_NAME}
     DMA
     LED
     Communication
+    PIO
 )
 
 pico_generate_pio_header(${PROJECT_NAME}
@@ -39,7 +40,6 @@ pico_add_extra_outputs(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME}
     pico_stdlib
     pico_multicore
-    # pico_cyw43_arch_none
 
     hardware_gpio
     hardware_pio
@@ -48,5 +48,11 @@ target_link_libraries(${PROJECT_NAME}
     hardware_irq
 )
 
-pico_enable_stdio_usb(${PROJECT_NAME}  1)
-pico_enable_stdio_uart(${PROJECT_NAME} 0)
+if(PICO_BOARD STREQUAL "pico_w")
+target_link_libraries(${PROJECT_NAME}
+    pico_cyw43_arch_none
+)
+endif()
+
+pico_enable_stdio_usb(${PROJECT_NAME}  0)
+pico_enable_stdio_uart(${PROJECT_NAME} 1)

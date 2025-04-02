@@ -13,6 +13,7 @@
 #include "communication.h"
 
 #include "read.pio.h"
+#include "read.h"
 
 
 #define TRIGGER_GPIO    16
@@ -50,23 +51,21 @@ uint reverseBit(uint64_t data){
 
 int main(){
     gpio_init_mask(read_mask);
-    gpio_init(ENABLE_GPIO);
     gpio_init(TRIGGER_GPIO);
 
 
     gpio_set_dir_in_masked(read_mask);
-    gpio_set_dir(ENABLE_GPIO, true);
     gpio_set_dir(TRIGGER_GPIO, false);
 
 
-    pio_claim_free_sm_and_add_program_for_gpio_range(&read_gpio_program, &pio, &sm, &offset, LSB_GPIO, PIO_NUM_PIN, true);
-    read_gpio_program_init(pio, sm, offset, LSB_GPIO, PIO_NUM_PIN, TRIGGER_GPIO);
-
+    // pio_claim_free_sm_and_add_program_for_gpio_range(&triggered_read_program, &pio, &sm, &offset, LSB_GPIO, PIO_NUM_PIN, true);
+    // triggered_read_program_init(pio, sm, offset, LSB_GPIO, PIO_NUM_PIN, TRIGGER_GPIO);
+    pio_claim_free_sm_and_add_program_for_gpio_range(&continue_read_program, &pio, &sm, &offset, LSB_GPIO, PIO_NUM_PIN, true);
+    continue_read_program_init(pio, sm, offset, LSB_GPIO, PIO_NUM_PIN, 5 * kHz);
 
 
     LED_init();
     communication_init();
-
 
     uint dma_1, dma_2;
     DMA_PIOconfig(
@@ -78,9 +77,11 @@ int main(){
 
     while(1){
         DMA_clear();
-        communication_run(dma_1, dma_2, sampleData);
+        communication_run(pio, sm, dma_1, dma_2, sampleData);
+
         DMA_setEnable(dma_1, false);
         DMA_setEnable(dma_2, false);
+        pio_sm_restart(pio, sm);
     }
 
 }

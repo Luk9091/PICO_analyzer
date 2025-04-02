@@ -2,7 +2,7 @@
 #include <hardware/gpio.h>
 
 
-#ifdef BUILD_PICO
+#if !PICO_CYW43_ARCH_THREADSAFE_BACKGROUND
 #define GPIO_INBUILD_LED    25
 
 void LED_init(){

@@ -4,8 +4,6 @@
 #include <string.h>
 #include <hardware/irq.h>
 
-#include <tusb.h>
-#include <hardware/structs/usb.h>
 
 #include "dma.h"
 #include "led.h"
@@ -15,20 +13,12 @@ static bool _transferData = false;
 typedef union{
     // uint64_t u64;
     uint32_t u32;
-    struct{
-        uint16_t half[2];
-    };
-
-    struct {
-        uint8_t quoter[4];
-    };
+    uint16_t u16[2];
+    uint8_t  u8[4];
 } convert_t;
 
 
-void waitUntilOK(){
-    bool wait = true;
-    char readMsg[256];
-    int index = 0;
+void waitUntilRun(){
     do{
         LED_toggle();
         sleep_ms(100);
@@ -37,11 +27,11 @@ void waitUntilOK(){
 }
 
 
-void communication_run(uint dma_1, uint dma_2, uint *data){
-    waitUntilOK();
+void communication_run(PIO pio, uint sm, uint dma_1, uint dma_2, uint *data){
+    waitUntilRun();
     _transferData = true;
     DMA_setEnable(dma_1, true);
-    gpio_put(ENABLE_GPIO, 1);
+    pio_sm_set_enabled(pio, sm, true);
 
     communication_sendProcedure(dma_1, dma_2, data);
 }
@@ -49,37 +39,84 @@ void communication_run(uint dma_1, uint dma_2, uint *data){
 
 
 
+#if LIB_PICO_STDIO_USB
 void tud_cdc_rx_cb(uint8_t itf){
-    char readMsg[CFG_TUD_CDC_RX_BUFSIZE];
+#elif LIB_PICO_STDIO_UART
+void UART_rx_cb(){
+#endif
+    char readMsg[MESSAGE_MAX_LEN];
 
-    if (communication_read(readMsg)){
-        if(strncmp(readMsg, "OK", 2) == PICO_OK){
+    if (!_transferData && communication_read(readMsg)){
+        if(strncmp(readMsg, "RUN", 1) == PICO_OK){
             _transferData = true;
+            print("OK\n\r", 4);
         }
-        else if(strncmp(readMsg, "DONE", 4) == PICO_OK){
+        else if(strncmp(readMsg, "DONE", 1) == PICO_OK){
             _transferData = false;
+            print("OK\n\r", 4);
         }
-        else if(strncmp(readMsg, "HELLO", 5) == PICO_OK){
-            tud_cdc_write_clear();
-            tud_cdc_write("Raspberry PI PICO\n\r", 20);
-            // char freqBuff[32] = {0};
-            // uint freq = getMainFreq(); 
-            // sprintf(freqBuff, "Clock: %3iMHz\n\r", freq);
-            // tud_cdc_write(freqBuff, strlen(freqBuff));
-            tud_cdc_write_flush();
+        else if(strncmp(readMsg, "HELLO", 1) == PICO_OK){
+            print("Raspberry PI PICO\n\r", 19);
+            char freqBuff[32] = {0};
+            uint freq = getMainFreq(); 
+            sprintf(freqBuff, "Clock: %3iMHz\n\r", freq);
+            print(freqBuff, strlen(freqBuff));
+            print("OK\n\r", 4);
         }
+        else {
+            print("Syntax error\n\r", 14);
+        }
+#if LIB_PICO_STDIO_USB
+        tud_cdc_write_flush();
+#endif
     }
 }
 
-
-void communication_init(){
-    stdio_usb_init();
-}
-
-
+#if LIB_PICO_STDIO_USB
 uint communication_read(const char *str){
     return tud_cdc_read((void*)str, CFG_TUD_CDC_RX_BUFSIZE);
 }
+#elif LIB_PICO_STDIO_UART
+uint communication_read(const char *str){
+    static char readLine[MESSAGE_MAX_LEN + 1];
+    static int index;
+    char c = uart_getc(uart0);
+    uart_putc(uart0, c);
+
+    if (c == '\r'){
+        uart_putc(uart0, '\n');
+        int tmp_index = index;
+        memcpy((void*)str, (void*)readLine, index);
+        index = 0;
+        return tmp_index;
+    }
+
+    if (c == '\x7F'){
+        index--;
+        uart_putc(uart0, '\x08');
+        uart_putc(uart0, ' ');
+        uart_putc(uart0, '\x08');
+    }
+    readLine[index] = c;
+    readLine[index + 1] = 0;
+    index++;
+    return 0;
+}
+#endif
+
+
+void communication_init(){
+#ifdef LIB_PICO_STDIO_USB
+    stdio_usb_init();
+#elif defined LIB_PICO_STDIO_UART
+    stdio_uart_init();
+    irq_set_exclusive_handler(UART0_IRQ, UART_rx_cb);
+    irq_set_enabled(UART0_IRQ, true);
+    uart_set_irq_enables(uart0, true, false);
+#endif
+}
+
+
 
 
 void communication_sendProcedure(uint dma_1, uint dma_2, uint *data){
@@ -92,9 +129,9 @@ void communication_sendProcedure(uint dma_1, uint dma_2, uint *data){
     while (_transferData){
         sampleIndex = dma_getCurrentIndex(dma[dmaSel]);
         if (index != sampleIndex){
-            uint sample = data[index];
+            convert_t sample = {.u32 = data[index]};
             // printf("Index: %u\tdma: %u:% 4u\n", index, dmaSel, sampleIndex);
-            tud_cdc_write(&sample, 2);               // store two byte on USB write buffer
+            print(&sample.u16[0], 2);               // store two byte on USB write buffer
             index++;
             if (index >= DATA_SIZE){
                 index = 0;
@@ -105,7 +142,9 @@ void communication_sendProcedure(uint dma_1, uint dma_2, uint *data){
                 }
             }
             nowriteDelay = 0;
-        } else{
+        } 
+#if LIB_PICO_STDIO_USB
+        else {
             if (nowriteDelay >= NOWRITE_DELAY_MAX){
                 tud_cdc_write_flush();                          // send buffer even is not full
                 nowriteDelay = 0;
@@ -115,13 +154,15 @@ void communication_sendProcedure(uint dma_1, uint dma_2, uint *data){
             if (buffCapacity != CFG_TUD_CDC_TX_BUFSIZE){
                 nowriteDelay++; // if the buffer is not empty, count cycles until unconditional send
             }
-
             // tud_cdc_read
         }
+#endif
     }
 
     printf("STOP\n");
+#if LIB_PICO_STDIO_USB
     tud_cdc_write_clear();
+#endif
     LED_off();
 }
 
