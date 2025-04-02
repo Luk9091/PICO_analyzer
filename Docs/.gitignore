@@ -1,0 +1,9 @@
+.vscode
+*.aux
+*.fls
+*.out
+*.synctex
+*.toc
+*.fdb_latexmk
+*.log
+main.pdf

@@ -1,0 +1,31 @@
+\section{Opis i założenia projektu}
+    Celem projektu jest zaprojektowanie oraz zbudowanie analizatora stanów logicznych z dedykowaną aplikacją graficzną.
+    Urządzenie urządzenie podłączane będzie do komputera za pomocą USB.
+    Z drugiej strony dla użytkownika zostane oddane listwa kołkowa umożliwiający podłączyć sygnałów analizowanych.
+
+\subsection{Założenia sprzętowe}
+    Analizator stanów logicznych, jako układ pomiarowy nie powinien obciążać urządzenia badanego.
+    W związku z czym układ cyfrowy powinien mieć możliwość ustawienia wyprowadzeń w stan wysokiej impedancji.
+
+    Kolejnym ograniczeniem jest maksymalna częstotliwość pracy układu powinna być nie mniejsza niż częstotliwość próbkowania.
+    W przypadku bardzo wysokich częstotliwości wejściowych, dane powinny być buforowane.
+    % TODO: Nie wiem wymyślcie
+
+\subsection{Założenia oprogramowania}
+    Projekt zakłada zbudowanie dwóch programów.
+    Pierwszą będzie firmware mikrokontrolera, będącego serem części hardwarowej.
+    Drugą zaś aplikacja graficzna pozwalająca wyświetlić użytkownikowi dane w wygodny sposób.
+
+    \subsubsection{Oprogramowanie mikroprocesora}
+        Mikrokontroler w maksymalnym stopniu powinien opierać się na zasobach hardwarowych, takich jak DMA czy akceleratory IO.
+        Natomiast komunikacja z komputerem, powinna być możliwie prosta - przykładowo wykorzystując protokół UART.
+        A w znacznie lepszym wykorzystaniem byłoby standard CDC (Communication Device Class) -- wirtualne połączenie przez port szeregowy,
+        dzięki czemu można przesyłać dane z maksymalną przepustowością \textit{USB 2.0}.
+
+
+\subsection{Podział obowiązków}
+    \begin{itemize}
+        \item Łukasz Przystupa  - napisanie aplikacji graficznej oraz oprogramowanie Raspberry PI PICO.
+        \item Krzysztof Płonka  - napisanie komunikacji przez Wi-Fi oraz zgodności z aplikacją ???. %nie wiem jak ona się nazywa
+        \item Paweł Olbrych     - zaprojektowanie PCB.
+    \end{itemize}
