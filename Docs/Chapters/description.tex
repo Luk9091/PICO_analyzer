@@ -15,14 +15,14 @@
 \subsection{Założenia sprzętowe}
     \begin{enumerate}
         \item Analizator stanów logicznych, jako układ pomiarowy nie powinien obciążać urządzenia badanego dlatego
-        system pomiarowy analizatora będzie mieć możliwość ustawienia wyprowadzeń w stan wysokiej impedancji.
-        \item Ukłąd powinien charakteryzować się co najmniej dobrymi parametrami takimi jak:
+        system pomiarowy analizatora będzie pracował w trybie wysokiej impedancji wejściowej.
+        \item Układ powinien charakteryzować się co najmniej dobrymi parametrami takimi jak:
         szybkość pracy, rozdzielczość sygnałów, dokładność oraz precyzja pomiaru.
         \item System powinien umożliwiać pomiary sygnałów których częstotliwość bitowa będzie wynosić co najmniej
         100kB/s %tak se podałem te 100 bo nie wiem ile ma mieć 
     \end{enumerate}
 
-    section{Założenia oprogramowania}
+\subsection{Założenia oprogramowania}
     \begin{enumerate}
         \item Aplikacja komputerowa powinna stanowić wygodny oraz intuicyjny interfejs między użytkownikiem
         a urządzeniem.
@@ -30,27 +30,29 @@
         hardware-owych takich jak DMA, Timery, akceleratory IO(PIO) itp. .
     \end{enumerate}
     
-% TO bym dał potem a w wstępie dał tylko założenia
-% \subsection{Założenia oprogramowania}
-%     \begin{enumerate}
-%         \item Projekt zakłada stworzenie dwóch aplikacji.
-%         Pierwszą z nich będzie oprogramowanie mikrokontrolera, będącego sercem części hardwarowej.
-%         Drugą zaś aplikacja graficzna pozwalająca wyświetlić użytkownikowi dane w wygodny sposób.
-%     \end{enumerate}
-
-% \subsubsection{Oprogramowanie mikroprocesora}
-%     \begin{enumerate}
-%         \item Mikrokontroler w maksymalnym stopniu powinien opierać się na zasobach hardwareowych, takich jak DMA czy akceleratory IO.
-%         Natomiast komunikacja z komputerem, powinna być możliwie prosta - przykładowo wykorzystując protokół UART.
-%         A w znacznie lepszym wykorzystaniem byłoby standard CDC (Communication Device Class) -- wirtualne połączenie przez port szeregowy,
-%         dzięki czemu można przesyłać dane z maksymalną przepustowością \textit{USB 2.0}.
-%     \end{enumerate}
-
-
 \subsection{Podział obowiązków}
-    \begin{itemize}
-        \item Łukasz Przystupa  - napisanie aplikacji graficznej oraz oprogramowanie Raspberry PI PICO.
-        \item Krzysztof Płonka  - stworzenie interfejscu do komunikacji bezprzewodowej(Wi-Fi),
-        biblioteki do układu ADC oraz (opcjonalne) ... . % TODO
-        \item Paweł Olbrych     - zaprojektowanie PCB.
-    \end{itemize}
+    \textbf{Łukasz Przystupa}
+    \begin{enumerate}
+        \item Stworzenie aplikacji komputerowej w GTK4
+        \item Zaprojektowanie niskopoziomowego systemu próbkującego opartego o PIO.
+        \item konfiguracja bardzo szybkiej i stabilnej komunikacji szeregowej między
+        komputerem użytkownika a PicoProbe z wykorzystaniem interfejsu USB.
+    \end{enumerate}
+
+    \textbf{Krzysztof Płonka}
+    \begin{enumerate}
+        \item Napisanie biblioteki do obsługi czujnika ADC ADS1115.
+        \item Zapewnienie komunikacji bezprzewodowej między Pi Pico a aplikacją graficzną
+        \item Dodanie funkcjonalności obserwacji sygnałów analogowych
+        (bibliotek gtk live-chart, integracja z SigRok lub biblioteka CAIRO).
+    \end{enumerate}
+
+    \textbf{Paweł Olbrych}
+    \begin{enumerate}
+        \item Projekt PCB.
+        \item Dobór elementów.
+        \item Zaprojektowanie min.: interfejsu wejściowego układu analizatora stanów,
+        interfejsu wejściowego przetworników ADC, układu filtracji oraz polaryzacji zasilania oraz
+        mniejszych podobwodów pomocniczych. 
+    \end{enumerate}
+    
