@@ -50,11 +50,11 @@ static inline void continue_read_program_init(PIO pio, uint sm, uint offset, uin
 
 
 static inline float PIO_get_division(uint sampleFreq){
-    if (sampleFreq > 5 * kHz){
+    if (sampleFreq < 5 * kHz){
         sampleFreq = 5 * kHz;
     }
-    float div = (200.f * MHz) / sampleFreq;
-    if (div > 1){
+    float div =  (200.f * MHz) / sampleFreq;
+    if (div < 1){
         div = 1;
     }
 
