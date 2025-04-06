@@ -4,22 +4,45 @@
 Analizator stanów logicznych składa się z 3 głównych bloków:
 \begin{enumerate}
     \item Układu wejściowego
-    \item Mikrokontrolera
-    \item Przetwornika analogowo-cyfrowego 
-\end{enumerate}
-Układ wejściowy analizatora zapewnia dostęp do 16 wejść
-cyfrowych, 2 szybkich wejść analogowych niskiej rozdzielczości
-2 wolnych wejść analogowych dużej rozdzielczości oraz 4 wejść masy.
-Schemat układu wejściowego przedstawiono poniżej.
+Układ wejściowy analizatora zapewnia dostęp do 16 wejść cyfrowych,
+2 szybkich wejść analogowych niskiej rozdzielczości 2 wolnych wejść
+analogowych dużej rozdzielczości oraz 4 złącz masy. Szczegółowy opis 
+interfejsu wejściowego analizatora przedstawiono poniżej.
+\input{Img/input.tex}
 
+Opis wyprowadzeń interfejsu:
+\begin{enumerate}
+    \item 0 - 15 - wejścia cyfrowe
+    \item TRIG0, TRIG1 - wejście sygnału wyzwalającego
+    \item ADC0, ADC1 - szybkie wejścia analogowe małej rozdzielczości
+    \item ADC2, ADC3 - wolne wejścia analogowe dużej rozdzielczości
+    \item GND - masa układu 
+\end{enumerate} 
+
+    \item Mikrokontrolera
+    \begin{figure}[!ht]
+        \centering
+        \includegraphics[width=0.6\textwidth]{rp2040_block_diagram.png}
+        \caption{RP2040}
+        \label{fig:RP2040}
+    \end{figure}
+
+    \item Przetwornika analogowo-cyfrowego 
+    \begin{figure}[!ht]
+        \centering
+        \includegraphics[width=0.6\textwidth]{ADC_block_diagram.png}
+        \caption{ADS1115}
+        \label{fig:ADS1115}
+    \end{figure}
 
 Schemat blokowy analizatora przedstawiono poniżej.
+\end{enumerate}
+
+
 
 \subsection{Schematy ideowe analizatora}
 \subsubsection{Układ wejściowy}
-
 \subsubsection{Układ mikrokontrolera}
-
 \subsubsection{Układ przetwornika analogowo-cyfrowego}
 
 
