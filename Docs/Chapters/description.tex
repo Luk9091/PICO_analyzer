@@ -7,21 +7,24 @@
         oraz interfejs wejściowy wraz z zabezpieczeniami chroniącymi układ przed przypadkowymi
         pomyłkami użytkownika.
         \item Aplikacji komputerowej - interfejs użytkownika odpowiadający za intuicyjną
-        komunikację między użytkownikiem a urządzeniem. Aplikacja komputerowa stworzona
-        zostanie z wykorzystaniem framework-u GTKmm oraz języka C++.
-        GUI dodatkowo będzie wykorzystywać mechanizmy wielowątkowości w celu zapewnienia
-        odpowiedniej kultury pracy z aplikacją. 
+        komunikację między użytkownikiem a urządzeniem. 
+        % Aplikacja komputerowa stworzona zostanie z wykorzystaniem framework-u GTKmm oraz języka C++.
+        % GUI będzie wykorzystywać mechanizmy wielowątkowości w celu zapewnienia odpowiedniej kultury pracy z aplikacją. 
+        W celu zapewnienia responsywności, aplikacja powinna dzielić wyświetlanie oraz przetwarzanie danych na oddzielne wątki.
     \end{itemize}
 
 \subsection{Założenia sprzętowe}
     \begin{enumerate}
         \item Analizator stanów logicznych, jako układ pomiarowy nie powinien obciążać prądowo
-        urządzenia badanego dlatego system pomiarowy analizatora będzie pracował w trybie
+        urządzenia badanego dlatego system będzie pracował w trybie
         wysokiej impedancji wejściowej.
-        \item Układ powinien charakteryzować się co najmniej dobrymi parametrami takimi jak:
-        szybkość pracy, rozdzielczość sygnałów, dokładność oraz precyzja pomiaru.
-        \item System powinien umożliwiać pomiary sygnałów których częstotliwość bitowa będzie
-        wynosić co najmniej 100kB/s 
+        \item Podstawowymi parametrami branymi urządzenia są:
+        \begin{itemize}
+            \item wysoką szybkością próbkowania sygnałów cyfrowych,
+            \item odpowiednią rozdzielczością pomiarowego toru analogowego,
+            \item stabilność pracy,
+        \end{itemize}
+        \item Maksymalna częstotliwość próbkowania sygnałów cyfrowych powinna wynosić co najmniej $f_{\text{sample}} = 50MHz$.
     \end{enumerate}
 
 \subsection{Założenia oprogramowania}
@@ -29,14 +32,14 @@
         \item Aplikacja komputerowa powinna stanowić wygodny oraz intuicyjny interfejs
         między użytkownikiem a urządzeniem.
         \item Oprogramowanie mikrokontrolera w maksymalnym stopniu powinno opierać się na
-        zasobach sprzętowych układu takich jak DMA, Timery, akceleratory IO(PIO) itp. .
+        zasobach sprzętowych układu takich jak DMA, timery, akceleratory IO (PIO) itp. .
     \end{enumerate}
     
 \subsection{Podział obowiązków}
     \textbf{Łukasz Przystupa}
     \begin{enumerate}
-        \item Stworzenie aplikacji komputerowej w GTKmm oraz C++.
-        \item Zaprojektowanie niskopoziomowego systemu próbkującego opartego o PIO.
+        \item Stworzenie aplikacji komputerowej.
+        \item Zaprojektowanie niskopoziomowego systemu próbkującego sekcji cyfrowej opartego o PIO wbudowany w Raspberry PI PICO.
         \item Konfiguracja bardzo szybkiej i stabilnej komunikacji szeregowej między
         komputerem użytkownika a PicoProbe z wykorzystaniem interfejsu USB.
     \end{enumerate}
