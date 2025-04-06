@@ -35,8 +35,8 @@ void I2C_writeReg(uint8_t dev_addr, address_pointerRegister reg_mode, uint8_t da
 void I2C_readReg(uint8_t dev_addr, address_pointerRegister reg_mode, uint8_t data_length, uint8_t* buffer)
 {
     const uint8_t tab = get_ADS1115RegMode(reg_mode);
-    uint8_t 
-    i2c_write_blocking(ADS1115_I2CInstance, get_ADS1115RegMode(reg_mode), &tab, 1, false);
+    uint8_t register_mode =  get_ADS1115RegMode(reg_mode);
+    i2c_write_blocking(ADS1115_I2CInstance, register_mode, &tab, 1, false);
     i2c_read_blocking(ADS1115_I2CInstance, dev_addr, buffer, data_length, false);
 }
 
