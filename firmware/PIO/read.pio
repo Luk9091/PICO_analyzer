@@ -19,16 +19,3 @@ main:
     nop
     in pins, 16
 .wrap
-
-
-.program trigger_timeDMA
-main:
-.wrap_target
-    jmp pin, SAMPLE
-.wrap
-SAMPLE:
-    push
-
-LOCK:
-    jmp pin, LOCK
-    jmp main

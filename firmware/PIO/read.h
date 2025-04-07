@@ -47,17 +47,6 @@ static inline void continue_read_program_init(PIO pio, uint sm, uint offset, uin
 }
 
 
-static inline void trigger_timeDMA_program_init(PIO pio, uint sm, uint offset, uint triggerPin){
-    pio_sm_config c = trigger_timeDMA_program_get_default_config(offset);
-
-    sm_config_set_jmp_pin(&c, triggerPin);
-    // sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_RX);
-
-    pio_sm_init(pio, sm, offset, &c);
-    pio_sm_set_enabled(pio, sm, true);
-}
-
-
 
 
 static inline float PIO_get_division(uint sampleFreq){

@@ -30,7 +30,7 @@ void waitUntilRun(){
 void communication_run(PIO pio, uint sm){
     waitUntilRun();
     DMA_setEnable(DMA_DATA_0, true);
-    // DMA_setEnable(DMA_TIME_0, true);
+    DMA_setEnable(DMA_TIME, true);
     pio_sm_set_enabled(pio, sm, true);
 
     communication_sendProcedure();
@@ -164,12 +164,7 @@ void communication_sendProcedure(){
     }
 
 #if LIB_PICO_STDIO_USB
-    tud_cdc_write_flush();
     tud_cdc_write_clear();
-#endif
-
-    print("\n\rSTOP\n\r", 8);
-#if LIB_PICO_STDIO_USB
     tud_cdc_write_flush();
 #endif
     LED_off();

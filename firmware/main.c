@@ -32,7 +32,6 @@ volatile uint sampleData[DATA_SIZE] = {0};
 volatile uint timeStamp[DATA_SIZE] = {0};
 
 PIO pio;
-PIO pio_2;
 
 
 inline uint getMainFreq(){
@@ -66,32 +65,26 @@ int main(){
     // pio_claim_free_sm_and_add_program_for_gpio_range(&continue_read_program, &pio, &sm, &offset, LSB_GPIO, PIO_NUM_PIN, true);
     // continue_read_program_init(pio, sm, offset, LSB_GPIO, PIO_NUM_PIN, 10 * kHz);
 
-    // uint sm_2;
-    // uint offset_2;
-    // pio_claim_free_sm_and_add_program_for_gpio_range(&trigger_timeDMA_program, &pio_2, &sm_2, &offset_2, 0, 0, true);
-    // trigger_timeDMA_program_init(pio_2, sm_2, offset_2, TRIGGER_GPIO);
-
 
 
 
     LED_init();
 
-    int status = DMA_PIOconfig(
+    DMA_PIOconfig(
         sampleData,
         &pio->rxf[sm],
         pio_get_dreq(pio, sm, false),
         DMA_DATA_0, DMA_DATA_1
     );
-    if (status != 0) return 1;
 
     TIMER_init(TIMER_SLICE, 1000);
     DMA_TIMERconfig(
         timeStamp,
         &(pwm_hw->slice[TIMER_SLICE].ctr),
         pio_get_dreq(pio, sm, false),
-        DMA_TIME,
-        true
+        DMA_TIME
     );
+
 
     communication_init();
 
