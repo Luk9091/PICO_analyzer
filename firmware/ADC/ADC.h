@@ -2,6 +2,7 @@
 #define _ADC_
 
 #include "hardware/i2c.h"
+#include "hardware/gpio.h"
 
 #define ADS1115_SDAPin 20
 #define ADS1115_SCLPin 21
@@ -13,24 +14,54 @@
 #define LO_thresh_reg   0b00000010
 #define Hi_thresh_reg   0b00000011
 
+typedef enum{
+    mode_circular = 0x0000,
+    mode_singleShot = 0x0100
+}ADS1115_operationMode;
 
+typedef enum{
+    channel_0 = 0x4000,
+    channel_1 = 0x5000,
+    channel_2 = 0x6000,
+    channel_3 = 0x7000
+}ADS1115_channel;
 
-/// @brief I2C write register helper function
-/// @param dev_addr     - device address
-/// @param reg_address  - register value(address)
-/// @param data         - data to save under register location
-void I2C_writeReg(uint8_t dev_addr, uint8_t reg_mode, uint8_t data_length, uint8_t data);
+/// @brief ADS1115 write data
+/// @param reg_mode - one of 4 available device registers 
+/// @param data     - data to save in register
+static void ADS1115_writeReg(uint8_t reg_mode, uint16_t data);
 
-/// @brief I2C read register helper function
-/// @param dev_addr     - device address
-/// @param reg_addr     - register value(address)
-/// @param buffer       - pointer to buffer where data has to be saved
-void I2C_readReg(uint8_t dev_addr, uint8_t reg_mode, uint8_t data_length, uint8_t *buffer);
-
+/// @brief ADS1115 read data
+/// @param reg_mode - one of 4 available device registers 
+/// @param buffer   - buffer to store read data
+static void ADS1115_readReg(uint8_t reg_mode, uint16_t *buffer);
 
 /// @brief ADS1115 initialize 
-/// @param SDA_pin - --
-/// @param SCL_pin - --
-void ADS1115_init(uint8_t SDA_pin, uint8_t SCL_pin);
+/// @param SDA_pin  - --
+/// @param SCL_pin  - --
+void ADS1115_init(uint8_t SDA_pin, uint8_t SCL_pin, ADS1115_operationMode operation_mode);
+
+/// @brief ADC1115 set operation Mode Circular or one shot
+/// @param mode - Circular/One shot
+void ADS1115_setOperationMode(ADS1115_operationMode mode);
+
+/// @brief ADS11115 set Programmable Gain Amplifier
+/// @param  PGA gain value
+void ADS1115_setPGA(uint8_t PGA_val);
+
+/// @brief ADS1115 set measured channel number
+/// @param channel_number   - --
+void ADS1115_setChannel(uint8_t channel_number);
+
+/// @brief Read ADC data from selected channel
+/// @param channel  - -- 
+/// @return         - raw ads1115 ADC data
+uint16_t ADS1115_readData(uint8_t channel);
+
+/// @brief READ ADC one sample from selected channel
+/// @param channel  - --
+/// @return         - ADC single sample   
+uint16_t ADS1115_getSample(uint8_t channel);
+
 
 #endif
