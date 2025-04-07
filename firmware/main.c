@@ -9,6 +9,7 @@
 
 
 #include "dma.h"
+#include "timer.h"
 #include "led.h"
 #include "communication.h"
 
@@ -27,11 +28,11 @@ uint read_mask =
     1 <<  4 | 1 <<  5 | 1 <<  6 | 1 <<  7 |
     1 <<  8 | 1 << 9 | 1 << 10 | 1 << 11 |
     1 << 12 | 1 << 13 | 1 << 14 | 1 << 15;
-uint sampleData[DATA_SIZE] = {0};
+volatile uint sampleData[DATA_SIZE] = {0};
+volatile uint timeStamp[DATA_SIZE] = {0};
 
 PIO pio;
-uint sm;
-uint offset;
+PIO pio_2;
 
 
 inline uint getMainFreq(){
@@ -58,30 +59,50 @@ int main(){
     gpio_set_dir(TRIGGER_GPIO, false);
 
 
-    // pio_claim_free_sm_and_add_program_for_gpio_range(&triggered_read_program, &pio, &sm, &offset, LSB_GPIO, PIO_NUM_PIN, true);
-    // triggered_read_program_init(pio, sm, offset, LSB_GPIO, PIO_NUM_PIN, TRIGGER_GPIO);
-    pio_claim_free_sm_and_add_program_for_gpio_range(&continue_read_program, &pio, &sm, &offset, LSB_GPIO, PIO_NUM_PIN, true);
-    continue_read_program_init(pio, sm, offset, LSB_GPIO, PIO_NUM_PIN, 5 * kHz);
+    uint sm;
+    uint offset;
+    pio_claim_free_sm_and_add_program_for_gpio_range(&triggered_read_program, &pio, &sm, &offset, LSB_GPIO, PIO_NUM_PIN, true);
+    triggered_read_program_init(pio, sm, offset, LSB_GPIO, PIO_NUM_PIN, TRIGGER_GPIO);
+    // pio_claim_free_sm_and_add_program_for_gpio_range(&continue_read_program, &pio, &sm, &offset, LSB_GPIO, PIO_NUM_PIN, true);
+    // continue_read_program_init(pio, sm, offset, LSB_GPIO, PIO_NUM_PIN, 10 * kHz);
+
+    // uint sm_2;
+    // uint offset_2;
+    // pio_claim_free_sm_and_add_program_for_gpio_range(&trigger_timeDMA_program, &pio_2, &sm_2, &offset_2, 0, 0, true);
+    // trigger_timeDMA_program_init(pio_2, sm_2, offset_2, TRIGGER_GPIO);
+
+
 
 
     LED_init();
-    communication_init();
 
-    uint dma_1, dma_2;
-    DMA_PIOconfig(
+    int status = DMA_PIOconfig(
         sampleData,
         &pio->rxf[sm],
         pio_get_dreq(pio, sm, false),
-        &dma_1, &dma_2
+        DMA_DATA_0, DMA_DATA_1
+    );
+    if (status != 0) return 1;
+
+    TIMER_init(TIMER_SLICE, 1000);
+    DMA_TIMERconfig(
+        timeStamp,
+        &(pwm_hw->slice[TIMER_SLICE].ctr),
+        pio_get_dreq(pio, sm, false),
+        DMA_TIME,
+        true
     );
 
-    while(1){
-        DMA_clear();
-        communication_run(pio, sm, dma_1, dma_2, sampleData);
+    communication_init();
 
-        DMA_setEnable(dma_1, false);
-        DMA_setEnable(dma_2, false);
+
+
+    while(1){
+        communication_run(pio, sm);
+
+        pio_sm_set_enabled(pio, sm, false);
         pio_sm_restart(pio, sm);
+        DMA_clear();
     }
 
 }
