@@ -15,16 +15,25 @@
 #define Hi_thresh_reg   0b00000011
 
 typedef enum{
-    mode_circular = 0x0000,
-    mode_singleShot = 0x0100
+    mode_circular,
+    mode_singleShot
 }ADS1115_operationMode;
 
 typedef enum{
-    channel_0 = 0x4000,
-    channel_1 = 0x5000,
-    channel_2 = 0x6000,
-    channel_3 = 0x7000
+    channel_0,
+    channel_1,
+    channel_2,
+    channel_3
 }ADS1115_channel;
+
+typedef enum{
+    PGA_1,   //101b : FSR = ±0.256V
+    PGA_2,  //100b : FSR = ±0.512V
+    PGA_3,  //011b : FSR = ±1.024V
+    PGA_4,  //010b : FSR = ±2.048V (default)
+    PGA_5,  //001b : FSR = ±4.096V(1)
+    PGA_6  //6.144V(1)
+}ADS1115_PGA;
 
 /// @brief ADS1115 write data
 /// @param reg_mode - one of 4 available device registers 
