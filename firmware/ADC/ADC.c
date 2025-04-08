@@ -1,13 +1,13 @@
 #include "ADC.h"
 
-static void ADS1115_writeReg(uint8_t reg_mode, uint16_t data)
+void ADS1115_writeReg(uint8_t reg_mode, uint16_t data)
 {
     uint8_t *data_ptr = (uint8_t*)&data;
     const uint8_t tab[3] = {reg_mode, data_ptr[1], data_ptr[0]};
     i2c_write_blocking(ADS1115_I2CInstance, ADS1115_Address, tab, 3, false);
 }
 
-static void ADS1115_readReg(uint8_t reg_mode, uint16_t *buffer)
+void ADS1115_readReg(uint8_t reg_mode, uint16_t *buffer)
 {
     uint8_t tab[2] = {0};
     i2c_write_blocking(ADS1115_I2CInstance, ADS1115_Address, &reg_mode, 1, true);

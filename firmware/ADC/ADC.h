@@ -38,12 +38,12 @@ typedef enum{
 /// @brief ADS1115 write data
 /// @param reg_mode - one of 4 available device registers 
 /// @param data     - data to save in register
-static void ADS1115_writeReg(uint8_t reg_mode, uint16_t data);
+void ADS1115_writeReg(uint8_t reg_mode, uint16_t data);
 
 /// @brief ADS1115 read data
 /// @param reg_mode - one of 4 available device registers 
 /// @param buffer   - buffer to store read data
-static void ADS1115_readReg(uint8_t reg_mode, uint16_t *buffer);
+void ADS1115_readReg(uint8_t reg_mode, uint16_t *buffer);
 
 /// @brief ADS1115 initialize 
 /// @param SDA_pin  - --
