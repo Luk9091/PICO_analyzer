@@ -10,14 +10,6 @@
 
 static bool _transferData = false;
 
-typedef union{
-    // uint64_t u64;
-    uint32_t u32;
-    uint16_t u16[2];
-    uint8_t  u8[4];
-} convert_t;
-
-
 void waitUntilRun(){
     do{
         LED_toggle();
@@ -48,13 +40,16 @@ void UART_rx_cb()
     char readMsg[MESSAGE_MAX_LEN];
     
     if (communication_read(readMsg)){
-        if(strncmp(readMsg, "RUN", 1) == PICO_OK){
-            _transferData = true;
-            print("OK\n\r", 4);
-        }
-        else if(strncmp(readMsg, "DONE", 1) == PICO_OK){
+        if(_transferData && strncmp(readMsg, "DONE", 1) == PICO_OK){
             _transferData = false;
             print("\n\rSTOP\n\r", 8);
+            print("OK\n\r", 4);
+        }
+        else if (_transferData){
+            return;
+        }
+        else if(strncmp(readMsg, "RUN", 1) == PICO_OK){
+            _transferData = true;
             print("OK\n\r", 4);
         }
         else if(strncmp(readMsg, "HELLO", 1) == PICO_OK){
@@ -128,20 +123,21 @@ void communication_sendProcedure(){
     uint32_t sampleIndex = 0;
     uint32_t nowriteDelay = 0;
     uint32_t dmaSel = 0;
-    extern uint sampleData[DATA_SIZE];
-    extern uint timeStamp[DATA_SIZE];
+    extern uint16_t sampleData[DATA_SIZE];
+    extern uint16_t timeStamp[DATA_SIZE];
 
     while (_transferData){
         sampleIndex = dma_getCurrentIndex(dmaSel);
         if (index != sampleIndex){
-            volatile convert_t sample = {.u32 = sampleData[index]};
-            printf("%4i\tData: %u, 0x%X, run: %i\n\r", index, timeStamp[index], sample.u16[0], dmaSel);
+            // print((uint8_t*)(timeStamp + index), 2);
+            // print((uint8_t*)(sampleData + index), 2);
+            printf("%4i\tData: %5hu, 0x%4X, run: %i\n\r", index, timeStamp[index], sampleData[index], sampleIndex);
             index++;
             if (index >= DATA_SIZE){
                 index = 0;
                 if(dmaSel == 1){
                     dmaSel = DMA_DATA_0;
-                    _transferData = false;
+                    // _transferData = false;
                 } else {
                     dmaSel = DMA_DATA_1;
                 }
@@ -165,6 +161,7 @@ void communication_sendProcedure(){
 
 #if LIB_PICO_STDIO_USB
     tud_cdc_write_clear();
+    print("\n\r\0", 3);
     tud_cdc_write_flush();
 #endif
     LED_off();
