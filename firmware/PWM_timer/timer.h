@@ -6,7 +6,7 @@
 
 #define TIMER_SLICE (0)
 
-uint TIMER_init(uint slice, uint tickPeriod);
+uint TIMER_init(uint slice, uint tickPeriod_ns);
 
 
 

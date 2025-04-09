@@ -9,11 +9,12 @@
 extern uint sampleData[DATA_SIZE];
 extern uint timeStamp[DATA_SIZE];
 
-static inline bool _DMA_config(volatile void *writeAddress, const volatile void *readAddress, uint dreq, uint dma, dma_channel_config *config){
+static inline bool _DMA_config(volatile void *writeAddress, const volatile void *readAddress, uint dreq, uint dma, dma_channel_config *config, bool priority){
     channel_config_set_transfer_data_size(config, DMA_SIZE_32);
     channel_config_set_read_increment(config, false);
     channel_config_set_write_increment(config, true);
     channel_config_set_dreq(config, dreq);
+    channel_config_set_high_priority(config, priority);
 
 
     dma_channel_configure(dma,
@@ -38,6 +39,17 @@ void _dma_1_handler(){
         dma_channel_set_write_addr(DMA_DATA_1, sampleData, false);
         dma_channel_set_trans_count(DMA_DATA_1, DATA_SIZE, false);
     }
+    
+    if (dma_hw->ints0 & (1 << DMA_TIME_0)){
+        dma_hw->ints0 = 1 << DMA_TIME_0;
+        dma_channel_set_write_addr(DMA_TIME_0, timeStamp, false);
+        dma_channel_set_trans_count(DMA_TIME_0, DATA_SIZE, false);
+    }
+    if (dma_hw->ints0 & (1 << DMA_TIME_1)){
+        dma_hw->ints0 = 1 << DMA_TIME_1;
+        dma_channel_set_write_addr(DMA_TIME_1, timeStamp, false);
+        dma_channel_set_trans_count(DMA_TIME_1, DATA_SIZE, false);
+    }
 }
 
 // void _dma_2_handler(){
@@ -58,14 +70,17 @@ bool DMA_clear(){
     
 
     // Clear time address DMA
-    dma_channel_set_write_addr(DMA_TIME, timeStamp, false);
-    dma_channel_set_trans_count(DMA_TIME, DATA_SIZE, true);
+    dma_channel_set_write_addr(DMA_TIME_0, timeStamp, false);
+    dma_channel_set_trans_count(DMA_TIME_0, DATA_SIZE, true);
+
+    dma_channel_set_write_addr(DMA_TIME_1, timeStamp, false);
+    dma_channel_set_trans_count(DMA_TIME_1, DATA_SIZE, true);
 
     return true;
 }
 
 
-int DMA_PIOconfig(volatile void *writeAddress, const volatile void *readAddress, uint dreq, uint dma_1, uint dma_2){
+int DMA_PIOconfig(volatile void *writeAddress, const volatile void *readAddress, uint dreq, uint dma_1, uint dma_2, bool priority){
     dma_channel_claim(dma_1);
     dma_channel_claim(dma_2);
 
@@ -83,8 +98,8 @@ int DMA_PIOconfig(volatile void *writeAddress, const volatile void *readAddress,
     // irq_set_exclusive_handler(DMA_IRQ_1, _dma_2_handler);
     // irq_set_enabled(DMA_IRQ_1, true);
 
-    _DMA_config(writeAddress, readAddress, dreq, dma_1, &config_1);
-    _DMA_config(writeAddress, readAddress, dreq, dma_2, &config_2);
+    _DMA_config(writeAddress, readAddress, dreq, dma_1, &config_1, priority);
+    _DMA_config(writeAddress, readAddress, dreq, dma_2, &config_2, priority);
 
     return 0;
 }
@@ -126,12 +141,12 @@ int DMA_TIMERconfig(volatile void *writeAddress, const volatile void *readAddres
 
     dma_channel_config config = dma_channel_get_default_config(dma);
     
-    channel_config_set_transfer_data_size(&config, DMA_SIZE_32);
+    channel_config_set_transfer_data_size(&config, DMA_SIZE_16);
     channel_config_set_read_increment(&config, false);
     channel_config_set_write_increment(&config, true);
     channel_config_set_dreq(&config, dreq);
     channel_config_set_high_priority(&config, true);
-    // channel_config_set_ring(&config, true, log2(DATA_SIZE));
+    channel_config_set_ring(&config, true, log2(DATA_SIZE));
 
     dma_channel_configure(dma,
         &config,

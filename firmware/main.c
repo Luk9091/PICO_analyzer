@@ -29,6 +29,8 @@ uint read_mask =
     1 <<  8 | 1 << 9 | 1 << 10 | 1 << 11 |
     1 << 12 | 1 << 13 | 1 << 14 | 1 << 15;
 volatile uint sampleData[DATA_SIZE] = {0};
+
+#pragma pack(push, 1)
 volatile uint timeStamp[DATA_SIZE] = {0};
 
 PIO pio;
@@ -74,17 +76,25 @@ int main(){
         sampleData,
         &pio->rxf[sm],
         pio_get_dreq(pio, sm, false),
-        DMA_DATA_0, DMA_DATA_1
+        DMA_DATA_0, DMA_DATA_1,
+        0
     );
 
     TIMER_init(TIMER_SLICE, 1000);
-    DMA_TIMERconfig(
+    // DMA_TIMERconfig(
+    //     timeStamp,
+    //     &(pwm_hw->slice[TIMER_SLICE].ctr),
+    //     pio_get_dreq(pio, sm, false),
+    //     DMA_TIME
+    // );
+
+    DMA_PIOconfig(
         timeStamp,
         &(pwm_hw->slice[TIMER_SLICE].ctr),
         pio_get_dreq(pio, sm, false),
-        DMA_TIME
+        DMA_TIME_0, DMA_TIME_1,
+        1
     );
-
 
     communication_init();
 

@@ -30,7 +30,7 @@ void waitUntilRun(){
 void communication_run(PIO pio, uint sm){
     waitUntilRun();
     DMA_setEnable(DMA_DATA_0, true);
-    DMA_setEnable(DMA_TIME, true);
+    DMA_setEnable(DMA_TIME_0, true);
     pio_sm_set_enabled(pio, sm, true);
 
     communication_sendProcedure();
