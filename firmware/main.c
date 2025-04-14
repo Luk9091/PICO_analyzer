@@ -11,6 +11,7 @@
 #include "dma.h"
 #include "led.h"
 #include "communication.h"
+#include "ADC/ADC.h"
 
 #include "read.pio.h"
 
@@ -76,11 +77,29 @@ int main(){
         &dma_1, &dma_2
     );
 
+
+    uint16_t ADC_data = 0;
+    float ADC_convert =  0.0f;
+    ADS1115_init(26, 27);
+    ADS1115_setOperationMode(mode_circular);
+    
     while(1){
-        DMA_clear();
-        communication_run(dma_1, dma_2, sampleData);
-        DMA_setEnable(dma_1, false);
-        DMA_setEnable(dma_2, false);
+        //DMA_clear();
+        //communication_run(dma_1, dma_2, sampleData);
+        //DMA_setEnable(dma_1, false);
+        //DMA_setEnable(dma_2, false);
+
+
+        printf("...\n");
+        sleep_ms(500);
+
+        ADC_data = ADS1115_readData(channel_0);
+        //printf("ADC_data: %d\n", ADC_data);
+        
+        ADC_convert = ADS1115_dataConvert((int16_t)ADC_data);
+        printf("Voltage: %f [V]\n", ADC_convert);
+
+        sleep_ms(500);
     }
 
 }
