@@ -15,8 +15,8 @@
 #define LO_thresh_reg   0b00000010
 #define Hi_thresh_reg   0b00000011
 
-#define OS_0  0     // 0 -> Device is currently performing a conversion
-#define OS_1  1     // 1 -> Device is not currently performing a conversion
+#define OS_0  0     // 0 : Device is currently performing a conversion
+#define OS_1  1     // 1 : Device is not currently performing a conversion
 
 #define channel_0 0
 #define channel_1 1
@@ -33,10 +33,10 @@
 #define mode_circular   0
 #define mode_singleShot 1
 
-#define data_rate8      0   // 000 : 8 SPS
-#define data_rate16     1  // 001 : 16 SPS
-#define data_rate32     2  // 010 : 32 SPS
-#define data_rate64     3  // 011 : 64 SPS
+#define data_rate8      0 // 000 : 8 SPS
+#define data_rate16     1 // 001 : 16 SPS
+#define data_rate32     2 // 010 : 32 SPS
+#define data_rate64     3 // 011 : 64 SPS
 #define data_rate128    4 // 100 : 128 SPS (default)
 #define data_rate250    5 // 101 : 250 SPS
 #define data_rate475    6 // 110 : 475 SPS
