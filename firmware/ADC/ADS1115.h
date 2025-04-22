@@ -7,7 +7,7 @@
 
 #define ADS1115_SDAPin 20
 #define ADS1115_SCLPin 21
-#define ADS1115_I2CInstance i2c1
+#define ADS1115_I2CInstance i2c0
 
 #define ADS1115_Address 0x48
 #define conversion_reg  0b00000000
@@ -80,9 +80,7 @@ void ADS1115_writeReg(uint8_t reg_mode, uint16_t data);
 void ADS1115_readReg(uint8_t reg_mode, uint16_t *buffer);
 
 /// @brief ADS1115 initialize 
-/// @param SDA_pin  - --
-/// @param SCL_pin  - --
-void ADS1115_init(uint8_t SDA_pin, uint8_t SCL_pin);
+void ADS1115_init(void);
 
 /// @brief ADC1115 set operation Mode Circular or one shot
 /// @param mode - Circular/One shot
@@ -106,5 +104,10 @@ uint16_t ADS1115_readData(uint8_t channel);
 /// @return         - ADC single sample   
 uint16_t ADS1115_getSample(uint8_t channel);
 
+
+/// @brief ADC received raw data converter -> convert from raw data to voltages
+/// @warning This method is not recommended to use on rp2040 !!!, is ONLY for debugging 
+/// @param data - raw ADC value
+/// @return     - voltage value
 float ADS1115_dataConvert(int16_t data);
 #endif

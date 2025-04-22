@@ -1,7 +1,7 @@
-#include "ADC.h"
+#include "ADS1115.h"
 
 // ADS1115 current settings //
-ADS1115_configState ADS1115_state_t = {0};
+static ADS1115_configState ADS1115_state_t = {0};
 
 void ADS1115_writeReg(uint8_t reg_mode, uint16_t data)
 {
@@ -19,15 +19,15 @@ void ADS1115_readReg(uint8_t reg_mode, uint16_t *buffer)
     *buffer = ((uint16_t)tab[0] << 8) | tab[1];
 }
 
-void ADS1115_init(uint8_t SDA_pin, uint8_t SCL_pin)
+void ADS1115_init(void)
 {
 
     /// I2C initialization ///
     i2c_init(ADS1115_I2CInstance, 100000);
-    gpio_set_function(SDA_pin, GPIO_FUNC_I2C);
-    gpio_set_function(SCL_pin, GPIO_FUNC_I2C);
-    gpio_pull_up(SDA_pin);
-    gpio_pull_up(SCL_pin);
+    gpio_set_function(ADS1115_SDAPin, GPIO_FUNC_I2C);
+    gpio_set_function(ADS1115_SCLPin, GPIO_FUNC_I2C);
+    gpio_pull_up(ADS1115_SDAPin);
+    gpio_pull_up(ADS1115_SCLPin);
     
 
     /// ADS1115 Basic Configuration ///

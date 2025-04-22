@@ -35,7 +35,7 @@ add_executable(${PROJECT_NAME}
     DMA/dma.c
     LED/led.c
     Communication/communication.c
-    ADC/ADC.c
+    ADC/ADS1115.c
 )
 
 include_directories(${PROJECT_NAME}
@@ -64,6 +64,7 @@ target_link_libraries(${PROJECT_NAME}
     hardware_dma
     hardware_irq
     hardware_i2c
+    hardware_adc
 )
 
 pico_enable_stdio_usb(${PROJECT_NAME}  1)
