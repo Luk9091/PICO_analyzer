@@ -32,131 +32,127 @@ void ADS1115_init(void)
 
     /// ADS1115 Basic Configuration ///
     uint16_t config_val = 0b0100001111100011;
-    ADS1115_writeReg(config_reg, config_val);
+    ADS1115_writeReg(ADS1115_configReg, config_val);
 
-    ADS1115_state_t.OS_state          = OS_0;
-    ADS1115_state_t.MUX_state         = channel_0;
-    ADS1115_state_t.PGA_state         = PGA_5;
-    ADS1115_state_t.MODE_state        = mode_singleShot;
-    ADS1115_state_t.DR_state          = data_rate860;
-    ADS1115_state_t.COMP_MODE_state   = comp_modeTraditional;
-    ADS1115_state_t.COMP_POL_state    = comp_polActiveLow; 
-    ADS1115_state_t.COMP_LAT_state    = comp_latNoLatching; 
-    ADS1115_state_t.COMP_QUE_state    = comp_queDisable; 
+    ADS1115_state_t.OS_state          = ADS1115_OS_0;
+    ADS1115_state_t.MUX_state         = ADS1115_channel_0;
+    ADS1115_state_t.PGA_state         = ADS1115_PGA_5;
+    ADS1115_state_t.MODE_state        = ADS1115_modeSingleShot;
+    ADS1115_state_t.DR_state          = ADS1115_dataRate860;
+    ADS1115_state_t.COMP_MODE_state   = ADS1115_compModeTraditional;
+    ADS1115_state_t.COMP_POL_state    = ADS1115_compPolActiveLow; 
+    ADS1115_state_t.COMP_LAT_state    = ADS1115_compLatNoLatching; 
+    ADS1115_state_t.COMP_QUE_state    = ADS1115_compQueDisable; 
 }
 
 void ADS1115_setOperationMode(uint8_t mode)
 {
     uint16_t ADS1115_state = 0;
-    ADS1115_readReg(config_reg, &ADS1115_state);
+    ADS1115_readReg(ADS1115_configReg, &ADS1115_state);
 
     switch(mode)
     {
-        case mode_circular:
+        case ADS1115_modeCircular:
             ADS1115_state &= ~(1<<8);
-            ADS1115_state_t.MODE_state = mode_circular;
+            ADS1115_state_t.MODE_state = ADS1115_modeCircular;
         break;
 
-        case mode_singleShot:
+        case ADS1115_modeSingleShot:
             ADS1115_state |= (1<<8);
-            ADS1115_state_t.MODE_state = mode_singleShot;
+            ADS1115_state_t.MODE_state = ADS1115_modeSingleShot;
         break;
     }
     
-    ADS1115_writeReg(config_reg, ADS1115_state);
+    ADS1115_writeReg(ADS1115_configReg, ADS1115_state);
 }
 
 void ADS1115_setPGA(uint8_t PGA_val)
 {
     uint16_t ADS1115_state = 0;
-    ADS1115_readReg(config_reg, &ADS1115_state);
+    ADS1115_readReg(ADS1115_configReg, &ADS1115_state);
 
     switch(PGA_val)
     {
-        case PGA_1:
+        case ADS1115_PGA_1:
             ADS1115_state |= (1<<11) | (1<<9);
             ADS1115_state &= ~(1<<10);
-            ADS1115_state_t.PGA_state = PGA_1;
+            ADS1115_state_t.PGA_state = ADS1115_PGA_1;
         break;
 
-        case PGA_2:
+        case ADS1115_PGA_2:
             ADS1115_state |= (1<<11);
             ADS1115_state &= ~((1<<10)|(1<<9));
-            ADS1115_state_t.PGA_state = PGA_2;
+            ADS1115_state_t.PGA_state = ADS1115_PGA_2;
         break;
 
-        case PGA_3:
+        case ADS1115_PGA_3:
             ADS1115_state |= (1<<10) | (1<<9);
             ADS1115_state &= ~(1<<11);
-            ADS1115_state_t.PGA_state = PGA_3;
+            ADS1115_state_t.PGA_state = ADS1115_PGA_3;
         break;
 
-        case PGA_4:
+        case ADS1115_PGA_4:
             ADS1115_state |= (1<<10);
             ADS1115_state &= ~((1<<11)|(1<<9));
-            ADS1115_state_t.PGA_state = PGA_4;
+            ADS1115_state_t.PGA_state = ADS1115_PGA_4;
         break;
 
-        case PGA_5:
+        case ADS1115_PGA_5:
             ADS1115_state |= (1<<9);
             ADS1115_state &= ~((1<<11)|(1<<10));
-            ADS1115_state_t.PGA_state = PGA_5;
+            ADS1115_state_t.PGA_state = ADS1115_PGA_5;
         break;
 
-        case PGA_6:
+        case ADS1115_PGA_6:
             ADS1115_state &= ~((1<<11)|(1<<10)|(1<<9));
-            ADS1115_state_t.PGA_state = PGA_6;
+            ADS1115_state_t.PGA_state = ADS1115_PGA_6;
         break;
     }
 
-    ADS1115_writeReg(config_reg, ADS1115_state);
+    ADS1115_writeReg(ADS1115_configReg, ADS1115_state);
 }
 
 void ADS1115_setChannel(uint8_t channel_number)
 {
     uint16_t ADS1115_state = 0;
-    ADS1115_readReg(config_reg, &ADS1115_state);
+    ADS1115_readReg(ADS1115_configReg, &ADS1115_state);
 
     switch(channel_number)
     {
-        case channel_0:
+        case ADS1115_channel_0:
             ADS1115_state &= ~((1<<13)|(1<<12));
             ADS1115_state |= (1<<14);
-            ADS1115_state_t.MUX_state = channel_0;
+            ADS1115_state_t.MUX_state = ADS1115_channel_0;
         break;
 
-        case channel_1:
+        case ADS1115_channel_1:
             ADS1115_state &= ~(1<<13);
             ADS1115_state |= (1<<14) | (1<<12);
-            ADS1115_state_t.MUX_state = channel_1;
+            ADS1115_state_t.MUX_state = ADS1115_channel_1;
         break;
 
-        case channel_2:
+        case ADS1115_channel_2:
             ADS1115_state |= (1<<14) | (1<<13);
             ADS1115_state &= ~(1<<12);
-            ADS1115_state_t.MUX_state = channel_2;
+            ADS1115_state_t.MUX_state = ADS1115_channel_2;
         break;
 
-        case channel_3:
+        case ADS1115_channel_3:
             ADS1115_state |= (1<<14) | (1<<12) | (1<<13);
-            ADS1115_state_t.MUX_state = channel_3;
+            ADS1115_state_t.MUX_state = ADS1115_channel_3;
         break;
     }
 
-    ADS1115_writeReg(config_reg, ADS1115_state);
+    ADS1115_writeReg(ADS1115_configReg, ADS1115_state);
 }
 
-uint16_t ADS1115_readData(uint8_t channel)
+void ADS1115_setDualChannelRoutine(uint8_t first_channel, uint8_t second_channel, ring_buffer *data_buffer1, ring_buffer *data_buffer2)
 {  
-    if(channel > 3)
-        return 0;
-
-    ADS1115_setChannel(channel);
-
-    uint16_t raw_data = 0;
-    ADS1115_readReg(conversion_reg, &raw_data);
-
-    return raw_data;
+    if(first_channel < 0 || first_channel > 4 || second_channel < 0 || second_channel > 4)
+        return;
+    
+    ring_bufferPush(data_buffer1, ADS1115_getSample(first_channel));
+    ring_bufferPush(data_buffer2, ADS1115_getSample(second_channel));
 }
 
 uint16_t ADS1115_getSample(uint8_t channel)
@@ -167,21 +163,21 @@ uint16_t ADS1115_getSample(uint8_t channel)
     ADS1115_setChannel(channel);
 
     uint16_t ADS1115_state = 0; 
-    ADS1115_readReg(config_reg, &ADS1115_state);
+    ADS1115_readReg(ADS1115_configReg, &ADS1115_state);
     ADS1115_state |= (1<<15);
-    ADS1115_writeReg(config_reg, ADS1115_state); // start conversion
+    ADS1115_writeReg(ADS1115_configReg, ADS1115_state); // start conversion
     sleep_ms(2); 
 
     uint16_t ADS1115_isBusy = 0;
-    ADS1115_readReg(config_reg, &ADS1115_isBusy);
+    ADS1115_readReg(ADS1115_configReg, &ADS1115_isBusy);
     while((ADS1115_isBusy & (1<<15)) == 0) // Device is currently performing a conversion
     {
-        ADS1115_readReg(config_reg, &ADS1115_isBusy);
+        ADS1115_readReg(ADS1115_configReg, &ADS1115_isBusy);
         sleep_ms(1);printf(".\n");
     }
 
     uint16_t raw_data = 0;
-    ADS1115_readReg(conversion_reg, &raw_data);
+    ADS1115_readReg(ADS1115_conversionReg, &raw_data);
 
     return raw_data;
 }
@@ -192,32 +188,32 @@ float ADS1115_dataConvert(int16_t data)
 
     switch(ADS1115_state_t.PGA_state)
     {
-        case(PGA_1):
+        case(ADS1115_PGA_1):
             voltage = data *  0.0000078125f;
             return voltage;
         break;
 
-        case(PGA_2):
+        case(ADS1115_PGA_2):
             voltage = data * 0.000015625f;
             return voltage;
         break;
 
-        case(PGA_3):
+        case(ADS1115_PGA_3):
             voltage = data * 0.00003125f;
             return voltage;
         break;
 
-        case(PGA_4):
+        case(ADS1115_PGA_4):
             voltage = data * 0.0000625f;
             return voltage;
         break;
 
-        case(PGA_5):
+        case(ADS1115_PGA_5):
             voltage = data * 0.000125f;
             return voltage;
         break;
 
-        case(PGA_6):
+        case(ADS1115_PGA_6):
             voltage = data * 0.0001875f;
             return voltage;
         break;

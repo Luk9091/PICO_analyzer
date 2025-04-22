@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 #include <hardware/dma.h>
+
 #define DATA_SIZE       (16384)
 
 
@@ -14,7 +15,6 @@
 #define DMA_TIME_1      (3)
 
 
-
 int DMA_PIOconfig(volatile void *writeAddress, const volatile void *readAddress, uint dreq, uint dma_1, uint dma_2, bool priority);
 void DMA_setEnable(uint dmaChannel, bool enable);
 void DMA_chain(uint dma_1, uint dma_2, bool chain);
@@ -22,5 +22,7 @@ void DMA_chain(uint dma_1, uint dma_2, bool chain);
 bool DMA_clear();
 
 uint dma_getCurrentIndex(uint dmaChannel);
+
+void DMA_ADCPicoInit(const uint DMA_number);
 
 #endif // __DMA_CONFIG_H__

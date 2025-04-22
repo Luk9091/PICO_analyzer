@@ -93,8 +93,8 @@ int main(){
 
     uint16_t ADC_data = 0;
     float ADC_convert =  0.0f;
-    ADS1115_init();
-    ADS1115_setOperationMode(mode_circular);
+    //ADS1115_init();
+    //ADS1115_setOperationMode(mode_circular);
 
     while(1){
         //DMA_clear();
@@ -106,11 +106,11 @@ int main(){
         //printf("...\n");
         //sleep_ms(500);
 
-        ADC_data = ADS1115_readData(channel_0);
+        //ADC_data = ADS1115_readData(channel_0);
         //printf("ADC_data: %d\n", ADC_data);
         
-        ADC_convert = ADS1115_dataConvert((int16_t)ADC_data);
-        printf("%f\n", ADC_convert);
+        //ADC_convert = ADS1115_dataConvert((int16_t)ADC_data);
+        //printf("%f\n", ADC_convert);
 
         //sleep_ms(10);
     }
