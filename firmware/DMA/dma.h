@@ -1,19 +1,26 @@
 #ifndef __DMA_CONFIG_H__
 #define __DMA_CONFIG_H__
 
+#include <pico/stdio.h>
+#include <stdio.h>
 
 #include <hardware/dma.h>
-#define DATA_SIZE       (1024)
-#define DATA_BIT_SIZE   10
+#define DATA_SIZE       (16384)
+
+
+#define DMA_DATA_0      (0)
+#define DMA_DATA_1      (1)
+#define DMA_TIME_0      (2)
+#define DMA_TIME_1      (3)
 
 
 
-bool DMA_PIOconfig(void *writeAddress, const volatile void *readAddress, uint dreq, uint *dmaOut_1, uint *dmaOut_2);
+int DMA_PIOconfig(volatile void *writeAddress, const volatile void *readAddress, uint dreq, uint dma_1, uint dma_2, bool priority);
 void DMA_setEnable(uint dmaChannel, bool enable);
+void DMA_chain(uint dma_1, uint dma_2, bool chain);
 
 bool DMA_clear();
 
 uint dma_getCurrentIndex(uint dmaChannel);
-// uint dma_getCurrentIndex(uint dmaChannel, uint *dataArray);
 
 #endif // __DMA_CONFIG_H__

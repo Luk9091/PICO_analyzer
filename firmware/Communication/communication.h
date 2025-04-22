@@ -2,17 +2,46 @@
 #define __COMMUNICATION_H__
 
 #include <pico/stdlib.h>
+#include <hardware/pio.h>
 
-#define NOWRITE_DELAY_MAX  1024
-#define COMMUNICATION_SPEED_TEST false
-#define ENABLE_GPIO     19
+#if LIB_PICO_STDIO_USB
+#include <tusb.h>
+#include <hardware/structs/usb.h>
+#elif LIB_PICO_STDIO_UART
+#include <pico/stdio_uart.h>
+#endif
+
+
+
+#if LIB_PICO_STDIO_USB
+#define MESSAGE_MAX_LEN CFG_TUD_CDC_RX_BUFSIZE
+#elif LIB_PICO_STDIO_UART
+#define MESSAGE_MAX_LEN 256
+#endif
+
+#define NOWRITE_DELAY_MAX           1024
+#define COMMUNICATION_SPEED_TEST    false
+
+#if LIB_PICO_STDIO_USB
+static inline int print(const void *str, uint32_t size){
+    return tud_cdc_write(str, size);
+}
+#elif LIB_PICO_STDIO_UART
+static inline int print(const void *str, uint32_t size){
+    for (uint i = 0; i < size; i++){
+        uart_putc(uart0, ((char*)(str))[i]);
+    }
+    return size;
+}
+#endif
 
 
 void communication_init();
-void communication_run(uint dma_1, uint dma_2, uint *data);
+void communication_run(PIO pio, uint sm);
+
 
 static inline uint communication_read(const char *str);
-void communication_sendProcedure(uint dma_1, uint dam_2, uint *data);
+void communication_sendProcedure();
 
 
 extern uint getMainFreq();
