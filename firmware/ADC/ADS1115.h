@@ -57,7 +57,7 @@
 #define ADS1115_compQueAfterFour       2
 #define ADS1115_compQueDisable         3
 
-#define ADC_ADS1115SampleNumber 250
+#define ADC_ADS1115SampleNumber 50
 
 typedef struct{
     uint8_t OS_state;
@@ -72,19 +72,12 @@ typedef struct{
 }ADS1115_configState;
 
 
-// typedef struct{
-//     bool ADS1115_isInitializedCh0;      //ADS1115 is initialized ch0      
-//     bool ADS1115_isInitializedCh1;      //ADS1115 is initialized ch1
-//     bool ADS1115_isInitializedCh2;      //ADS1115 is initialized ch2
-//     bool ADS1115_isInitializedCh3;      //ADS1115 is initialized ch3
-
-//     uint16_t *ADS1115_bufferPtrCh0;     //ADS1115 buffer pointer(size = ADC_SAMPLE_NUMBER)
-//     uint16_t *ADS1115_bufferPtrCh1;     //ADS1115 buffer pointer(size = ADC_SAMPLE_NUMBER)
-//     uint16_t *ADS1115_bufferPtrCh2;     //ADS1115 buffer pointer(size = ADC_SAMPLE_NUMBER)
-//     uint16_t *ADS1115_bufferPtrCh3;     //ADS1115 buffer pointer(size = ADC_SAMPLE_NUMBER)
-
-//     uint16_t ADS1115_lastSample;        //ADS1115 last sample Channel 0
-// }ADS1115_data;
+typedef struct{
+    uint16_t channel_number;        // channel number
+    ring_buffer *current_buffer;    // current buffer where new samples are saved
+    ring_buffer *buffer_1;         
+    ring_buffer *buffer_2;         
+}ADS1115_doubleBufferState;
 
 
 /// @brief ADS1115 write data
@@ -112,22 +105,27 @@ void ADS1115_setPGA(uint8_t PGA_val);
 /// @param channel_number   - --
 void ADS1115_setChannel(uint8_t channel_number);
 
-/// @brief set up dual channel mode - read(and save) sample from first channel, read(and save) second sample from second channel
-/// @param first_channel    - first ADC channel in dual channel mode
-/// @param second_channel   - second ADC channel in dual channel mode
-/// @param data_buffer1     - first data buffer
-/// @param data_buffer2     - second data buffer
-void ADS1115_setDualChannelRoutine(uint8_t first_channel, uint8_t second_channel, ring_buffer *data_buffer1, ring_buffer *data_buffer2);
-
 /// @brief READ ADC one sample from selected channel
 /// @param channel  - --
 /// @return         - ADC single sample   
 uint16_t ADS1115_getSample(uint8_t channel);
-
 
 /// @brief ADC received raw data converter -> convert from raw data to voltages
 /// @warning This method is not recommended to use on rp2040 !!!, is ONLY for debugging 
 /// @param data - raw ADC value
 /// @return     - voltage value
 float ADS1115_dataConvert(int16_t data);
+
+/// @brief double buffering mode initialization 
+/// @param channel_number   - --
+/// @param buffer_size      - --
+/// @param ADS1115_doubleBufferState_t - data structure containing double buffering mode data 
+/// @return true - Error occurred, false otherwise
+bool ADS1115_doubleBufferingInit(uint8_t channel_number, uint32_t buffer_size, ADS1115_doubleBufferState *ADS1115_doubleBufferState_t);
+
+/// @brief double buffering mode callback
+/// @param channel_number - --
+/// @param double_bufferState - data structure containing double buffering mode data 
+void ADS1115_measureRoutineCallback(uint8_t channel_number, ADS1115_doubleBufferState *double_bufferState);
+
 #endif

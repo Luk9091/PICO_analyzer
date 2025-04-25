@@ -52,3 +52,8 @@ void ring_bufferPrint(ring_buffer* ring_buffer_t)
     }
     
 }
+
+void ring_bufferFree(ring_buffer* ring_buffer_t)
+{
+    free(ring_buffer_t->data);
+}

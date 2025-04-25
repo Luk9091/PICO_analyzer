@@ -7,6 +7,7 @@ void ADC_PicoInit(uint8_t ADC_channel)
 
     adc_init();
     adc_gpio_init(ADC_channel);
+    //adc_set_clkdiv();
 
     uint robin_mask = 0;
 

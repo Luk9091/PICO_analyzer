@@ -43,4 +43,8 @@ void ring_bufferClear(ring_buffer* ring_Buffer_t);
 /// @param ring_Buffer_t 
 void ring_bufferPrint(ring_buffer* ring_Buffer_t);
 
+/// @brief free ring buffer allocated memory
+/// @param - -- 
+void ring_bufferFree(ring_buffer* ring_buffer_t);
+
 #endif 

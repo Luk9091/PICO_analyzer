@@ -146,15 +146,6 @@ void ADS1115_setChannel(uint8_t channel_number)
     ADS1115_writeReg(ADS1115_configReg, ADS1115_state);
 }
 
-void ADS1115_setDualChannelRoutine(uint8_t first_channel, uint8_t second_channel, ring_buffer *data_buffer1, ring_buffer *data_buffer2)
-{  
-    if(first_channel < 0 || first_channel > 4 || second_channel < 0 || second_channel > 4)
-        return;
-    
-    ring_bufferPush(data_buffer1, ADS1115_getSample(first_channel));
-    ring_bufferPush(data_buffer2, ADS1115_getSample(second_channel));
-}
-
 uint16_t ADS1115_getSample(uint8_t channel)
 {
     if(channel > 3)
@@ -218,5 +209,38 @@ float ADS1115_dataConvert(int16_t data)
             return voltage;
         break;
 
+    }
+}
+
+bool ADS1115_doubleBufferingInit(uint8_t channel_number, uint32_t buffer_size, ADS1115_doubleBufferState *ADS1115_doubleBufferState_t)
+{  
+    if(channel_number < 0 || channel_number > 4)
+        return true;
+
+    if(buffer_size <= 0)
+        return true;
+
+    ADS1115_doubleBufferState_t->channel_number = channel_number;
+    ring_bufferInit(ADS1115_doubleBufferState_t->buffer_1, buffer_size);
+    ADS1115_doubleBufferState_t->current_buffer = ADS1115_doubleBufferState_t->buffer_1;
+}
+
+void ADS1115_measureRoutineCallback(uint8_t channel_number, ADS1115_doubleBufferState *double_bufferState)
+{
+    if(channel_number < 0 || channel_number > 4)
+        return;
+
+    if(double_bufferState == NULL)
+        return;
+
+    ring_bufferPush(double_bufferState->current_buffer, ADS1115_getSample(channel_number));
+
+    if(ring_bufferGetCapacity(double_bufferState->current_buffer) >= double_bufferState->current_buffer->buffer_size)
+    {
+        if (double_bufferState->current_buffer ==   double_bufferState->buffer_1)
+            double_bufferState->current_buffer =    double_bufferState->buffer_2;
+        else
+            double_bufferState->current_buffer = double_bufferState->buffer_1;
+    
     }
 }
