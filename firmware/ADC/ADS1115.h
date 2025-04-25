@@ -121,11 +121,11 @@ float ADS1115_dataConvert(int16_t data);
 /// @param buffer_size      - --
 /// @param ADS1115_doubleBufferState_t - data structure containing double buffering mode data 
 /// @return true - Error occurred, false otherwise
-bool ADS1115_doubleBufferingInit(uint8_t channel_number, uint32_t buffer_size, ADS1115_doubleBufferState *ADS1115_doubleBufferState_t);
+bool ADS1115_setChannelDoubleBuffering(uint8_t channel_number, uint32_t buffer_size, ADS1115_doubleBufferState *BufferState);
 
 /// @brief double buffering mode callback
 /// @param channel_number - --
 /// @param double_bufferState - data structure containing double buffering mode data 
-void ADS1115_measureRoutineCallback(uint8_t channel_number, ADS1115_doubleBufferState *double_bufferState);
+void ADS1115_doubleBufferingCallback(ADS1115_doubleBufferState *buffer_state);
 
 #endif

@@ -39,6 +39,7 @@ add_executable(${PROJECT_NAME}
     ADC/ADS1115.c
     ADC/Pico_ADC.c
     ADC/ADC_bootStrap.c
+    Ring_buffer/ring_buffer.c
 )
 
 include_directories(${PROJECT_NAME}

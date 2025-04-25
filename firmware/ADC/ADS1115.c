@@ -23,7 +23,7 @@ void ADS1115_init(void)
 {
 
     /// I2C initialization ///
-    i2c_init(ADS1115_I2CInstance, 100000);
+    i2c_init(ADS1115_I2CInstance, 400000);
     gpio_set_function(ADS1115_SDAPin, GPIO_FUNC_I2C);
     gpio_set_function(ADS1115_SCLPin, GPIO_FUNC_I2C);
     gpio_pull_up(ADS1115_SDAPin);
@@ -156,15 +156,15 @@ uint16_t ADS1115_getSample(uint8_t channel)
     uint16_t ADS1115_state = 0; 
     ADS1115_readReg(ADS1115_configReg, &ADS1115_state);
     ADS1115_state |= (1<<15);
-    ADS1115_writeReg(ADS1115_configReg, ADS1115_state); // start conversion
-    sleep_ms(2); 
+    ADS1115_writeReg(ADS1115_configReg, ADS1115_state); //start conversion
+    //sleep_us(800); 
 
     uint16_t ADS1115_isBusy = 0;
     ADS1115_readReg(ADS1115_configReg, &ADS1115_isBusy);
-    while((ADS1115_isBusy & (1<<15)) == 0) // Device is currently performing a conversion
+    while((ADS1115_isBusy & (1<<15)) == 0) //Device is currently performing a conversion
     {
         ADS1115_readReg(ADS1115_configReg, &ADS1115_isBusy);
-        sleep_ms(1);printf(".\n");
+        //sleep_us(1);
     }
 
     uint16_t raw_data = 0;
@@ -212,35 +212,32 @@ float ADS1115_dataConvert(int16_t data)
     }
 }
 
-bool ADS1115_doubleBufferingInit(uint8_t channel_number, uint32_t buffer_size, ADS1115_doubleBufferState *ADS1115_doubleBufferState_t)
+bool ADS1115_setChannelDoubleBuffering(uint8_t channel_number, uint32_t buffer_size, ADS1115_doubleBufferState *BufferState)
 {  
     if(channel_number < 0 || channel_number > 4)
         return true;
 
     if(buffer_size <= 0)
         return true;
-
-    ADS1115_doubleBufferState_t->channel_number = channel_number;
-    ring_bufferInit(ADS1115_doubleBufferState_t->buffer_1, buffer_size);
-    ADS1115_doubleBufferState_t->current_buffer = ADS1115_doubleBufferState_t->buffer_1;
+    
+    BufferState->channel_number = channel_number;
+    ring_bufferInit(BufferState->buffer_1, buffer_size);
+    ring_bufferInit(BufferState->buffer_2, buffer_size);
+    BufferState->current_buffer = BufferState->buffer_1;
 }
 
-void ADS1115_measureRoutineCallback(uint8_t channel_number, ADS1115_doubleBufferState *double_bufferState)
+void ADS1115_doubleBufferingCallback(ADS1115_doubleBufferState *buffer_state)
 {
-    if(channel_number < 0 || channel_number > 4)
+    if(buffer_state == NULL)
         return;
 
-    if(double_bufferState == NULL)
-        return;
+    ring_bufferPush(buffer_state->current_buffer, ADS1115_getSample(buffer_state->channel_number));
 
-    ring_bufferPush(double_bufferState->current_buffer, ADS1115_getSample(channel_number));
-
-    if(ring_bufferGetCapacity(double_bufferState->current_buffer) >= double_bufferState->current_buffer->buffer_size)
+    if(ring_bufferGetCapacity(buffer_state->current_buffer) >= buffer_state->current_buffer->buffer_size)
     {
-        if (double_bufferState->current_buffer ==   double_bufferState->buffer_1)
-            double_bufferState->current_buffer =    double_bufferState->buffer_2;
+        if (buffer_state->current_buffer == buffer_state->buffer_1)
+            buffer_state->current_buffer =  buffer_state->buffer_2;
         else
-            double_bufferState->current_buffer = double_bufferState->buffer_1;
-    
+            buffer_state->current_buffer = buffer_state->buffer_1;
     }
 }

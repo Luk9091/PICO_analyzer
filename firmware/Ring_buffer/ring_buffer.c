@@ -12,7 +12,7 @@ void ring_bufferInit(ring_buffer* ring_buffer_t, uint32_t buffer_size)
 void ring_bufferPush(ring_buffer *ring_buffer_t, uint16_t data)
 {
     ring_buffer_t->data[ring_buffer_t->head] = data;
-
+    
     ring_buffer_t->head = (ring_buffer_t->head + 1) % ring_buffer_t->buffer_size;
     ring_buffer_t->counter++;
 

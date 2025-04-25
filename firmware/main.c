@@ -7,12 +7,13 @@
 #include <pico/multicore.h>
 #include <hardware/gpio.h>
 #include <hardware/adc.h>
-
+ 
 #include "dma.h"
 #include "timer.h"
 #include "led.h"
 #include "communication.h"
 #include "ADC/ADS1115.h"
+#include "ADC/ADC_bootStrap.h"
 
 #include "read.pio.h"
 #include "read.h"
@@ -90,29 +91,22 @@ int main(){
         1
     );
 
-
+    ADS1115_doubleBufferState buffer_state;
     uint16_t ADC_data = 0;
     float ADC_convert =  0.0f;
     //ADS1115_init();
-    //ADS1115_setOperationMode(mode_circular);
+    //ADS1115_doubleBufferingInit(ADS1115_channel_0, 200, &buffer_state);
+    ADC_bootStrap();
 
-    while(1){
-        //DMA_clear();
-        //communication_run(dma_1, dma_2, sampleData);
-        //DMA_setEnable(dma_1, false);
-        //DMA_setEnable(dma_2, false);
-
-
-        //printf("...\n");
-        //sleep_ms(500);
-
-        //ADC_data = ADS1115_readData(channel_0);
-        //printf("ADC_data: %d\n", ADC_data);
+    int n = 0;
+    while(1)
+    {
+        //ADC_data = ADS1115_getSample(ADS1115_channel_0);
+        //printf("ADC_data: %d, ", ADC_data);
         
-        //ADC_convert = ADS1115_dataConvert((int16_t)ADC_data);
+        //ADC_convert = ADS1115_dataConvert((int16_t) buffer_state.buffer_1->data[n]);
         //printf("%f\n", ADC_convert);
-
-        //sleep_ms(10);
+        sleep_ms(1);        
     }
 
 }
