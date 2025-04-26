@@ -54,49 +54,47 @@ uint reverseBit(uint64_t data){
 int main(){
     stdio_init_all();
 
-    gpio_init_mask(read_mask);
-    gpio_init(TRIGGER_GPIO);
+    // gpio_init_mask(read_mask);
+    // gpio_init(TRIGGER_GPIO);
+// 
+// 
+    // gpio_set_dir_in_masked(read_mask);
+    // gpio_set_dir(TRIGGER_GPIO, false);
+// 
+// 
+    // uint sm;
+    // uint offset;
+    // pio_claim_free_sm_and_add_program_for_gpio_range(&triggered_read_program, &pio, &sm, &offset, LSB_GPIO, PIO_NUM_PIN, true);
+    // triggered_read_program_init(pio, sm, offset, LSB_GPIO, PIO_NUM_PIN, TRIGGER_GPIO);
+    // //pio_claim_free_sm_and_add_program_for_gpio_range(&continue_read_program, &pio, &sm, &offset, LSB_GPIO, PIO_NUM_PIN, true);
+    // //continue_read_program_init(pio, sm, offset, LSB_GPIO, PIO_NUM_PIN, 10 * kHz);
+// 
+// 
+// 
+// 
+    // LED_init();
+// 
+    // DMA_PIOconfig(
+        // sampleData,
+        // &pio->rxf[sm],
+        // pio_get_dreq(pio, sm, false),
+        // DMA_DATA_0, DMA_DATA_1,
+        // 0
+    // );
+// 
+    // TIMER_init(TIMER_SLICE, 1000);
+    // DMA_PIOconfig(
+        // timeStamp,
+        // &(pwm_hw->slice[TIMER_SLICE].ctr),
+        // pio_get_dreq(pio, sm, false),
+        // DMA_TIME_0, DMA_TIME_1,
+        // 1
+    // );
 
-
-    gpio_set_dir_in_masked(read_mask);
-    gpio_set_dir(TRIGGER_GPIO, false);
-
-
-    uint sm;
-    uint offset;
-    pio_claim_free_sm_and_add_program_for_gpio_range(&triggered_read_program, &pio, &sm, &offset, LSB_GPIO, PIO_NUM_PIN, true);
-    triggered_read_program_init(pio, sm, offset, LSB_GPIO, PIO_NUM_PIN, TRIGGER_GPIO);
-    // pio_claim_free_sm_and_add_program_for_gpio_range(&continue_read_program, &pio, &sm, &offset, LSB_GPIO, PIO_NUM_PIN, true);
-    // continue_read_program_init(pio, sm, offset, LSB_GPIO, PIO_NUM_PIN, 10 * kHz);
-
-
-
-
-    LED_init();
-
-    DMA_PIOconfig(
-        sampleData,
-        &pio->rxf[sm],
-        pio_get_dreq(pio, sm, false),
-        DMA_DATA_0, DMA_DATA_1,
-        0
-    );
-
-    TIMER_init(TIMER_SLICE, 1000);
-    DMA_PIOconfig(
-        timeStamp,
-        &(pwm_hw->slice[TIMER_SLICE].ctr),
-        pio_get_dreq(pio, sm, false),
-        DMA_TIME_0, DMA_TIME_1,
-        1
-    );
-
-    ADS1115_doubleBufferState buffer_state;
-    uint16_t ADC_data = 0;
-    float ADC_convert =  0.0f;
-    //ADS1115_init();
-    //ADS1115_doubleBufferingInit(ADS1115_channel_0, 200, &buffer_state);
+    
     ADC_bootStrap();
+    uint16_t data[ADC_PicoSampleNumber] = {0};
+
 
     int n = 0;
     while(1)
@@ -106,7 +104,10 @@ int main(){
         
         //ADC_convert = ADS1115_dataConvert((int16_t) buffer_state.buffer_1->data[n]);
         //printf("%f\n", ADC_convert);
-        sleep_ms(1);        
+
+        memcpy(data, Pico_ADCGetData(ADC_PicoChannel_1), 2000);
+        printf("%d\n", data[10]);
+        sleep_ms(100);        
     }
 
 }

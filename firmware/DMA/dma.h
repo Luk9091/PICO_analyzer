@@ -23,6 +23,5 @@ bool DMA_clear();
 
 uint dma_getCurrentIndex(uint dmaChannel);
 
-void DMA_ADCPicoInit(const uint DMA_number);
 
 #endif // __DMA_CONFIG_H__

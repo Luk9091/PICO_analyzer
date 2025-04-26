@@ -132,12 +132,3 @@ volatile uint dma_getCurrentIndex(uint dmaChannel){
     uint transfer_count = channel->al3_transfer_count;
     return DATA_SIZE - transfer_count;
 }
-
-void DMA_ADCPicoInit(const uint DMA_number)
-{
-    dma_channel_config dma_config = dma_channel_get_default_config(DMA_number);
-    channel_config_set_transfer_data_size(&dma_config, DMA_SIZE_16);
-    channel_config_set_read_increment(&dma_config, false);
-
-    //dma_channel_configure(0, &dma_config, results, (volatile uint32_t*) &ADC->result, ADC_SAMPLES_NUMBER * 2, true);
-}

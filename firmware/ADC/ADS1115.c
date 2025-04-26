@@ -224,6 +224,8 @@ bool ADS1115_setChannelDoubleBuffering(uint8_t channel_number, uint32_t buffer_s
     ring_bufferInit(BufferState->buffer_1, buffer_size);
     ring_bufferInit(BufferState->buffer_2, buffer_size);
     BufferState->current_buffer = BufferState->buffer_1;
+
+    return false;
 }
 
 void ADS1115_doubleBufferingCallback(ADS1115_doubleBufferState *buffer_state)
@@ -241,3 +243,4 @@ void ADS1115_doubleBufferingCallback(ADS1115_doubleBufferState *buffer_state)
             buffer_state->current_buffer = buffer_state->buffer_1;
     }
 }
+
