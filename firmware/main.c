@@ -93,21 +93,22 @@ int main(){
 
     
     ADC_bootStrap();
-    uint16_t data[ADC_PicoSampleNumber] = {0};
-
-
+    uint16_t *adc_data = NULL;
+    adc_data = ADS1115_ADCGetData(ADS1115_channel_0);
+    uint16_t data = 0;
+    //ADS1115_init();
     int n = 0;
     while(1)
-    {
-        //ADC_data = ADS1115_getSample(ADS1115_channel_0);
-        //printf("ADC_data: %d, ", ADC_data);
-        
-        //ADC_convert = ADS1115_dataConvert((int16_t) buffer_state.buffer_1->data[n]);
-        //printf("%f\n", ADC_convert);
+    {  
+        adc_data = ADS1115_ADCGetData(ADS1115_channel_0);
+        printf("%d\n", adc_data[10]);
 
-        memcpy(data, Pico_ADCGetData(ADC_PicoChannel_1), 2000);
-        printf("%d\n", data[10]);
-        sleep_ms(100);        
+        //data = ADS1115_getSample(0);
+        //printf("ADC: %d\n", data);
+
+        //printf("counter: %d\n", n);
+        //n++;
+        //sleep_ms(100);        
     }
 
 }

@@ -2,7 +2,7 @@
 
 void ring_bufferInit(ring_buffer* ring_buffer_t, uint32_t buffer_size)
 {
-    ring_buffer_t->data = (uint16_t*)calloc(buffer_size * sizeof(uint16_t), buffer_size);
+    ring_buffer_t->data = (uint16_t*)calloc(buffer_size, sizeof(uint16_t));
     
     ring_buffer_t->buffer_size = buffer_size;
     ring_buffer_t->head = 0;

@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include "hardware/i2c.h"
+#include "hardware/timer.h"
 #include "hardware/gpio.h"
 #include "../ring_buffer/ring_buffer.h"
 
@@ -57,7 +58,7 @@
 #define ADS1115_compQueAfterFour       2
 #define ADS1115_compQueDisable         3
 
-#define ADC_ADS1115SampleNumber 50
+#define ADC_ADS1115SampleNumber 100
 
 typedef struct{
     uint8_t OS_state;
@@ -73,10 +74,11 @@ typedef struct{
 
 
 typedef struct{
-    uint16_t channel_number;        // channel number
-    ring_buffer *current_buffer;    // current buffer where new samples are saved
-    ring_buffer *buffer_1;         
-    ring_buffer *buffer_2;         
+    uint32_t data_counter;
+    uint16_t channel_number;       // channel number
+    uint16_t current_buffer;    // current buffer where new samples are saved
+    ring_buffer buffer_1;         
+    ring_buffer buffer_2;         
 }ADS1115_doubleBufferState;
 
 

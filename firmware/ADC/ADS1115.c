@@ -209,21 +209,27 @@ float ADS1115_dataConvert(int16_t data)
             return voltage;
         break;
 
+        default:
+            return 0.0f;
     }
 }
 
 bool ADS1115_setChannelDoubleBuffering(uint8_t channel_number, uint32_t buffer_size, ADS1115_doubleBufferState *BufferState)
 {  
-    if(channel_number < 0 || channel_number > 4)
+    if(channel_number > 3)
         return true;
 
     if(buffer_size <= 0)
         return true;
     
+    if(BufferState == NULL)
+        return true;
+
+    BufferState->data_counter = 0;
     BufferState->channel_number = channel_number;
-    ring_bufferInit(BufferState->buffer_1, buffer_size);
-    ring_bufferInit(BufferState->buffer_2, buffer_size);
-    BufferState->current_buffer = BufferState->buffer_1;
+    ring_bufferInit(&BufferState->buffer_1, buffer_size);
+    ring_bufferInit(&BufferState->buffer_2, buffer_size);
+    BufferState->current_buffer = 0;
 
     return false;
 }
@@ -233,14 +239,31 @@ void ADS1115_doubleBufferingCallback(ADS1115_doubleBufferState *buffer_state)
     if(buffer_state == NULL)
         return;
 
-    ring_bufferPush(buffer_state->current_buffer, ADS1115_getSample(buffer_state->channel_number));
-
-    if(ring_bufferGetCapacity(buffer_state->current_buffer) >= buffer_state->current_buffer->buffer_size)
+    if(buffer_state->current_buffer == 0)
     {
-        if (buffer_state->current_buffer == buffer_state->buffer_1)
-            buffer_state->current_buffer =  buffer_state->buffer_2;
+        ring_bufferPush(&buffer_state->buffer_1, ADS1115_getSample(buffer_state->channel_number));
+        buffer_state->data_counter++;
+    }
+    else
+    {
+        ring_bufferPush(&buffer_state->buffer_2, ADS1115_getSample(buffer_state->channel_number));
+        buffer_state->data_counter++;
+    }
+
+    if(buffer_state->data_counter >= buffer_state->buffer_1.buffer_size) // buffer is full
+    {
+        if (buffer_state->current_buffer == 0)
+        {
+            ring_bufferClear(&buffer_state->buffer_2);  // clear buffer
+            buffer_state->data_counter = 0;
+            buffer_state->current_buffer =  1;          // swap buffer
+        }
         else
-            buffer_state->current_buffer = buffer_state->buffer_1;
+        {
+            ring_bufferClear(&buffer_state->buffer_1);   // clear buffer
+            buffer_state->data_counter = 0;
+            buffer_state->current_buffer = 0;            // swap buffer
+        }
     }
 }
 

@@ -14,6 +14,6 @@ void ADC_bootStrap(void);
 
 /// @brief ADS1115 received samples getter
 /// @param channel_number - --
-void ADS1115_ADCGetData(uint8_t channel_number, ADS1115_doubleBufferState *buffer);
+uint16_t *ADS1115_ADCGetData(uint8_t channel_number);
 
 #endif

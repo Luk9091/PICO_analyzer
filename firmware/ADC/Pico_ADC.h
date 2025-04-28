@@ -9,20 +9,20 @@
 #include "DMA/dma.h"
 #include "../ring_buffer/ring_buffer.h"
 
-#define ADC_PicoChannel_0 0    // ADC 0 Input Pin  <-> ADC 0 channel
-#define ADC_PicoChannel_1 1    // ADC 1 Input Pin  <-> ADC 1 channel
-#define ADC_PicoChannel_2 2    // ADC 2 Input Pin  <-> ADC 2 channel
+#define ADC_PicoChannel_0 0         // ADC 0 Input Pin  <-> ADC 0 channel
+#define ADC_PicoChannel_1 1         // ADC 1 Input Pin  <-> ADC 1 channel
+#define ADC_PicoChannel_2 2         // ADC 2 Input Pin  <-> ADC 2 channel
 
-#define ADC_PicoSampleNumber 1000
-
+#define ADC_PicoSampleNumber 500    // 500 samples = samples from channel_0 + samples from channel_1
+#define ADC_PicoADCClkDiv 100.0f    // 100.0f <-> 5kHz 
 
 typedef struct{
     uint16_t current_buffer;
-    uint16_t DMA_buffer_1[2 * ADC_PicoSampleNumber];
-    uint16_t DMA_buffer_2[2 * ADC_PicoSampleNumber];
+    uint16_t ADC_buffer_1[2 * ADC_PicoSampleNumber];
+    uint16_t ADC_buffer_2[2 * ADC_PicoSampleNumber];
     int DMA_channel;
     dma_channel_config DMA_cfg;
-}DMA_state;
+}Pico_adcDmaModeState;
 
 /// @brief standard mode including only double buffering <-> require timer irq pooling 
 typedef struct{
@@ -48,9 +48,16 @@ void ADC_PicoStandardModeInit(uint8_t channel_number, uint32_t buffer_size, Pico
 /// @param buffer_state - --
 void ADC_PicoStandardModeCallback(Pico_adcStandardMode *buffer_state);
 
+/// @brief initialize Pi Pico embedded ADC in Circle mode with DMA
+/// @param  - --
+/// @attention this mode use ADC channel 0 and channel 1 
 void ADC_PicoDMAModeInit(void);
 
-uint16_t *Pico_ADCGetData(uint8_t channel_number);
+
+/// @brief Pi pico double buffering with DMA received data getter
+/// @param - --
+/// @return ptr to fully filled data buffer 
+uint16_t *ADC_PicoDMAModeGetData(void);
 
 
 #endif
