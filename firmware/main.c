@@ -94,21 +94,30 @@ int main(){
     
     ADC_bootStrap();
     uint16_t *adc_data = NULL;
-    adc_data = ADS1115_ADCGetData(ADS1115_channel_0);
     uint16_t data = 0;
-    //ADS1115_init();
-    int n = 0;
+    uint64_t timer = 0;
+    adc_data = ADS1115_ADCGetData(ADS1115_channel_0);
+
+    adc_data = ADC_PicoDMAModeGetData();
+    sleep_ms(10000);
+
     while(1)
     {  
+        //timer = time_us_64();
+        //adc_data = ADC_PicoDMAModeGetData();
+        //for(uint32_t i = 0; i < ADC_PicoSampleNumber; i++)
+        //{
+        //    //if(i%2 == 0)
+        //        printf("%d\n", adc_data[i]);
+        //    sleep_ms(2);
+        //}
+        //sleep_ms(60); // WIFI receive data simmulation
+        //printf("********************\n time: %llu\n*********************\n", time_us_64() - timer);  
+        
         adc_data = ADS1115_ADCGetData(ADS1115_channel_0);
-        printf("%d\n", adc_data[10]);
-
-        //data = ADS1115_getSample(0);
-        //printf("ADC: %d\n", data);
-
-        //printf("counter: %d\n", n);
-        //n++;
-        //sleep_ms(100);        
+        for(uint8_t i = 0; i < ADC_ADS1115SampleNumber; i++)
+            printf("%d\n", adc_data[i]);
+        sleep_ms(90);
     }
 
 }

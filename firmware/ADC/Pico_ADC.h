@@ -59,5 +59,6 @@ void ADC_PicoDMAModeInit(void);
 /// @return ptr to fully filled data buffer 
 uint16_t *ADC_PicoDMAModeGetData(void);
 
+uint32_t ADC_PicoDMAModeGetCapacity(void);
 
 #endif

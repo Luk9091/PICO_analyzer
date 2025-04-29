@@ -181,37 +181,33 @@ float ADS1115_dataConvert(int16_t data)
     {
         case(ADS1115_PGA_1):
             voltage = data *  0.0000078125f;
-            return voltage;
         break;
 
         case(ADS1115_PGA_2):
             voltage = data * 0.000015625f;
-            return voltage;
         break;
 
         case(ADS1115_PGA_3):
             voltage = data * 0.00003125f;
-            return voltage;
         break;
 
         case(ADS1115_PGA_4):
             voltage = data * 0.0000625f;
-            return voltage;
         break;
 
         case(ADS1115_PGA_5):
             voltage = data * 0.000125f;
-            return voltage;
         break;
 
         case(ADS1115_PGA_6):
             voltage = data * 0.0001875f;
-            return voltage;
         break;
 
         default:
-            return 0.0f;
+            voltage = 0.0f;
     }
+    
+    return voltage;
 }
 
 bool ADS1115_setChannelDoubleBuffering(uint8_t channel_number, uint32_t buffer_size, ADS1115_doubleBufferState *BufferState)

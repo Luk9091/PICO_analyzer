@@ -15,10 +15,10 @@ void ADC_bootStrap(void)
     ADS1115_setChannelDoubleBuffering(ADS1115_channel_1, ADC_ADS1115SampleNumber, &ADS1115_ch1);
     
     /// PI Pico(embedded) ADC initialization 
-    /// @todo
+    ADC_PicoDMAModeInit();
+
 
     add_repeating_timer_ms(2, ADC_bootStrapIrq, NULL, &ADC_irqTimer);
-    //add_repeating_timer_ms();
 }
 
 static bool ADC_bootStrapIrq(struct repeating_timer *t)

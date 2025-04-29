@@ -45,14 +45,15 @@ void ADC_PicoStandardModeCallback(Pico_adcStandardMode *buffer_state)
 void ADC_PicoDMAModeInit(void)
 {
     adc_init();
-    adc_gpio_init(ADC_PicoChannel_0);
-    adc_gpio_init(ADC_PicoChannel_1);
-    adc_set_clkdiv(ADC_PicoADCClkDiv); // 1kHz sampling rate
+    adc_gpio_init(26);
+    adc_gpio_init(27);
+    adc_set_clkdiv(ADC_PicoADCClkDiv); // 5kHz sampling rate
     adc_set_round_robin((1 << ADC_PicoChannel_0) | (1 << ADC_PicoChannel_1));
     adc_fifo_setup(true, true, 1, false, false);
     adc_fifo_drain();
 
-    DMA_state_t.current_buffer = 0; // begin with buffer 0
+    irq_set_priority(DMA_IRQ_1, 5);
+    DMA_state_t.current_buffer = 0;     // begin with buffer 0
     DMA_state_t.DMA_channel = dma_claim_unused_channel(true);
     DMA_state_t.DMA_cfg = dma_channel_get_default_config(DMA_state_t.DMA_channel);
     channel_config_set_transfer_data_size(&DMA_state_t.DMA_cfg, DMA_SIZE_16);
