@@ -2,7 +2,7 @@
 
 static Pico_adcDmaModeState DMA_state_t = {0};
 static void DMA_handler(void);
-
+uint64_t timer = 0;
 
 void ADC_PicoStandardModeInit(uint8_t channel_number, uint32_t buffer_size, Pico_adcStandardMode *buffer_state)
 {
@@ -44,15 +44,16 @@ void ADC_PicoStandardModeCallback(Pico_adcStandardMode *buffer_state)
 
 void ADC_PicoDMAModeInit(void)
 {
-    adc_init();
     adc_gpio_init(ADC_PicoPinCh_0);
     adc_gpio_init(ADC_PicoPinCh_1);
-    adc_set_clkdiv(ADC_PicoADCClkDiv); // 5kHz sampling rate
+    adc_init();
     adc_set_round_robin((1 << ADC_PicoChannel_0) | (1 << ADC_PicoChannel_1));
     adc_fifo_setup(true, true, 1, false, false);
+    adc_set_clkdiv(25000); // 5kHz sampling rate
     adc_fifo_drain();
 
-    irq_set_priority(DMA_IRQ_1, 5);
+    //irq_set_priority(DMA_IRQ_1, 5);
+    //irq_set_priority(I2C0_IRQ, 10);
     DMA_state_t.current_buffer = 0;     // begin with buffer 0
 
     DMA_state_t.DMA_channel = dma_claim_unused_channel(true);
@@ -71,9 +72,11 @@ void ADC_PicoDMAModeInit(void)
 }
 
 static void DMA_handler(void)
-{
-    uint32_t status = dma_hw->ints1; 
-    dma_hw->ints1 = status; 
+{     
+    uint32_t status = dma_hw->ints1;
+    if (!(status & (1u << DMA_state_t.DMA_channel)))
+        return;
+    dma_hw->ints1 = (1u << DMA_state_t.DMA_channel);
     
     if(DMA_state_t.current_buffer == 0)
     {
@@ -93,7 +96,7 @@ uint16_t *ADC_PicoDMAModeGetData(void)
     switch(DMA_state_t.current_buffer)
     {
         case(0):
-            buffer = DMA_state_t.ADC_buffer_2;
+            buffer = DMA_state_t.ADC_buffer_2; 
         break;
 
         case(1):
