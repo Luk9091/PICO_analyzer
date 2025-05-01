@@ -97,7 +97,8 @@ int main(){
 wifi_init();
     while(1)
     {  
-        sleep_ms(100);
+        cyw43_arch_poll();
+        sleep_ms(10);
     }
 
 }

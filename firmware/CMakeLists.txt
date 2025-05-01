@@ -41,6 +41,7 @@ add_executable(${PROJECT_NAME}
     ADC/ADC_bootStrap.c
     Ring_buffer/ring_buffer.c
     WIFI/wifi.c
+    WIFI/dhcpserver.c
 )
 
 include_directories(${PROJECT_NAME}

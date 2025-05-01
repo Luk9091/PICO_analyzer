@@ -14,6 +14,7 @@
 #include "lwip/udp.h"
 #include "pico/cyw43_arch.h"
 #include "pico/util/queue.h"
+#include "dhcpserver.h"
 
 
 #define UDP_port 4444
@@ -23,4 +24,5 @@
 
 
 void wifi_init(void);
+void print_Ip_Address(void);
 #endif
