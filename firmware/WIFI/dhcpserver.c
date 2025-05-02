@@ -86,6 +86,15 @@ typedef struct {
     uint8_t options[312]; // optional parameters, variable, starts with magic
 } dhcp_msg_t;
 
+typedef struct{
+    uint8_t yiaddr[4];  // your IP address
+    uint8_t chaddr[16]; // client hardware address
+}receiver_IP;
+
+/// @brief receiver IP information
+/// @warning PI PICO CAN REMEMBER ONLY ONE USER(bcs. only one instance of this struct is provided)
+static receiver_IP receiver_IP_t = {0};
+
 static int dhcp_socket_new_dgram(struct udp_pcb **udp, void *cb_data, udp_recv_fn cb_udp_recv) {
     // family is AF_INET
     // type is SOCK_DGRAM
@@ -274,6 +283,20 @@ static void dhcp_server_process(void *arg, struct udp_pcb *upcb, struct pbuf *p,
             printf("DHCPS: client connected: MAC=%02x:%02x:%02x:%02x:%02x:%02x IP=%u.%u.%u.%u\n",
                 dhcp_msg.chaddr[0], dhcp_msg.chaddr[1], dhcp_msg.chaddr[2], dhcp_msg.chaddr[3], dhcp_msg.chaddr[4], dhcp_msg.chaddr[5],
                 dhcp_msg.yiaddr[0], dhcp_msg.yiaddr[1], dhcp_msg.yiaddr[2], dhcp_msg.yiaddr[3]);
+
+                // SAVE USER IP ADDRESS AND MAC
+                receiver_IP_t.chaddr[0] = dhcp_msg.chaddr[0];
+                receiver_IP_t.chaddr[1] = dhcp_msg.chaddr[1];
+                receiver_IP_t.chaddr[2] = dhcp_msg.chaddr[2];
+                receiver_IP_t.chaddr[3] = dhcp_msg.chaddr[3];
+                receiver_IP_t.chaddr[4] = dhcp_msg.chaddr[4];
+                receiver_IP_t.chaddr[5] = dhcp_msg.chaddr[5];
+
+                receiver_IP_t.yiaddr[0] = dhcp_msg.yiaddr[0];
+                receiver_IP_t.yiaddr[1] = dhcp_msg.yiaddr[1];
+                receiver_IP_t.yiaddr[2] = dhcp_msg.yiaddr[2];
+                receiver_IP_t.yiaddr[3] = dhcp_msg.yiaddr[3];
+
             break;
         }
 
@@ -306,4 +329,17 @@ void dhcp_server_init(dhcp_server_t *d, ip_addr_t *ip, ip_addr_t *nm) {
 
 void dhcp_server_deinit(dhcp_server_t *d) {
     dhcp_socket_free(&d->udp);
+}
+
+void dhcp_getUserIP(ip_addr_t *IP)
+{
+    if(IP == NULL)
+        return;
+    //printf("%d.%d.%d.%d", receiver_IP_t.yiaddr[0], receiver_IP_t.yiaddr[1], receiver_IP_t.yiaddr[2], receiver_IP_t.yiaddr[3]);
+    
+    IP4_ADDR(ip_2_ip4(IP), 
+    receiver_IP_t.yiaddr[0], 
+    receiver_IP_t.yiaddr[1], 
+    receiver_IP_t.yiaddr[2], 
+    receiver_IP_t.yiaddr[3]);
 }

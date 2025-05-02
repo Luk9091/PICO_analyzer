@@ -2,11 +2,12 @@
 
 void ring_bufferInit(ring_buffer* ring_buffer_t, uint32_t buffer_size)
 {
-    ring_buffer_t->data = (uint16_t*)calloc(buffer_size, sizeof(uint16_t));
+    ring_buffer_t->data = (uint16_t*)malloc(buffer_size * sizeof(uint16_t));
     
     ring_buffer_t->buffer_size = buffer_size;
-    ring_buffer_t->head = 0;
-    ring_buffer_t->tail = 0;
+    ring_buffer_t->head     = 0;
+    ring_buffer_t->tail     = 0;
+    ring_buffer_t->counter  = 0;
 }
 
 void ring_bufferPush(ring_buffer *ring_buffer_t, uint16_t data)
@@ -56,4 +57,5 @@ void ring_bufferPrint(ring_buffer* ring_buffer_t)
 void ring_bufferFree(ring_buffer* ring_buffer_t)
 {
     free(ring_buffer_t->data);
+    ring_buffer_t->data = NULL;
 }

@@ -54,7 +54,7 @@ uint reverseBit(uint64_t data){
 
 int main(){
     stdio_init_all();
-
+    sleep_ms(1000);
     // gpio_init_mask(read_mask);
     // gpio_init(TRIGGER_GPIO);
 // 
@@ -94,11 +94,30 @@ int main(){
 
     
 
-wifi_init();
+    //timer_1 = time_us_64();
+//adc_data = ADC_PicoDMAModeGetData();
+//for(uint32_t i = 0; i < ADC_PicoSampleNumber; i++)
+//{
+//    //printf("ctr: %d, sample: %d\n",counter, adc_data[i]);
+//    printf("%d\n", adc_data[i]);
+//
+
+
+    ADC_bootStrap();
+    uint16_t *adc_data = NULL;
+    //wifi_init();
+
     while(1)
     {  
-        cyw43_arch_poll();
-        sleep_ms(10);
+        
+       adc_data = ADC_PicoStandardModeGetData(ADC_PicoChannel_0);
+       for(uint32_t i = 0; i < ADC_PicoSampleNumber; i++){
+           printf("%d\n", adc_data[i]);
+           sleep_ms(1);
+       }
+        
+        sleep_ms(100);
+
     }
 
 }

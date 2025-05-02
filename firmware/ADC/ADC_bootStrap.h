@@ -16,4 +16,9 @@ void ADC_bootStrap(void);
 /// @param channel_number - --
 uint16_t *ADS1115_ADCGetData(uint8_t channel_number);
 
+/// @brief get Pi Pico standard mode current  buffer
+/// @param channel - --
+/// @return pointer to current buffer
+uint16_t *ADC_PicoStandardModeGetData(uint8_t channel);
+
 #endif
