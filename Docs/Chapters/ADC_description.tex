@@ -7,7 +7,7 @@ Analizator wykorzystuje dwa przetworniki ADC:
             \item Wykonanie : jeden przetwornik z multipleksowanym wejściem(4 wejścia) 
             \item $f_{smax}$ = 500 kHz (przypadek dla jednego kanału)
             \item Rozdzielczość : 12 bit (8.7 ENOB)
-            \item Tryb pracy: pojedynczy / różnicowy
+            \item Tryb pracy: pojedynczy (brak możliwości badania sygnałów różnicowych) 
             \item $V_{inmax}$ = 3.3 V
         \end{itemize}
         
@@ -17,14 +17,14 @@ Analizator wykorzystuje dwa przetworniki ADC:
             \item Wykonanie : jeden przetwornik z multipleksowanym wejściem(4 wejścia) 
             \item $f_{smax}$ = 860 Hz (przypadek dla jednego kanału)
             \item Rozdzielczość : 16 bit 
-            \item Tryb pracy: pojedynczy (brak możliwości badania sygnałów różnicowych) 
+            \item Tryb pracy: pojedynczy / różnicowy
             \item $V_{inmax}$ = 6.144 V
         \end{itemize}
 \end{itemize}
 
 \subsection{Wewnętrzny przetwornik ADC(SAR)}
 \subsubsection{Konfiguracja.}
-Przetwornik skonfigurowano w następujący sposób:
+Przetwornik wewnętrzny skonfigurowano w następujący sposób:
     \begin{itemize}
         \item $f_{s}$ = 5 kHz (z racji wykorzystania dwóch kanałów: $f_{sch1}$ = 2.5 kHz, $f_{sch1}$ = 2.5 kHz)
         \item Wyzwalanie konwersji : wyzwalanie za pomocą timera. 
@@ -37,25 +37,26 @@ zapełniania drugiego bufora nie będą nadpisywane.\\
 \indent Wyzwalaniem przetwornika zajmuje się timer który odpytuje go o nowe dane z zadaną częstotliwością.
 Działanie przetwornika można by w znacznym stopniu zoptymalizować przez skonfigurowanie go w 
 trybie kołowym oraz wykorzystaniu DMA. W takim przypadku przetwornik sam zbierałby dane ze swojego
-wejścia, przełączał na kolejne a to co zebrał zapisywał do dedykowanego rejestru z którego dane
+wejścia następnie przełączał na kolejne a to co zebrał zapisywał do dedykowanego rejestru z którego dane
 były by odbierane przez DMA. Zaprojektowana biblioteka do obsługi ADC uwzględnia taką możliwość
-jednak w aktualne wersji analizatora jest ona wyłączona na rzecz odpytywania przetwornika z poziomu
+jednak w aktualnej wersji analizatora jest ona wyłączona na rzecz odpytywania przetwornika z poziomu
 przerwania od timera. Głównym powodem takiego wyboru jest fakt dostępności tylko jednego 
-DMA(multipleksowanego na 12 kanałów), oraz priorytetowej roli części cyfrowej(analizatora stanów
+DMA(multipleksowanego na 12 kanałów) oraz priorytetowej roli części cyfrowej(analizatora stanów
 logicznych).
 
 
 \subsection{Zewnętrzny przetwornik ADC(ADS1115)}
+Przetwornik zewnętrzny skonfigurowano w następujący sposób:
 \begin{itemize}
-    \item $f_{s}$ = 860 kHz(z racji wykorzystania dwóch kanałów: $f_{sch1}$ = 430, $f_{sch1}$ = 430)
+    \item $f_{s}$ = 860 Hz(z racji wykorzystania dwóch kanałów: $f_{sch1}$ = 430 Hz, $f_{sch1}$ = 430 Hz)
     \item Wyzwalanie konwersji : wyzwalanie za pomocą timera. 
     \item Komunikacja : I2C (prędkość: 400kHz)
 \end{itemize}
 
 \indent Zewnętrzny przetwornik podobnie jak ten dostępny w RP2040 również został skonfigurowany do cyklicznego 
-odpytywania go o nowe dane przez Timer, oraz podobnie jak poprzednio jego praca opiera się o 
-naprzemienne zapełnianie dwóch buforów(tym razem buforów kołowych). \\
-\indent Do komunikacji z mikrokontrolerem ADS1115 wykorzystuje interfejs I2C skonfigurowane
+odpytywania o nowe dane przez licznik(timer), oraz podobnie jak poprzednio jego praca opiera się o 
+naprzemienne zapełnianie dwóch buforów (tym razem buforów kołowych). \\
+\indent Do komunikacji z mikrokontrolerem, ADS1115 wykorzystuje interfejs I2C skonfigurowany
 z prędkością 400 kHz.
 
 \begin{figure}[ht]

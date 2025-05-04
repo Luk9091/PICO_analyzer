@@ -1,40 +1,42 @@
 \section{Implementacja algorytmów komunikacji analizatora z komputerem użytkownika.}
 % Tutaj Łukasz możesz też opisać implementacji protokołu po USB
-Analizator do komunikacji wykorzystuje dwie metody: WIFI oraz USB.   
+Analizator do komunikacji wykorzystuje dwie metody transmisji: WIFI oraz USB.   
 
 \subsection{Komunikacja bezprzewodowa - WIFI}
 
 \indent Do komunikacji bezprzewodowej wykorzystano dostępny na raspberry pi Pico
 układ CYW43439. Jako protokół transmisyjny wykorzystan UDP ze względu na mały narzut
-obliczeniowy oraz mniejszą latencję. 
-
-\indent Dodatkowo aby współpraca z urządzeniem była maksymalnie prosta ustawiono Pi Pico
+obliczeniowy oraz mniejszą latencję, dodatkowo aby współpraca z urządzeniem była maksymalnie prosta ustawiono Pi Pico
 jako punkt dostępu(access point) oraz skonfigurowano na nim serwer DHCP który przydziela adresy
-IP podłączającym sie do niego użytkownikom.
+IP podłączającym sie do niego użytkownikom. Schemat działania protokołów transmisji
+odstępnych na pi pico przedstawiono poniżej.
 
 
 \begin{figure}[ht]
-    \centering
-    \begin{tikzpicture}[
-      device/.style={rectangle, draw, rounded corners, minimum width=4cm, minimum height=1.2cm, align=center, font=\small},
-      arrow/.style={-{Latex}, thick},
-      bidir/.style={<->, thick, dashed}, % przerywana linia dwukierunkowa
-      every node/.style={font=\small}
-    ]
-    
-    % Komputer użytkownika
-    \node[device, fill=blue!10] (pc) {Komputer użytkownika\\(dedykowana aplikacja)};
-    
-    % RP2040 jako AP
-    \node[device, fill=green!20, right=6cm of pc] (pico) {RP2040 (Pico W)\\jako Access Point};
-    
-    % Dwukierunkowa przerywana strzałka z podpisem
-    \draw[bidir] (pc) -- node[above] {UDP przez Wi-Fi} (pico);
-    
-    \end{tikzpicture}
-    \caption{Komunikacja UDP przez Wi-Fi między aplikacją a Raspberry Pi Pico W(Access Pointe)}
-    \label{fig:udp-komunikacja}
-    \end{figure}
+\centering
+\begin{tikzpicture}[
+  device/.style={rectangle, draw, rounded corners, minimum width=4cm, minimum height=1.2cm, align=center, font=\small},
+  arrow/.style={-{Latex}, thick},
+  bidir/.style={<->, thick, dashed}, % przerywana linia dwukierunkowa
+  every node/.style={font=\small}
+]
+
+% Komputer użytkownika
+\node[device, fill=blue!10] (pc) {Komputer użytkownika\\(dedykowana aplikacja)};
+
+% RP2040 jako AP
+\node[device, fill=green!20, right=6cm of pc] (pico) {RP2040 (Pico W)\\jako Access Point};
+
+% Dwukierunkowa przerywana strzałka z podpisem (Wi-Fi)
+\draw[bidir] (pc) -- ++(0,1) -- ++(10,0) -- ++(0,-0.4) node[below right, xshift=-6.5cm, yshift=1cm] {UDP przez Wi-Fi} (pico);
+
+% Połączenie USB (ciągła linia) - poprawione, strzałka do pico
+\draw[->, <->, thick] (pc) -- ++(0,-1) -- ++(10,0) -- ++(0,0.4) node[below right, xshift=-6.5cm, yshift=-0.5cm] {Połączenie USB} (pico);
+
+\end{tikzpicture}
+\caption{Rozwiązanie kwestii transmisji w analizatorze}
+\label{fig:udp-komunikacja}
+\end{figure}
 
 
 
