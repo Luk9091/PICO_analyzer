@@ -1,0 +1,92 @@
+\section{Implementacja algorytmów przetwarzania sygnałów z przetworników analogowo-cyfrowych}
+Analizator wykorzystuje dwa przetworniki ADC:
+\begin{itemize}
+    \item Wewnętrzny - przetwornik SAR(Successive Approximation) o parametrach
+        \begin{itemize}
+            \item Typ : SAR
+            \item Wykonanie : jeden przetwornik z multipleksowanym wejściem(4 wejścia) 
+            \item $f_{smax}$ = 500 kHz (przypadek dla jednego kanału)
+            \item Rozdzielczość : 12 bit (8.7 ENOB)
+            \item Tryb pracy: pojedynczy / różnicowy
+            \item $V_{inmax}$ = 3.3 V
+        \end{itemize}
+        
+    \item Zewnętrzny - przetwornik $\Delta\Sigma$ (Delta Sigma)
+        \begin{itemize}
+            \item Typ : Sigma - Delta
+            \item Wykonanie : jeden przetwornik z multipleksowanym wejściem(4 wejścia) 
+            \item $f_{smax}$ = 860 Hz (przypadek dla jednego kanału)
+            \item Rozdzielczość : 16 bit 
+            \item Tryb pracy: pojedynczy (brak możliwości badania sygnałów różnicowych) 
+            \item $V_{inmax}$ = 6.144 V
+        \end{itemize}
+\end{itemize}
+
+\subsection{Wewnętrzny przetwornik ADC(SAR)}
+\subsubsection{Konfiguracja.}
+Przetwornik skonfigurowano w następujący sposób:
+    \begin{itemize}
+        \item $f_{s}$ = 5 kHz (z racji wykorzystania dwóch kanałów: $f_{sch1}$ = 2.5 kHz, $f_{sch1}$ = 2.5 kHz)
+        \item Wyzwalanie konwersji : wyzwalanie za pomocą timera. 
+    \end{itemize}
+
+\subsubsection{Zasadaa działania.}
+Wewnętrzny przetwornik działa w oparciu o dwa bufory, które na zmianę zapełnia danymi. Takie 
+działanie pozwala przetwarzać(np. wysłać) ostatnio zebrane dane które przez okres 
+zapełniania drugiego bufora nie będą nadpisywane.\\
+\indent Wyzwalaniem przetwornika zajmuje się timer który odpytuje go o nowe dane z zadaną częstotliwością.
+Działanie przetwornika można by w znacznym stopniu zoptymalizować przez skonfigurowanie go w 
+trybie kołowym oraz wykorzystaniu DMA. W takim przypadku przetwornik sam zbierałby dane ze swojego
+wejścia, przełączał na kolejne a to co zebrał zapisywał do dedykowanego rejestru z którego dane
+były by odbierane przez DMA. Zaprojektowana biblioteka do obsługi ADC uwzględnia taką możliwość
+jednak w aktualne wersji analizatora jest ona wyłączona na rzecz odpytywania przetwornika z poziomu
+przerwania od timera. Głównym powodem takiego wyboru jest fakt dostępności tylko jednego 
+DMA(multipleksowanego na 12 kanałów), oraz priorytetowej roli części cyfrowej(analizatora stanów
+logicznych).
+
+
+\subsection{Zewnętrzny przetwornik ADC(ADS1115)}
+\begin{itemize}
+    \item $f_{s}$ = 860 kHz(z racji wykorzystania dwóch kanałów: $f_{sch1}$ = 430, $f_{sch1}$ = 430)
+    \item Wyzwalanie konwersji : wyzwalanie za pomocą timera. 
+    \item Komunikacja : I2C (prędkość: 400kHz)
+\end{itemize}
+
+\indent Zewnętrzny przetwornik podobnie jak ten dostępny w RP2040 również został skonfigurowany do cyklicznego 
+odpytywania go o nowe dane przez Timer, oraz podobnie jak poprzednio jego praca opiera się o 
+naprzemienne zapełnianie dwóch buforów(tym razem buforów kołowych). \\
+\indent Do komunikacji z mikrokontrolerem ADS1115 wykorzystuje interfejs I2C skonfigurowane
+z prędkością 400 kHz.
+
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[
+      buffer/.style={rectangle, draw, minimum width=2.5cm, minimum height=1cm, text centered},
+      arrow/.style={-{Latex}, thick},
+      every node/.style={font=\small}
+    ]
+    
+    % ADC
+    \node[buffer, fill=blue!10] (adc) {ADC};
+    
+    % Buffers
+    \node[buffer, fill=yellow!30, right=3cm of adc] (bufA) {Bufor A};
+    \node[buffer, fill=orange!30, below=2cm of bufA] (bufB) {Bufor B};
+    
+    % Arrows from ADC
+    \draw[arrow] (adc) -- node[above] {Próbkowanie} (bufA);
+    
+    % Processing
+    \node[buffer, fill=green!20, right=2cm of bufA] (procA) {Przetwarzanie / Wysyłanie};
+    
+    \draw[arrow] (bufB) -- node[below, sloped] {wysyłanie} (procA);
+    %\draw[arrow] (bufA) -- (procA);
+    
+    % Swapping arrows (loop)
+    \draw[arrow, dashed] (bufA.south) to[bend right=20] node[left] {\shortstack{Zmiana\\buforów}} (bufB.north);
+    \draw[arrow, dashed] (bufB.north) to[bend right=20] node[right] {} (bufA.south);
+  
+    \end{tikzpicture}
+    \caption{Mechanizm podwójnego buforowania próbek z ADC}
+    \label{fig:double-buffering}
+  \end{figure}
