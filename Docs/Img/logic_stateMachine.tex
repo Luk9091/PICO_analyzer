@@ -1,0 +1,24 @@
+\begin{figure}[!ht]
+    \centering
+    \begin{circuitikz}
+        \draw
+            (0,  0) node[draw, circle, align=center, minimum width = 3cm](trig){Oczekiwanie\\ na wyzwolenie}
+            (4, -4) node[draw, circle, align=center, minimum width = 3cm](sample){Zebranie\\próbki}
+            (0, -8) node[draw, circle, align=center, minimum width = 3cm](lock){Blokada\\wyzwalania}
+            (8, -8) node[draw, circle, align=center, minimum width = 3cm](dma){Wyzwolenie\\DMA}
+            (6, -12) node[draw, circle, align=center, minimum width = 3cm, dashed](time){Zapisanie\\czasu}
+            (0, -12) node[draw, circle, align=center, minimum width = 3cm](store){Zapisanie\\próbki}
+        ;
+
+        \draw[very thick, -Stealth] (trig) to[bend left] node[right]{$trigger = 1$} (sample);
+        \draw[very thick, -Stealth] (trig) to[loop left] (trig);
+        \draw[very thick, -Stealth] (sample) to[bend left] (lock);
+        \draw[very thick, -Stealth] (lock) to[bend left] node[left]{$trigger = 0$} (trig);
+
+        \draw[very thick, -Stealth] (sample) to[bend right] (dma);
+        \draw[very thick, -Stealth] (dma) to[bend left] (time);
+        \draw[very thick, -Stealth] (time) to[short] (store);
+    \end{circuitikz}
+    \caption{Maszyna stanów, odpowiedzialna za akwizycję danych}
+    \label{fig:logic_stateMachine}
+\end{figure}

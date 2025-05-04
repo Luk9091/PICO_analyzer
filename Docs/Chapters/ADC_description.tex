@@ -5,20 +5,20 @@ Analizator wykorzystuje dwa przetworniki ADC:
         \begin{itemize}
             \item Typ : SAR
             \item Wykonanie : jeden przetwornik z multipleksowanym wejściem(4 wejścia) 
-            \item $f_{smax}$ = 500 kHz (przypadek dla jednego kanału)
+            \item $f_{s\ max}$ = 500 kHz (dla jednego kanału)
             \item Rozdzielczość : 12 bit (8.7 ENOB)
             \item Tryb pracy: pojedynczy (brak możliwości badania sygnałów różnicowych) 
-            \item $V_{inmax}$ = 3.3 V
+            \item $V_{in\ max}$ = 3.3 V
         \end{itemize}
         
     \item Zewnętrzny - przetwornik $\Delta\Sigma$ (Delta Sigma)
         \begin{itemize}
             \item Typ : Sigma - Delta
             \item Wykonanie : jeden przetwornik z multipleksowanym wejściem(4 wejścia) 
-            \item $f_{smax}$ = 860 Hz (przypadek dla jednego kanału)
+            \item $f_{s\ max}$ = 860 Hz (dla jednego kanału)
             \item Rozdzielczość : 16 bit 
             \item Tryb pracy: pojedynczy / różnicowy
-            \item $V_{inmax}$ = 6.144 V
+            \item $V_{in\ max}$ = 6.144 V
         \end{itemize}
 \end{itemize}
 
@@ -30,11 +30,11 @@ Przetwornik wewnętrzny skonfigurowano w następujący sposób:
         \item Wyzwalanie konwersji : wyzwalanie za pomocą timera. 
     \end{itemize}
 
-\subsubsection{Zasadaa działania.}
+\subsubsection{Zasada działania.}
 Wewnętrzny przetwornik działa w oparciu o dwa bufory, które na zmianę zapełnia danymi. Takie 
-działanie pozwala przetwarzać(np. wysłać) ostatnio zebrane dane które przez okres 
+działanie pozwala przetwarzać (np. wysłać) ostatnio zebrane dane które przez okres 
 zapełniania drugiego bufora nie będą nadpisywane.\\
-\indent Wyzwalaniem przetwornika zajmuje się timer który odpytuje go o nowe dane z zadaną częstotliwością.
+\indent Wyzwalaniem przetwornika zajmuje się timer, który odpytuje go o nowe dane z zadaną częstotliwością.
 Działanie przetwornika można by w znacznym stopniu zoptymalizować przez skonfigurowanie go w 
 trybie kołowym oraz wykorzystaniu DMA. W takim przypadku przetwornik sam zbierałby dane ze swojego
 wejścia następnie przełączał na kolejne a to co zebrał zapisywał do dedykowanego rejestru z którego dane
