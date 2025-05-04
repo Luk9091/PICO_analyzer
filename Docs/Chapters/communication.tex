@@ -1,15 +1,5 @@
-\section{Implementacja algorytmów komunikacji analizatora z komputerem użytkownika.}
-% Tutaj Łukasz możesz też opisać implementacji protokołu po USB
-Analizator do komunikacji wykorzystuje dwie metody transmisji: WIFI oraz USB.   
-
-\subsection{Komunikacja bezprzewodowa - WIFI}
-    Do komunikacji bezprzewodowej wykorzystano układ CYW43439, dostępny na Raspberry PI Pico. 
-    Jako protokół transmisyjny wykorzystan UDP ze względu na mały narzut
-    obliczeniowy oraz mniejszą latencję, dodatkowo aby współpraca z urządzeniem była maksymalnie prosta ustawiono Pi Pico
-    jako punkt dostępu(access point) oraz skonfigurowano na nim serwer DHCP który przydziela adresy
-    IP podłączającym sie do niego użytkownikom. Schemat działania protokołów transmisji
-    odstępnych na pi pico przedstawiono poniżej.
-
+\section{Komunikacji analizatora z komputerem użytkownika}
+Analizator do komunikacji wykorzystuje dwie metody transmisji: WIFI lub USB.
 
 \begin{figure}[ht]
     \centering
@@ -34,6 +24,13 @@ Analizator do komunikacji wykorzystuje dwie metody transmisji: WIFI oraz USB.
     \label{fig:udp-komunikacja}
 \end{figure}
 
+\subsection{Komunikacja bezprzewodowa - WIFI}
+    Do komunikacji bezprzewodowej wykorzystano układ CYW43439, dostępny na Raspberry PI Pico. 
+    Jako protokół transmisyjny wykorzystan UDP ze względu na mały narzut
+    obliczeniowy oraz mniejszą latencję, dodatkowo aby współpraca z urządzeniem była maksymalnie prosta ustawiono Pi Pico
+    jako punkt dostępu(access point) oraz skonfigurowano na nim serwer DHCP który przydziela adresy
+    IP podłączającym sie do niego użytkownikom. Schemat działania protokołów transmisji
+    odstępnych na pi pico przedstawiono poniżej.
 
 
 \subsection{Komunikacja przewodowa - USB}
@@ -43,16 +40,19 @@ Analizator do komunikacji wykorzystuje dwie metody transmisji: WIFI oraz USB.
     pozwalający na emulację komunikacji szeregowej.
 
     Tak zaprogramowany kontroler, pozwalana na prostą komunikację za pomocą portu szeregowe, z szybkością nieporównywalna z klasycznymi układami \textit{USB UART}.
-    W tabli poniżej przedstawiono uśredniony czas wysłania wiadomości ,,Hello, world$\backslash$n$\backslash$r", za pomocą różnych rozwiązań:
+    W tabli poniżej przedstawiono uśredniony czas wysłania wiadomości ,,Hello, world$\backslash$n$\backslash$r" w pętli 500 razy, za pomocą różnych rozwiązań:
     \begin{table}[!ht]
         \centering
         \caption{Średni czas wysłania wiadomości za pomocą różnych instrukcji}
-        \begin{tabular}{|c|c|c|}\hline
-            Protokół komunikacyjny & Polecenie wysłania danych & Zmierzony czas\\\hline
-            USB & tud\_cdc\_write &  325 \\\hline
-            USB & printf          & 3066 \\\hline
-            UART& uart\_putc      &  \\\hline
-            UART& printf          &  \\\hline
-
+        \begin{tabular}{|c|c|c|c|}\hline
+            Protokół      & Polecenie wysłania & Zmierzony czas & Szybkość transmisji\\
+            komunikacyjny & danych & $[ms]$& $[kbps]$\\\hline
+            USB & tud\_cdc\_write &   1 520 & 294.74  \\\hline
+            USB & printf          &   7 624 &  58.76  \\\hline
+            UART& uart\_putc      & 604 732 &   0.74 \\\hline
+            UART& printf          & 656 235 &   0.68 \\\hline
         \end{tabular}
     \end{table}
+
+    Jak widać wykorzystanie sprzętowego kontrolera USB niesie ze sobą olbrzymią przewagę.
+    A dodatkowe wyeliminowanie, funkcji formatującej pozwala przyspieszyć prędkość ponad pięciokrotnie!
