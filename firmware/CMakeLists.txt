@@ -21,6 +21,12 @@ add_executable(${PROJECT_NAME}
     LED/led.c
     Communication/communication.c
     PWM_timer/timer.c
+    ADC/ADS1115.c
+    ADC/Pico_ADC.c
+    ADC/ADC_bootStrap.c
+    Ring_buffer/ring_buffer.c
+    WIFI/wifi.c
+    WIFI/dhcpserver.c
 )
 
 include_directories(${PROJECT_NAME}
@@ -30,6 +36,9 @@ include_directories(${PROJECT_NAME}
     Communication
     PIO
     PWM_timer
+    ADC
+    Ring_buffer
+    WIFI
 )
 
 pico_generate_pio_header(${PROJECT_NAME}
@@ -49,13 +58,11 @@ target_link_libraries(${PROJECT_NAME}
     hardware_clocks
     hardware_dma
     hardware_irq
+    hardware_i2c
+    hardware_adc
+    pico_util
+    pico_cyw43_arch_lwip_threadsafe_background
 )
-
-if(PICO_BOARD STREQUAL "pico_w")
-target_link_libraries(${PROJECT_NAME}
-    pico_cyw43_arch_none
-)
-endif()
 
 pico_enable_stdio_usb(${PROJECT_NAME}  1)
 pico_enable_stdio_uart(${PROJECT_NAME} 1)

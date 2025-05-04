@@ -6,12 +6,15 @@
 #include <hardware/structs/systick.h>
 #include <pico/multicore.h>
 #include <hardware/gpio.h>
-
-
+#include <hardware/adc.h>
+ 
 #include "dma.h"
 #include "timer.h"
 #include "led.h"
 #include "communication.h"
+#include "ADC/ADS1115.h"
+#include "ADC/ADC_bootStrap.h"
+#include "WIFI/wifi.h"
 
 #include "read.pio.h"
 #include "read.h"
@@ -50,52 +53,70 @@ uint reverseBit(uint64_t data){
 
 
 int main(){
-    gpio_init_mask(read_mask);
-    gpio_init(TRIGGER_GPIO);
+    stdio_init_all();
+    sleep_ms(1000);
+    // gpio_init_mask(read_mask);
+    // gpio_init(TRIGGER_GPIO);
+// 
+// 
+    // gpio_set_dir_in_masked(read_mask);
+    // gpio_set_dir(TRIGGER_GPIO, false);
+// 
+// 
+    // uint sm;
+    // uint offset;
+    // pio_claim_free_sm_and_add_program_for_gpio_range(&triggered_read_program, &pio, &sm, &offset, LSB_GPIO, PIO_NUM_PIN, true);
+    // triggered_read_program_init(pio, sm, offset, LSB_GPIO, PIO_NUM_PIN, TRIGGER_GPIO);
+    // //pio_claim_free_sm_and_add_program_for_gpio_range(&continue_read_program, &pio, &sm, &offset, LSB_GPIO, PIO_NUM_PIN, true);
+    // //continue_read_program_init(pio, sm, offset, LSB_GPIO, PIO_NUM_PIN, 10 * kHz);
+// 
+// 
+// 
+// 
+    // LED_init();
+// 
+    // DMA_PIOconfig(
+        // sampleData,
+        // &pio->rxf[sm],
+        // pio_get_dreq(pio, sm, false),
+        // DMA_DATA_0, DMA_DATA_1,
+        // 0
+    // );
+// 
+    // TIMER_init(TIMER_SLICE, 1000);
+    // DMA_PIOconfig(
+        // timeStamp,
+        // &(pwm_hw->slice[TIMER_SLICE].ctr),
+        // pio_get_dreq(pio, sm, false),
+        // DMA_TIME_0, DMA_TIME_1,
+        // 1
+    // );
+
+    
+
+    //timer_1 = time_us_64();
+//adc_data = ADC_PicoDMAModeGetData();
+//for(uint32_t i = 0; i < ADC_PicoSampleNumber; i++)
+//{
+//    //printf("ctr: %d, sample: %d\n",counter, adc_data[i]);
+//    printf("%d\n", adc_data[i]);
+//
 
 
-    gpio_set_dir_in_masked(read_mask);
-    gpio_set_dir(TRIGGER_GPIO, false);
+    ADC_bootStrap();
+    uint16_t *adc_data = NULL;
+    //wifi_init();
 
+    while(1)
+    {  
+        
+       adc_data = ADC_PicoStandardModeGetData(ADC_PicoChannel_0);
+       for(uint32_t i = 0; i < ADC_PicoSampleNumber; i++){
+           printf("%d\n", adc_data[i]);
+           sleep_ms(1);
+       }
+        
+        sleep_ms(100);
 
-    uint sm;
-    uint offset;
-    pio_claim_free_sm_and_add_program_for_gpio_range(&triggered_read_program, &pio, &sm, &offset, LSB_GPIO, PIO_NUM_PIN, true);
-    triggered_read_program_init(pio, sm, offset, LSB_GPIO, PIO_NUM_PIN, TRIGGER_GPIO);
-    // pio_claim_free_sm_and_add_program_for_gpio_range(&continue_read_program, &pio, &sm, &offset, LSB_GPIO, PIO_NUM_PIN, true);
-    // continue_read_program_init(pio, sm, offset, LSB_GPIO, PIO_NUM_PIN, 10 * kHz);
-
-
-
-
-    LED_init();
-
-    DMA_PIOconfig(
-        sampleData,
-        &pio->rxf[sm],
-        pio_get_dreq(pio, sm, false),
-        DMA_DATA_0, DMA_DATA_1,
-        0
-    );
-
-    TIMER_init(TIMER_SLICE, 1000);
-    DMA_PIOconfig(
-        timeStamp,
-        &(pwm_hw->slice[TIMER_SLICE].ctr),
-        pio_get_dreq(pio, sm, false),
-        DMA_TIME_0, DMA_TIME_1,
-        1
-    );
-
-    communication_init();
-
-
-
-    while(1){
-        communication_run(pio, sm);
-
-        pio_sm_set_enabled(pio, sm, false);
-        DMA_clear();
     }
-
 }
