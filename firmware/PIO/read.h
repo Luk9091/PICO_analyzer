@@ -53,7 +53,7 @@ static inline float PIO_get_division(uint sampleFreq){
     if (sampleFreq < 5 * kHz){
         sampleFreq = 5 * kHz;
     }
-    float div =  (200.f * MHz) / sampleFreq;
+    float div = (200.f * MHz) / sampleFreq;
     if (div < 1){
         div = 1;
     }

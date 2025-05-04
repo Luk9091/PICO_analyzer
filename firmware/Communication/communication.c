@@ -10,14 +10,6 @@
 
 static bool _transferData = false;
 
-typedef union{
-    // uint64_t u64;
-    uint32_t u32;
-    uint16_t u16[2];
-    uint8_t  u8[4];
-} convert_t;
-
-
 void waitUntilRun(){
     do{
         LED_toggle();
@@ -27,32 +19,37 @@ void waitUntilRun(){
 }
 
 
-void communication_run(PIO pio, uint sm, uint dma_1, uint dma_2, uint *data){
+void communication_run(PIO pio, uint sm){
     waitUntilRun();
-    _transferData = true;
-    DMA_setEnable(dma_1, true);
+    DMA_setEnable(DMA_DATA_0, true);
+    DMA_setEnable(DMA_TIME_0, true);
     pio_sm_set_enabled(pio, sm, true);
 
-    communication_sendProcedure(dma_1, dma_2, data);
+    communication_sendProcedure();
 }
 
 
 
 
 #if LIB_PICO_STDIO_USB
-void tud_cdc_rx_cb(uint8_t itf){
+void tud_cdc_rx_cb(uint8_t itf)
 #elif LIB_PICO_STDIO_UART
-void UART_rx_cb(){
+void UART_rx_cb()
 #endif
+{
     char readMsg[MESSAGE_MAX_LEN];
-
-    if (!_transferData && communication_read(readMsg)){
-        if(strncmp(readMsg, "RUN", 1) == PICO_OK){
-            _transferData = true;
+    
+    if (communication_read(readMsg)){
+        if(_transferData && strncmp(readMsg, "DONE", 1) == PICO_OK){
+            _transferData = false;
+            print("\n\rSTOP\n\r", 8);
             print("OK\n\r", 4);
         }
-        else if(strncmp(readMsg, "DONE", 1) == PICO_OK){
-            _transferData = false;
+        else if (_transferData){
+            return;
+        }
+        else if(strncmp(readMsg, "RUN", 1) == PICO_OK){
+            _transferData = true;
             print("OK\n\r", 4);
         }
         else if(strncmp(readMsg, "HELLO", 1) == PICO_OK){
@@ -83,9 +80,10 @@ uint communication_read(const char *str){
     char c = uart_getc(uart0);
     uart_putc(uart0, c);
 
-    if (c == '\r'){
+    if (c == '\r' || index == MESSAGE_MAX_LEN){
         uart_putc(uart0, '\n');
         int tmp_index = index;
+        readLine[index + 1] = '\x00';
         memcpy((void*)str, (void*)readLine, index);
         index = 0;
         return tmp_index;
@@ -96,9 +94,10 @@ uint communication_read(const char *str){
         uart_putc(uart0, '\x08');
         uart_putc(uart0, ' ');
         uart_putc(uart0, '\x08');
+        return 0;
     }
+
     readLine[index] = c;
-    readLine[index + 1] = 0;
     index++;
     return 0;
 }
@@ -119,26 +118,29 @@ void communication_init(){
 
 
 
-void communication_sendProcedure(uint dma_1, uint dma_2, uint *data){
-    uint dma[2] = {dma_1, dma_2};
+void communication_sendProcedure(){
     uint32_t index = 0;
     uint32_t sampleIndex = 0;
     uint32_t nowriteDelay = 0;
     uint32_t dmaSel = 0;
+    extern uint16_t sampleData[DATA_SIZE];
+    extern uint16_t timeStamp[DATA_SIZE];
 
     while (_transferData){
-        sampleIndex = dma_getCurrentIndex(dma[dmaSel]);
+        sampleIndex = dma_getCurrentIndex(dmaSel);
         if (index != sampleIndex){
-            convert_t sample = {.u32 = data[index]};
-            // printf("Index: %u\tdma: %u:% 4u\n", index, dmaSel, sampleIndex);
-            print(&sample.u16[0], 2);               // store two byte on USB write buffer
+            print((uint8_t*)(timeStamp + index), 2);
+            print((uint8_t*)(sampleData + index), 2);
+            // printf("%4i\tData: %5hu, 0x%4X, run: %i\n\r", index, timeStamp[index], sampleData[index], sampleIndex);
+            // printf("%i,%i,%i\n", index, timeStamp[index], sampleData[index]);
             index++;
             if (index >= DATA_SIZE){
                 index = 0;
                 if(dmaSel == 1){
-                    dmaSel = 0;
+                    dmaSel = DMA_DATA_0;
                 } else {
-                    dmaSel = 1;
+                    dmaSel = DMA_DATA_1;
+                    _transferData = false;
                 }
             }
             nowriteDelay = 0;
@@ -154,14 +156,14 @@ void communication_sendProcedure(uint dma_1, uint dma_2, uint *data){
             if (buffCapacity != CFG_TUD_CDC_TX_BUFSIZE){
                 nowriteDelay++; // if the buffer is not empty, count cycles until unconditional send
             }
-            // tud_cdc_read
         }
 #endif
     }
 
-    printf("STOP\n");
 #if LIB_PICO_STDIO_USB
     tud_cdc_write_clear();
+    print("\n\r\0", 3);
+    tud_cdc_write_flush();
 #endif
     LED_off();
 }
@@ -174,10 +176,10 @@ void communication_sendProcedure(uint dma_1, uint dma_2, uint *data){
 #if COMMUNICATION_SPEED_TEST
 
 #define SEND_SAMPLE 500
-uint measureTime_tud(){
+uint measureTime_print(){
     uint start = time_us_32();
     for(uint i = 0; i < SEND_SAMPLE; i ++){
-        tud_cdc_write("Hello\n\r", 8);
+        print("Hello, world\n\r", 14);
     }
     uint stop = time_us_32();
 
@@ -187,24 +189,10 @@ uint measureTime_tud(){
 uint measureTime_printf(){
     uint start = time_us_32();
     for(uint i = 0; i < SEND_SAMPLE; i ++){
-        printf("Hello\n\r");
+        printf("Hello, world\n\r");
     }
     uint stop = time_us_32();
 
    return stop - start;
 }
-
-uint measureTime_uartPutChar(){
-    uint start = time_us_32();
-    char str[] = "Hello\n\r";
-    for (uint i = 0; i < SEND_SAMPLE; i++){
-        for (uint j = 0; j < 8; j++){
-            uart_putc_raw(UART_ID, str[j]);
-        }
-    }
-    uint stop = time_us_32();
-    return stop - start;
-}
-
-
 #endif

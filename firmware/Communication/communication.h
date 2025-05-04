@@ -37,19 +37,18 @@ static inline int print(const void *str, uint32_t size){
 
 
 void communication_init();
-void communication_run(PIO pio, uint sm, uint dma_1, uint dma_2, uint *data);
+void communication_run(PIO pio, uint sm);
 
 
 static inline uint communication_read(const char *str);
-void communication_sendProcedure(uint dma_1, uint dam_2, uint *data);
+void communication_sendProcedure();
 
 
 extern uint getMainFreq();
 
 
 #if COMMUNICATION_SPEED_TEST
-uint measureTime_tud();
-uint measureTime_uartPutChar();
+uint measureTime_print();
 uint measureTime_printf();
 #endif
 

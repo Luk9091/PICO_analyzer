@@ -5,7 +5,7 @@ main:
 .wrap
 
 CAPTURE_SAMPLE:
-    nop                     ; 5ns additional delay for data stabilization
+    ; nop                     ; 5ns additional delay for data stabilization
     in pins, 16             ; 5ns
 
 LOCK:
@@ -16,5 +16,6 @@ LOCK:
 .program continue_read
 main:
 .wrap_target
+    ; nop
     in pins, 16
 .wrap
