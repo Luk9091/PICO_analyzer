@@ -6,7 +6,7 @@
 
 #define s   (1)
 // #define ms  (1000)
-#define us  (1000000)
+// #define us  (1000000)
 #define ns  (1000000000)
 
 #endif

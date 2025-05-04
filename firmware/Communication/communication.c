@@ -129,17 +129,18 @@ void communication_sendProcedure(){
     while (_transferData){
         sampleIndex = dma_getCurrentIndex(dmaSel);
         if (index != sampleIndex){
-            // print((uint8_t*)(timeStamp + index), 2);
-            // print((uint8_t*)(sampleData + index), 2);
-            printf("%4i\tData: %5hu, 0x%4X, run: %i\n\r", index, timeStamp[index], sampleData[index], sampleIndex);
+            print((uint8_t*)(timeStamp + index), 2);
+            print((uint8_t*)(sampleData + index), 2);
+            // printf("%4i\tData: %5hu, 0x%4X, run: %i\n\r", index, timeStamp[index], sampleData[index], sampleIndex);
+            // printf("%i,%i,%i\n", index, timeStamp[index], sampleData[index]);
             index++;
             if (index >= DATA_SIZE){
                 index = 0;
                 if(dmaSel == 1){
                     dmaSel = DMA_DATA_0;
-                    // _transferData = false;
                 } else {
                     dmaSel = DMA_DATA_1;
+                    _transferData = false;
                 }
             }
             nowriteDelay = 0;
@@ -175,10 +176,10 @@ void communication_sendProcedure(){
 #if COMMUNICATION_SPEED_TEST
 
 #define SEND_SAMPLE 500
-uint measureTime_tud(){
+uint measureTime_print(){
     uint start = time_us_32();
     for(uint i = 0; i < SEND_SAMPLE; i ++){
-        tud_cdc_write("Hello\n\r", 8);
+        print("Hello, world\n\r", 14);
     }
     uint stop = time_us_32();
 
@@ -188,24 +189,10 @@ uint measureTime_tud(){
 uint measureTime_printf(){
     uint start = time_us_32();
     for(uint i = 0; i < SEND_SAMPLE; i ++){
-        printf("Hello\n\r");
+        printf("Hello, world\n\r");
     }
     uint stop = time_us_32();
 
    return stop - start;
 }
-
-uint measureTime_uartPutChar(){
-    uint start = time_us_32();
-    char str[] = "Hello\n\r";
-    for (uint i = 0; i < SEND_SAMPLE; i++){
-        for (uint j = 0; j < 8; j++){
-            uart_putc_raw(UART_ID, str[j]);
-        }
-    }
-    uint stop = time_us_32();
-    return stop - start;
-}
-
-
 #endif

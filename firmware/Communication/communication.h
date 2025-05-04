@@ -48,8 +48,7 @@ extern uint getMainFreq();
 
 
 #if COMMUNICATION_SPEED_TEST
-uint measureTime_tud();
-uint measureTime_uartPutChar();
+uint measureTime_print();
 uint measureTime_printf();
 #endif
 

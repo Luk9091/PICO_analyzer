@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.25)
 
 # Select board:
-set(PICO_BOARD pico)
+set(PICO_BOARD pico_w)
 
 include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
 include($ENV{PICO_SDK_PATH}/tools/CMakeLists.txt)
@@ -58,4 +58,4 @@ target_link_libraries(${PROJECT_NAME}
 endif()
 
 pico_enable_stdio_usb(${PROJECT_NAME}  1)
-pico_enable_stdio_uart(${PROJECT_NAME} 0)
+pico_enable_stdio_uart(${PROJECT_NAME} 1)
