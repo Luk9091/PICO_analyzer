@@ -48,5 +48,4 @@ bool fifo_trySetReadStatus(void);
 /// @return true -> read buffer was successfully read, false otherwise
 bool fifo_tryReadBufferData(uint8_t *buffer_number, uint8_t *buffer_size);
 
-
 #endif
