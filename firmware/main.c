@@ -104,19 +104,30 @@ int main(){
 
 
     ADC_bootStrap();
-    uint16_t *adc_data = NULL;
+    uint16_t *adc_data_1 = NULL;
+    uint16_t *adc_data_2 = NULL;
     //wifi_init();
 
     while(1)
     {  
-        
-       adc_data = ADC_PicoStandardModeGetData(ADC_PicoChannel_0);
-       for(uint32_t i = 0; i < ADC_PicoSampleNumber; i++){
-           printf("%d\n", adc_data[i]);
-           sleep_ms(1);
-       }
-        
+       adc_data_1 = ADC_PicoStandardModeGetData(ADC_PicoChannel_0);
+       adc_data_2 = ADS1115_ADCGetData(ADS1115_channel_0);
+
+        // ################ TEST PI PICO ADC ####################
+        //for(uint32_t i = 0; i < ADC_PicoSampleNumber; i++){
+        //    printf("%d\n", adc_data_1[i]);
+        //    sleep_ms(1);
+        //} 
+        // ######################################################
+
+
+       // ################### TEST ADS1115 ######################
+       for(uint32_t i = 0; i < ADC_ADS1115SampleNumber; i++){
+            printf("%d\n", adc_data_2[i]);
+            sleep_ms(1);
+        }
         sleep_ms(100);
+       // #######################################################
 
     }
 }

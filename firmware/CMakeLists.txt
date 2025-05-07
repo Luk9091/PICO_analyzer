@@ -42,6 +42,7 @@ add_executable(${PROJECT_NAME}
     Ring_buffer/ring_buffer.c
     WIFI/wifi.c
     WIFI/dhcpserver.c
+    Multicore_fifo/multicore_fifo.c
 )
 
 include_directories(${PROJECT_NAME}
@@ -54,6 +55,7 @@ include_directories(${PROJECT_NAME}
     ADC
     Ring_buffer
     WIFI
+    Multicore_fifo
 )
 
 pico_generate_pio_header(${PROJECT_NAME}
