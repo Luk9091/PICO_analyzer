@@ -9,11 +9,10 @@ bool fifo_trySetValidBuffer(uint8_t buffer_number, uint8_t valid_bufferSize)
         return false;
 
     uint32_t fifo_readData = multicore_fifo_pop_blocking_inline();
-    if(!(fifo_readData & (1<<0))) //check if Core 0 can push new data 
-    { 
-        tx_isEmpty = true;
+    if(fifo_readData & (1<<0)) //check if Core 0 can push new data 
+        tx_isEmpty = true; // Core 1 Rx = Core 0 Tx
+    else 
         return false;
-    }
 
     uint32_t fifo_writeData = 0;
     fifo_writeData |= ((buffer_number << 24) | (valid_bufferSize << 8));
@@ -21,12 +20,8 @@ bool fifo_trySetValidBuffer(uint8_t buffer_number, uint8_t valid_bufferSize)
     return true;
 }
 
-
 bool fifo_trySetReadStatus(void)
 {
-    if(!multicore_fifo_rvalid())
-        return false;
-
     if(tx_isEmpty)
     {
         multicore_fifo_push_blocking_inline(mc_readyCore1);
