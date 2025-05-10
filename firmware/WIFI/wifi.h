@@ -16,6 +16,9 @@
 #include "pico/util/queue.h"
 #include "dhcpserver.h"
 #include "hardware/timer.h"
+#include "ADC/ADS1115.h"
+#include "ADC/Pico_ADC.h"
+#include "Multicore_fifo/multicore_fifo.h"
 
 
 #define UDP_port 4444
@@ -27,13 +30,11 @@
 /// !!!! @todo -> HOW TO RESOLVE MULTI USER CASE !!!! /// 
 
 typedef struct{
-    uint32_t device_status;         // Device status flag, default: status = 0
-    uint16_t *ADC_picoBuffer;       // Pi Pico embedded ADC data(remember PicoAdc = {Ch1, Ch2, Ch1, Ch2, ....})
-    uint16_t *ADC_ADS1115BufferCh1; // ADS1115 ADC data channel 1
-    uint16_t *ADC_ADS1115BufferCh2; // ADS1115 ADC data channel 2
-
-    /// TODO ///
-    /// DATA FROM LOGIC ANALYZER ///
+    uint16_t device_status;
+    uint16_t *ADC_ADS1115BufferCh0;//[ADC_ADS1115SampleNumber];
+    uint16_t *ADC_ADS1115BufferCh1;//[ADC_ADS1115SampleNumber];
+    uint16_t *ADC_PicoBuffer;//[ADC_PicoSampleNumber];                  //Pi Pico embedded ADC data(remember PicoAdc = {Ch1, Ch2, Ch1, Ch2, ....})
+    uint digital_analyzerBuffer[digital_analyzerMaxBufferSize]; //TO DO -> CHANGE BUFFER to PTR
 }send_bufferFrame;
 
 typedef struct{
@@ -46,8 +47,9 @@ typedef struct{
 void wifi_init(void);
 
 /// @brief Pi Pico send data via WIFI
-/// @param data_frame dato to send
-void wifi_sendData(const send_bufferFrame* data_frame);
+/// @param data - --
+/// @param data_size - -- 
+void wifi_sendData(const void *data, size_t data_size);
 
 void print_Ip_Address(void);
 #endif

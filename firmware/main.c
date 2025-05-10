@@ -15,6 +15,7 @@
 #include "ADC/ADS1115.h"
 #include "ADC/ADC_bootStrap.h"
 #include "WIFI/wifi.h"
+#include "Core1_bootstrap/core1.h"
 
 #include "read.pio.h"
 #include "read.h"
@@ -55,64 +56,22 @@ uint reverseBit(uint64_t data){
 int main(){
     stdio_init_all();
     sleep_ms(1000);
-    // gpio_init_mask(read_mask);
-    // gpio_init(TRIGGER_GPIO);
-// 
-// 
-    // gpio_set_dir_in_masked(read_mask);
-    // gpio_set_dir(TRIGGER_GPIO, false);
-// 
-// 
-    // uint sm;
-    // uint offset;
-    // pio_claim_free_sm_and_add_program_for_gpio_range(&triggered_read_program, &pio, &sm, &offset, LSB_GPIO, PIO_NUM_PIN, true);
-    // triggered_read_program_init(pio, sm, offset, LSB_GPIO, PIO_NUM_PIN, TRIGGER_GPIO);
-    // //pio_claim_free_sm_and_add_program_for_gpio_range(&continue_read_program, &pio, &sm, &offset, LSB_GPIO, PIO_NUM_PIN, true);
-    // //continue_read_program_init(pio, sm, offset, LSB_GPIO, PIO_NUM_PIN, 10 * kHz);
-// 
-// 
-// 
-// 
-    // LED_init();
-// 
-    // DMA_PIOconfig(
-        // sampleData,
-        // &pio->rxf[sm],
-        // pio_get_dreq(pio, sm, false),
-        // DMA_DATA_0, DMA_DATA_1,
-        // 0
-    // );
-// 
-    // TIMER_init(TIMER_SLICE, 1000);
-    // DMA_PIOconfig(
-        // timeStamp,
-        // &(pwm_hw->slice[TIMER_SLICE].ctr),
-        // pio_get_dreq(pio, sm, false),
-        // DMA_TIME_0, DMA_TIME_1,
-        // 1
-    // );
+    //gpio_init(25);
+    //gpio_set_dir(25, GPIO_OUT);
+    //cyw43_arch_init();
 
-    
-
-    //timer_1 = time_us_64();
-//adc_data = ADC_PicoDMAModeGetData();
-//for(uint32_t i = 0; i < ADC_PicoSampleNumber; i++)
-//{
-//    //printf("ctr: %d, sample: %d\n",counter, adc_data[i]);
-//    printf("%d\n", adc_data[i]);
-//
+    core1_init();
 
 
-    ADC_bootStrap();
+    //ADC_bootStrap();
     uint16_t *adc_data_1 = NULL;
     uint16_t *adc_data_2 = NULL;
-    //wifi_init();
+
 
     while(1)
     {  
-       adc_data_1 = ADC_PicoStandardModeGetData(ADC_PicoChannel_0);
+       adc_data_1 = ADC_PicoStandardModeGetData();
        adc_data_2 = ADS1115_ADCGetData(ADS1115_channel_0);
-
         // ################ TEST PI PICO ADC ####################
         //for(uint32_t i = 0; i < ADC_PicoSampleNumber; i++){
         //    printf("%d\n", adc_data_1[i]);
@@ -122,12 +81,14 @@ int main(){
 
 
        // ################### TEST ADS1115 ######################
-       for(uint32_t i = 0; i < ADC_ADS1115SampleNumber; i++){
-            printf("%d\n", adc_data_2[i]);
-            sleep_ms(1);
-        }
-        sleep_ms(100);
-       // #######################################################
+       //for(uint32_t i = 0; i < ADC_ADS1115SampleNumber; i++){
+       //     printf("%d\n", adc_data_1[i]);
+            //sleep_ms(1);
+        //}
 
+        //cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
+        //sleep_ms(500);
+        //cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
+        sleep_ms(500);
     }
 }

@@ -11,6 +11,8 @@
 #define mc_fifoBuffer2 2
 #define mc_fifoBuffer3 3
 
+#define digital_analyzerMaxBufferSize 256
+
 #define mc_readyCore1 0x00000001
 
 /// @note

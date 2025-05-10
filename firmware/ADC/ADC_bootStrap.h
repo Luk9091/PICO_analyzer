@@ -19,6 +19,10 @@ uint16_t *ADS1115_ADCGetData(uint8_t channel_number);
 /// @brief get Pi Pico standard mode current  buffer
 /// @param channel - --
 /// @return pointer to current buffer
-uint16_t *ADC_PicoStandardModeGetData(uint8_t channel);
+uint16_t *ADC_PicoStandardModeGetData(void);
+
+
+void ADC_DMAModeIrq(void);
+void ADC_standardModeIrq(void);
 
 #endif

@@ -58,7 +58,7 @@
 #define ADS1115_compQueAfterFour       2
 #define ADS1115_compQueDisable         3
 
-#define ADC_ADS1115SampleNumber 100
+#define ADC_ADS1115SampleNumber 50 
 
 typedef struct{
     uint8_t OS_state;

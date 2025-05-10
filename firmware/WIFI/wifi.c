@@ -8,17 +8,6 @@ static struct udp_pcb *send_pcb = NULL;
 static struct udp_pcb *receive_pcb = NULL;
 static ip_addr_t receiver_ipAddress = {0};
 
-static bool wifi_irq(struct repeating_timer *t)
-{
-    static uint32_t n = 0;
-    send_bufferFrame buffer_t = {n};
-    wifi_sendData(&buffer_t);  
-    n++;
-
-    return true;
-}
-
-
 void wifi_init(void)
 {
     cyw43_arch_init();
@@ -35,11 +24,6 @@ void wifi_init(void)
     wifi_receiveInit();
 
     send_pcb = udp_new();
-
-    /// temporary test
-    static repeating_timer_t wifi_timer; 
-    add_repeating_timer_ms(-100, wifi_irq, NULL, &wifi_timer);
-
 }
 
 static void wifi_receiveInit(void)
@@ -80,18 +64,22 @@ static void wifi_receiveCallback(void *arg, struct udp_pcb *pcb, struct pbuf *p,
     }
 }
 
-void wifi_sendData(const send_bufferFrame* data_frame)
+void wifi_sendData(const void *data, size_t data_size)
 {
-    struct pbuf *p = pbuf_alloc(PBUF_TRANSPORT, sizeof(send_bufferFrame), PBUF_RAM);
+    struct pbuf *p = pbuf_alloc(PBUF_TRANSPORT, data_size, PBUF_RAM);
     dhcp_getUserIP(&receiver_ipAddress);
 
-    if(p != NULL)
+    if (p != NULL)
     {
-        memcpy(p->payload, data_frame, sizeof(send_bufferFrame));
+        memcpy(p->payload, data, data_size);
         err_t err = udp_sendto(send_pcb, p, &receiver_ipAddress, UDP_port);
         if (err != ERR_OK) 
-            printf("Failed to send UDP packet\n");
+            printf("Failed to send UDP packet !!!\n");
         pbuf_free(p);
+    }
+    else
+    {
+        printf("Failed to allocate pbuf!\n");
     }
 }
 
