@@ -37,16 +37,16 @@ static bool core1_timerIrq(struct repeating_timer *t)
     if(data_ctr >= 500) // equals to 500 ADC_Pico samples and 50 ADS1115 samples
     {
         frame.ADC_ADS1115BufferCh0  = ADS1115_ADCGetData(ADS1115_channel_0);
-        wifi_sendData(frame.ADC_ADS1115BufferCh0, ADC_ADS1115SampleNumber * sizeof(uint16_t));
+        wifi_sendData(frame.ADC_ADS1115BufferCh0, TAG_ADC_ADS1115_CH_1, ADC_ADS1115SampleNumber * sizeof(uint16_t));
 
         frame.ADC_ADS1115BufferCh1  = ADS1115_ADCGetData(ADS1115_channel_1);
-        wifi_sendData(frame.ADC_ADS1115BufferCh1, ADC_ADS1115SampleNumber * sizeof(uint16_t));
+        wifi_sendData(frame.ADC_ADS1115BufferCh1, TAG_ADC_ADS1115_CH_2, ADC_ADS1115SampleNumber * sizeof(uint16_t));
 
         frame.ADC_PicoBuffer        = ADC_PicoStandardModeGetData();
         //printf("ADC: %d\n", frame.ADC_PicoBuffer[1]);
-        wifi_sendData(frame.ADC_PicoBuffer, ADC_PicoSampleNumber * sizeof(uint16_t));
+        wifi_sendData(frame.ADC_PicoBuffer, TAG_ADC_PICO, ADC_PicoSampleNumber * sizeof(uint16_t));
 
-        wifi_sendData(&frame.digital_analyzerBuffer, 256*sizeof(uint));
+        wifi_sendData(frame.digital_analyzerBuffer, TAG_DIGITAL_SCOPE, 256*sizeof(uint));
         
         
         data_ctr = 0;

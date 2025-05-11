@@ -47,16 +47,16 @@ uint16_t *ADS1115_ADCGetData(uint8_t channel_number)
     {
         case(ADS1115_channel_0):
              if(ADS1115_ch0.current_buffer == 0)
-                return ADS1115_ch0.buffer_2.data;
-             else 
                 return ADS1115_ch0.buffer_1.data;
+             else 
+                return ADS1115_ch0.buffer_0.data;
         break;
 
         case(ADS1115_channel_1): 
             if(ADS1115_ch1.current_buffer == 0)
-                return ADS1115_ch1.buffer_2.data;
-            else 
                 return ADS1115_ch1.buffer_1.data;
+            else 
+                return ADS1115_ch1.buffer_0.data;
         break;
 
         default:

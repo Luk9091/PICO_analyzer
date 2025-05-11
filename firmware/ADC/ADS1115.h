@@ -74,11 +74,11 @@ typedef struct{
 
 
 typedef struct{
-    uint32_t data_counter;
-    uint16_t channel_number;       // channel number
+    uint32_t data_counter;      // valid data counter
+    uint16_t channel_number;    // channel number
     uint16_t current_buffer;    // current buffer where new samples are saved
-    ring_buffer buffer_1;         
-    ring_buffer buffer_2;         
+    ring_buffer buffer_0;       // first swapping buffer
+    ring_buffer buffer_1;       // second swapping buffer
 }ADS1115_doubleBufferState;
 
 

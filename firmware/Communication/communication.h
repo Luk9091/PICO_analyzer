@@ -36,6 +36,13 @@ static inline int print(const void *str, uint32_t size){
 #endif
 
 
+typedef enum{
+    TAG_ADC_PICO = 0,
+    TAG_ADC_ADS1115_CH_1 = 1,
+    TAG_ADC_ADS1115_CH_2 = 2,
+    TAG_DIGITAL_SCOPE = 3
+}send_dataTag;
+
 void communication_init();
 void communication_run(PIO pio, uint sm);
 

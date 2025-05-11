@@ -64,17 +64,22 @@ static void wifi_receiveCallback(void *arg, struct udp_pcb *pcb, struct pbuf *p,
     }
 }
 
-void wifi_sendData(const void *data, size_t data_size)
+void wifi_sendData(const uint16_t *data, send_dataTag tag, size_t data_size)
 {
-    struct pbuf *p = pbuf_alloc(PBUF_TRANSPORT, data_size, PBUF_RAM);
+    uint16_t tag_16 = (uint16_t)tag;
+
+    struct pbuf *p = pbuf_alloc(PBUF_TRANSPORT, data_size + sizeof(tag_16), PBUF_RAM);
     dhcp_getUserIP(&receiver_ipAddress);
 
     if (p != NULL)
     {
-        memcpy(p->payload, data, data_size);
+        uint8_t *payload = (uint8_t *)p->payload;
+        memcpy(payload, &tag_16, sizeof(tag_16));
+        memcpy(payload + sizeof(tag_16), data, data_size);
         err_t err = udp_sendto(send_pcb, p, &receiver_ipAddress, UDP_port);
         if (err != ERR_OK) 
             printf("Failed to send UDP packet !!!\n");
+
         pbuf_free(p);
     }
     else
