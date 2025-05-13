@@ -17,7 +17,7 @@ bool fifo_trySetValidBuffer(uint8_t buffer_number, uint8_t valid_bufferSize)
     uint32_t fifo_writeData = 0;
     fifo_writeData |= ((buffer_number << 24) | (valid_bufferSize << 8));
     multicore_fifo_push_blocking_inline(fifo_writeData);
-    return true;
+    return true; 
 }
 
 bool fifo_trySetReadStatus(void)
