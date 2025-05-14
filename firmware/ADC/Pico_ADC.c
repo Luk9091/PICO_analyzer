@@ -6,21 +6,22 @@ uint64_t timer = 0;
 
 void ADC_PicoStandardModeInit(uint8_t channel_number, uint32_t buffer_size, Pico_adcStandardMode *buffer_state)
 {
+    if(channel_number > 3)
+        return;
+
+    if(buffer_size == 0)
+        return;
+
     adc_init();
-    adc_gpio_init(channel_number);
+    adc_gpio_init(ADC_picoGetChannelPin(channel_number));
     //adc_set_clkdiv(ADC_PicoADCClkDiv); //5kHz sampling rate
-
-    if(channel_number < 0 || channel_number > 4)
-        return;
-
-    if(buffer_size <= 0)
-        return;
+    adc_set_clkdiv(0); //The fastest ADC sampling rate
 
     buffer_state->channel_number = channel_number;
-    ring_bufferInit(buffer_state->buffer_1, buffer_size);
-    ring_bufferInit(buffer_state->buffer_2, buffer_size);
-    buffer_state->current_buffer = buffer_state->buffer_1; 
-    adc_select_input(buffer_state->channel_number);
+    ring_bufferInit(&buffer_state->buffer_1, buffer_size);
+    ring_bufferInit(&buffer_state->buffer_2, buffer_size);
+    buffer_state->current_buffer = 0; // begin with buffer 1 
+    adc_select_input(ADC_picoGetChannelPin(channel_number));
 }
 
 void ADC_PicoStandardModeCallback(Pico_adcStandardMode *buffer_state)
@@ -29,16 +30,25 @@ void ADC_PicoStandardModeCallback(Pico_adcStandardMode *buffer_state)
         return;
 
     adc_select_input(buffer_state->channel_number);
-    ring_bufferPush(buffer_state->current_buffer, adc_read());
-
-    if(ring_bufferGetCapacity(buffer_state->current_buffer) >= buffer_state->current_buffer->buffer_size)
+    
+    switch(buffer_state->current_buffer)
     {
-        if(buffer_state->current_buffer == buffer_state->buffer_1)
-           buffer_state->current_buffer = buffer_state->buffer_2;
-        
-        else
-            buffer_state->current_buffer = buffer_state->buffer_1;
+        case(0):   
+            ring_bufferPush(&buffer_state->buffer_1, adc_read());
+            if(ring_bufferGetCapacity(&buffer_state->buffer_1) >= ADC_PicoSampleNumber)
+            {
+                buffer_state->current_buffer = 1;
+            }
+        break;
 
+        case(1):
+            ring_bufferPush(&buffer_state->buffer_2, adc_read());
+            if(ring_bufferGetCapacity(&buffer_state->buffer_2) >= ADC_PicoSampleNumber)
+                buffer_state->current_buffer = 0;
+        break;
+
+        default:
+            return;
     }
 }
 

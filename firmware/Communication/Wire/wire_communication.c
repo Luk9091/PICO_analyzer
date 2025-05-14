@@ -1,4 +1,4 @@
-#include "communication.h"
+#include "wire_communication.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -22,14 +22,14 @@ void waitUntilRun(){
 }
 
 
-void communication_run(){
+void wireCommunication_run(){
     waitUntilRun();
     ANALYZE_enable(true);
 
     if (ANALYZE_timerIsOn()){
-        communication_sendWithTimeProcedure();
+        wireCommunication_sendWithTimeProcedure();
     } else {
-        communication_sendProcedure();
+        wireCommunication_sendProcedure();
     }
     LED_off();
 }
@@ -45,8 +45,8 @@ void UART_rx_cb()
 {
     char readMsg[MESSAGE_MAX_LEN];
     
-    if (communication_read(readMsg)){
-        communication_valid(readMsg);
+    if (wireCommunication_read(readMsg)){
+        wireCommunication_valid(readMsg);
 #if LIB_PICO_STDIO_USB
         tud_cdc_write_flush();
 #endif
@@ -54,11 +54,11 @@ void UART_rx_cb()
 }
 
 #if LIB_PICO_STDIO_USB
-uint communication_read(const char *str){
+uint wireCommunication_read(const char *str){
     return tud_cdc_read((void*)str, CFG_TUD_CDC_RX_BUFSIZE);
 }
 #elif LIB_PICO_STDIO_UART
-uint communication_read(const char *str){
+uint wireCommunication_read(const char *str){
     static char readLine[MESSAGE_MAX_LEN + 1];
     static int index;
     char c = uart_getc(uart0);
@@ -88,7 +88,7 @@ uint communication_read(const char *str){
 #endif
 
 
-void communication_init(){
+void wireCommunication_init(){
 #ifdef LIB_PICO_STDIO_USB
     stdio_usb_init();
 #elif defined LIB_PICO_STDIO_UART
@@ -104,7 +104,7 @@ static inline char *nextToken(){
     return strtok(0, " \n");
 }
 
-static inline enum pico_error_codes communication_validator(char *line){
+static inline enum pico_error_codes wireCommunication_validator(char *line){
     char *token = strtok(line, " ");
     if(_transferData && strncmp(token, "DONE", 4) == PICO_OK){
         _transferData = false;
@@ -177,8 +177,8 @@ static inline enum pico_error_codes communication_validator(char *line){
 }
 
 
-enum pico_error_codes communication_valid(char *line){
-    enum pico_error_codes error = communication_validator(line);
+enum pico_error_codes wireCommunication_valid(char *line){
+    enum pico_error_codes error = wireCommunication_validator(line);
 
     switch (error)
     {
@@ -202,7 +202,7 @@ enum pico_error_codes communication_valid(char *line){
 
 
 
-void communication_sendWithTimeProcedure(){
+void wireCommunication_sendWithTimeProcedure(){
     uint32_t index = 0;
     uint32_t nowriteDelay = 0;
     uint32_t dmaSel = 0;
@@ -251,7 +251,7 @@ void communication_sendWithTimeProcedure(){
 #endif
 }
 
-void communication_sendProcedure(){
+void wireCommunication_sendProcedure(){
     uint32_t index = 0;
     uint32_t nowriteDelay = 0;
     uint32_t dmaSel = 0;
@@ -304,7 +304,7 @@ void communication_sendProcedure(){
 // ##############################
 // ###### SPEED TEST ############
 // ##############################
-#if COMMUNICATION_SPEED_TEST
+#if wireCommunication_SPEED_TEST
 
 #define SEND_SAMPLE 500
 uint measureTime_print(){

@@ -215,7 +215,7 @@ bool ADS1115_setChannelDoubleBuffering(uint8_t channel_number, uint32_t buffer_s
     if(channel_number > 3)
         return true;
 
-    if(buffer_size <= 0)
+    if(buffer_size = 0)
         return true;
     
     if(BufferState == NULL)
@@ -223,8 +223,8 @@ bool ADS1115_setChannelDoubleBuffering(uint8_t channel_number, uint32_t buffer_s
 
     BufferState->data_counter = 0;
     BufferState->channel_number = channel_number;
+    ring_bufferInit(&BufferState->buffer_0, buffer_size);
     ring_bufferInit(&BufferState->buffer_1, buffer_size);
-    ring_bufferInit(&BufferState->buffer_2, buffer_size);
     BufferState->current_buffer = 0;
 
     return false;
@@ -237,12 +237,12 @@ void ADS1115_doubleBufferingCallback(ADS1115_doubleBufferState *buffer_state)
 
     if(buffer_state->current_buffer == 0)
     {
-        ring_bufferPush(&buffer_state->buffer_1, ADS1115_getSample(buffer_state->channel_number));
+        ring_bufferPush(&buffer_state->buffer_0, ADS1115_getSample(buffer_state->channel_number));
         buffer_state->data_counter++;
     }
     else
     {
-        ring_bufferPush(&buffer_state->buffer_2, ADS1115_getSample(buffer_state->channel_number));
+        ring_bufferPush(&buffer_state->buffer_1, ADS1115_getSample(buffer_state->channel_number));
         buffer_state->data_counter++;
     }
 
@@ -250,13 +250,13 @@ void ADS1115_doubleBufferingCallback(ADS1115_doubleBufferState *buffer_state)
     {
         if (buffer_state->current_buffer == 0)
         {
-            ring_bufferClear(&buffer_state->buffer_2);  // clear buffer
+            ring_bufferClear(&buffer_state->buffer_1);  // clear buffer
             buffer_state->data_counter = 0;
             buffer_state->current_buffer =  1;          // swap buffer
         }
         else
         {
-            ring_bufferClear(&buffer_state->buffer_1);   // clear buffer
+            ring_bufferClear(&buffer_state->buffer_0);   // clear buffer
             buffer_state->data_counter = 0;
             buffer_state->current_buffer = 0;            // swap buffer
         }

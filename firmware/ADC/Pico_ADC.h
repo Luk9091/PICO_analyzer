@@ -7,16 +7,18 @@
 #include "hardware/timer.h"
 #include "pico/stdlib.h"
 #include "DMA/dma.h"
-#include "../ring_buffer/ring_buffer.h"
+#include "ring_buffer.h"
 
 #define ADC_PicoChannel_0 0         // ADC 0 Input Pin  <-> ADC 0 channel
 #define ADC_PicoChannel_1 1         // ADC 1 Input Pin  <-> ADC 1 channel
 #define ADC_PicoChannel_2 2         // ADC 2 Input Pin  <-> ADC 2 channel
-#define ADC_PicoPinCh_0 26
+#define ADC_PicoPinCh_0 26          
 #define ADC_PicoPinCh_1 27
 
 #define ADC_PicoSampleNumber 500    // 500 samples = samples from channel_0 + samples from channel_1
 #define ADC_PicoADCClkDiv 100.0f    // 100.0f <-> 5kHz 
+
+#define ADC_picoGetChannelPin(ch) ((ch) == 0 ? 26 : 0) | ((ch) == 1 ? 27 : 0) | ((ch) == 2 ? 28 : 0)
 
 typedef struct{
     uint16_t current_buffer;
@@ -28,10 +30,10 @@ typedef struct{
 
 /// @brief standard mode including only double buffering <-> require timer irq pooling 
 typedef struct{
-    uint16_t    channel_number;        // channel number
-    ring_buffer *current_buffer;    // current buffer where new samples are saved
-    ring_buffer *buffer_1;         
-    ring_buffer *buffer_2;
+    uint16_t    channel_number; // channel number
+    uint32_t    current_buffer; // current buffer where new samples are saved
+    ring_buffer buffer_1;         
+    ring_buffer buffer_2;
 }Pico_adcStandardMode;
 
 /// @brief - initialize Pi Pico embedded selected ADC 
