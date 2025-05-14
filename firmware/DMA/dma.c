@@ -2,9 +2,11 @@
 #include <math.h>
 #include <hardware/irq.h>
 #include <hardware/clocks.h>
+#include <hardware/adc.h>
 
 #include "util.h"
-
+//#include "ADC/ADS1115.h"
+//#include "ADC/Pico_ADC.h"
 
 static volatile uint16_t dataArray[DATA_SIZE * 2] = {0};
 volatile uint16_t *sampleData = dataArray;
@@ -33,7 +35,6 @@ static inline bool _DMA_config(volatile void *writeAddress, const volatile void 
     );
     return true;
 }
-
 
 void _dma_1_handler(){
     if (dma_hw->ints0 & (1 << DMA_DATA_0)){
@@ -64,7 +65,6 @@ void _dma_1_handler(){
 //     dma_channel_set_write_addr(DMA_DATA_1, sampleData, false);
 //     dma_channel_set_trans_count(DMA_DATA_1, DATA_SIZE, false);
 // }
-
 
 bool DMA_clear(){
     // Clear write address DMA 1
@@ -115,7 +115,6 @@ int DMA_PIOconfig(volatile void *writeAddress, const volatile void *readAddress,
     return 0;
 }
 
-
 void DMA_chain(uint dma_1, uint dma_2, bool chain){
     dma_channel_config config_1 = dma_get_channel_config(dma_1);
     dma_channel_config config_2 = dma_get_channel_config(dma_2);
@@ -130,15 +129,10 @@ void DMA_chain(uint dma_1, uint dma_2, bool chain){
     }
 }
 
-
-
 void DMA_setEnable(uint dmaChannel, bool enabled){
     dma_channel_config config = dma_get_channel_config(dmaChannel);
     dma_channel_set_config(dmaChannel, &config, enabled);
 }
-
-
-
 
 volatile uint dma_getCurrentIndex(uint dmaChannel){
     dma_channel_hw_t *channel = dma_channel_hw_addr(dmaChannel);

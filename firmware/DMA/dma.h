@@ -5,8 +5,8 @@
 #include <stdio.h>
 
 #include <hardware/dma.h>
-// #define DATA_SIZE       (16384)
-#define DATA_SIZE       (512)
+
+#define DATA_SIZE       (16384)
 
 
 #define DMA_DATA_0      (0)
@@ -25,5 +25,6 @@ void DMA_chain(uint dma_1, uint dma_2, bool chain);
 bool DMA_clear();
 
 uint dma_getCurrentIndex(uint dmaChannel);
+
 
 #endif // __DMA_CONFIG_H__
