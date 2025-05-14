@@ -1,7 +1,7 @@
 #ifndef _COMMUNICATION_CONFIG_
 #define _COMMUNICATION_CONFIG_
 
-
+/// @brief transmission status TAG's
 typedef enum{
     TAG_OK = 0,
     TAG_ERROR = -1,
@@ -11,22 +11,45 @@ typedef enum{
     TAG_DIGITAL_SCOPE
 }send_dataTag_t;
 
+/// @brief Device configuration available TAG 
+typedef enum{
+    ADC_ADS1115_CH1_ENABLE = 0,
+    ADC_ADS1115_CH2_ENABLE = 1,
+    ADC_PICO_CH1_ENABLE = 2,
+    ADC_PICO_CH2_ENABLE = 3,
+
+    DIGITAL_PROBE_ENABLE = 4,
+    DIGITAL_MODE_FREERUN = 5,
+    DIGITAL_MODE_TRIGGERED = 6,
+    DIGITAL_SET_SAMPLE_FREQ = 7,
+    DIGITAL_SET_TIMER = 8,
+
+    DEVICE_STOP = 9,
+    DEVICE_RUN = 10
+}device_configTag_t;
+
+/// @brief Struct containing current device configuration 
+typedef struct{
+    bool ADC_ADS1115_CH1_ENABLE;
+    bool ADC_ADS1115_CH2_ENABLE;
+    bool ADC_PICO_CH1_ENABLE;
+    bool ADC_PICO_CH2_ENABLE;
+
+    bool DIGITAL_PROBE_ENABLE;
+    bool DIGITAL_MODE_FREERUN;
+    bool DIGITAL_MODE_TRIGGERED;
+    bool DIGITAL_SET_SAMPLE_FREQ;
+    bool DIGITAL_SET_TIMER;
+
+    bool DEVICE_STOP;
+    bool DEVICE_RUN;
+}device_configStatus_t;
 
 typedef enum{
-    ADC_ADS1115_CH1_ENABLE,
-    ADC_ADS1115_CH2_ENABLE,
-    ADC_PICO_CH1_ENABLE,
-    ADC_PICO_CH2_ENABLE,
+    FIFO_FRAME_DATA,  // frame containing data
+    FIFO_FRAME_CONFIG // frame containing configuration information(see "device_configTag_t")
+}fifo_tag_t;
 
-    DIGITAL_PROBE_ENABLE,
-    DIGITAL_MODE_FREERUN,
-    DIGITAL_MODE_TRIGGERED,
-    DIGITAL_SET_SAMPLE_FREQ,
-    DIGITAL_SET_TIMER,
-
-    DEVICE_STOP,
-    DEVICE_RUN
-}config_tag_t;
 
 
 #endif
