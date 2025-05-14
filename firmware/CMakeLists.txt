@@ -21,6 +21,7 @@ add_executable(${PROJECT_NAME}
     LED/led.c
     Communication/communication.c
     PWM_timer/timer.c
+    PIO/analyze.c
 )
 
 include_directories(${PROJECT_NAME}
@@ -58,4 +59,4 @@ target_link_libraries(${PROJECT_NAME}
 endif()
 
 pico_enable_stdio_usb(${PROJECT_NAME}  1)
-pico_enable_stdio_uart(${PROJECT_NAME} 1)
+pico_enable_stdio_uart(${PROJECT_NAME} 0)

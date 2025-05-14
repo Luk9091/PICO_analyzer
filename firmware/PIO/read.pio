@@ -19,3 +19,22 @@ main:
     ; nop
     in pins, 16
 .wrap
+
+
+
+.program count_read
+main:
+    pull
+    mov X, OSR
+    ; set X, 10
+
+.wrap_target
+    jmp pin, SAMPLE
+.wrap
+
+SAMPLE:
+    in pins, 16
+    jmp X--, SAMPLE
+
+; LOCK:
+;     jmp LOCK

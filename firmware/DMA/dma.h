@@ -5,7 +5,8 @@
 #include <stdio.h>
 
 #include <hardware/dma.h>
-#define DATA_SIZE       (16384)
+// #define DATA_SIZE       (16384)
+#define DATA_SIZE       (512)
 
 
 #define DMA_DATA_0      (0)
@@ -14,8 +15,10 @@
 #define DMA_TIME_1      (3)
 
 
+extern volatile uint16_t *sampleData;
+extern volatile uint16_t *timeStamp ;
 
-int DMA_PIOconfig(volatile void *writeAddress, const volatile void *readAddress, uint dreq, uint dma_1, uint dma_2, bool priority);
+int DMA_PIOconfig(volatile void *writeAddress, const volatile void *readAddress, uint dreq, uint dma_1, uint dma_2, bool priority, bool doubleSize);
 void DMA_setEnable(uint dmaChannel, bool enable);
 void DMA_chain(uint dma_1, uint dma_2, bool chain);
 

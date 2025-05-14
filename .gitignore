@@ -1,0 +1,14 @@
+__pycache__
+*/.vscode
+build
+
+
+# LaTeX autobuild ignore
+*.aux
+*.fls
+*.out
+*.synctex.gz
+*.toc
+*.fdb_latexmk
+*.log
+main.pdf

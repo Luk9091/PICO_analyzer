@@ -36,11 +36,12 @@ static inline int print(const void *str, uint32_t size){
 #endif
 
 
+void communication_run();
 void communication_init();
-void communication_run(PIO pio, uint sm);
-
+enum pico_error_codes communication_valid(char *line);
 
 static inline uint communication_read(const char *str);
+void communication_sendWithTimeProcedure();
 void communication_sendProcedure();
 
 
