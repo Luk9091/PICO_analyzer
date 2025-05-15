@@ -13,19 +13,19 @@ typedef enum{
 
 /// @brief Device configuration available TAG 
 typedef enum{
-    ADC_ADS1115_CH1_ENABLE = 0,
-    ADC_ADS1115_CH2_ENABLE = 1,
-    ADC_PICO_CH1_ENABLE = 2,
-    ADC_PICO_CH2_ENABLE = 3,
+    ADC_ADS1115_CH1_ENABLE  = 0,
+    ADC_ADS1115_CH2_ENABLE  = 1,
+    ADC_PICO_CH1_ENABLE     = 2,
+    ADC_PICO_CH2_ENABLE     = 3,
 
-    DIGITAL_PROBE_ENABLE = 4,
-    DIGITAL_MODE_FREERUN = 5,
-    DIGITAL_MODE_TRIGGERED = 6,
+    DIGITAL_PROBE_ENABLE    = 4,
+    DIGITAL_MODE_FREERUN    = 5,
+    DIGITAL_MODE_TRIGGERED  = 6,
     DIGITAL_SET_SAMPLE_FREQ = 7,
-    DIGITAL_SET_TIMER = 8,
+    DIGITAL_SET_TIMER       = 8,
 
     DEVICE_STOP = 9,
-    DEVICE_RUN = 10
+    DEVICE_RUN  = 10
 }device_configTag_t;
 
 /// @brief Struct containing current device configuration 
@@ -46,10 +46,17 @@ typedef struct{
 }device_configStatus_t;
 
 typedef enum{
-    FIFO_FRAME_DATA,  // frame containing data
-    FIFO_FRAME_CONFIG // frame containing configuration information(see "device_configTag_t")
-}fifo_tag_t;
+    FIFO_FRAME_DATA,        // frame containing data
+    FIFO_FRAME_CONFIG,      // frame containing configuration information(see "device_configTag_t")
+    FIFO_FRAME_DATA_CONFIG  // frame containing data & configuration
+}fifo_frameType_t;
 
-
+typedef enum{
+    mc_fifoBuffer0 = 0,
+    mc_fifoBuffer1 = 1,
+    mc_fifoBuffer2 = 2,
+    mc_fifoBuffer3 = 3
+}core0_validBufferNumber;
+ 
 
 #endif

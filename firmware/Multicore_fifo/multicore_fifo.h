@@ -7,12 +7,6 @@
 #include "hardware/irq.h"
 #include "Communication/communication_config.h"
 
-/// Core 0 valid buffer defines
-#define mc_fifoBuffer0 0
-#define mc_fifoBuffer1 1
-#define mc_fifoBuffer2 2
-#define mc_fifoBuffer3 3
-
 
 /// @note
 /// Pi Pico multicore fifo has 8 words each 32 bit's 
@@ -26,12 +20,30 @@
 /// ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
 ///
 /// Core1 --TO--> Core0 frame format
-/// _________________________________________________________________________________________________________________
-/// | NOT USED | NOT USED | NOT USED | Frame Tag | received config | received config |  valid buffer | valid buffer | 
-/// |   XXXX   |   XXXX   |   XXXX   |   0|&&&   |    [&|&|&|&]    |    [&|&|&|&]    |    [&|&|&|&]  |   [&|&|&|&]  |  
-/// |   XXXX   |   XXXX   |   XXXX   |   X|&&&   |    [&|&|&|&]    |    [&|&|&|&]    |    [&|&|&|&]  |   [&|&|&|&]  |  
-/// ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+/// ________________________________________________________________________________________________________________________
+/// | NOT USED | NOT USED | Frame Tag | received config | received config | received config | valid buffer | valid buffer  | 
+/// |   XXXX   |   XXXX   |   X|&&&   |    [X|AC|BC|CC] |  [DC|EC|FC|GC]  |  [HC|IC|JC|KC]  |  [X|X|X|X]   | [AD|BD|CD|DD] |  
+/// |   XXXX   |   XXXX   |   X|&&&   |    [X|AC|BC|CC] |  [DC|EC|FC|GC]  |  [HC|IC|JC|KC]  |  [X|X|X|X]   | [AD|BD|CD|DD] | 
+/// ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
 /// FRAME TAG : 100 - frame contain data, 010 - frame contain config, 001 - frame contain data and config 
+///
+///AC = 1 - ADC_ADS1115_CH1_ENABLE,  0 otherwise
+///BC = 1 - ADC_ADS1115_CH2_ENABLE,  0 otherwise
+///CC = 1 - ADC_PICO_CH1_ENABLE,     0 otherwise
+///DC = 1 - ADC_PICO_CH2_ENABLE,     0 otherwise
+///EC = 1 - DIGITAL_PROBE_ENABLE,    0 otherwise
+///FC = 1 - DIGITAL_MODE_FREERUN,    0 otherwise
+///GC = 1 - DIGITAL_MODE_TRIGGERED,  0 otherwise
+///HC = 1 - DIGITAL_SET_SAMPLE_FREQ, 0 otherwise
+///IC = 1 - DIGITAL_SET_TIMER,       0 otherwise
+///JC = 1 - DEVICE_STOP,             0 otherwise
+///KC = 1 - DEVICE_RUN,              0 otherwise
+///
+///AD = 1 - ADC_ADS1115_CH1_VALID,   0 otherwise
+///BD = 1 - ADC_ADS1115_CH2_VALID,   0 otherwise
+///CD = 1 - ADC_PICO_CH1_VALID,      0 otherwise
+///DD = 1 - ADC_PICO_CH2_VALID,      0 otherwise
+
 
 
 /// @brief 
@@ -42,6 +54,9 @@ void multicore_fifoInitCore0(void);
 /// @param  
 void multicore_fifoInitCore1(void);
 
-void core0_sio_irq();
-void core1_sio_irq();
+bool multicore_fifoTryPushCore0(uint8_t buffer_size, core0_validBufferNumber buffer_number);
+bool multicore_fifoTryPushCore1();
+
+
+///@note multicore_fifoTryPushCore0() & multicore_fifoTryPushCore1() are not necessary because of fifo rvalid IRQ's
 #endif
