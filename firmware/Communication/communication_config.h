@@ -57,6 +57,5 @@ typedef enum{
     mc_fifoBuffer2 = 2,
     mc_fifoBuffer3 = 3
 }core0_validBufferNumber;
- 
 
 #endif

@@ -7,6 +7,7 @@ static dhcp_server_t dhcp_server;
 static struct udp_pcb *send_pcb = NULL;
 static struct udp_pcb *receive_pcb = NULL;
 static ip_addr_t receiver_ipAddress = {0};
+static device_configStatus_t received_data;
 
 void wifi_init(void)
 {
@@ -54,12 +55,11 @@ static void wifi_receiveCallback(void *arg, struct udp_pcb *pcb, struct pbuf *p,
 {
     if (p != NULL)
     {
-        receive_bufferFrame received_data;
-        memcpy(&received_data, p->payload, sizeof(receive_bufferFrame));
-        //queue_try_add(&queue_Server_To_Pico, &received_data);
-            printf("data received !!!\n");
-            printf("Received data from IP: %s, Port: %d\n", ip4addr_ntoa(addr), port);
-            printf("Data: %c\n", p->payload);
+        memcpy(&received_data, p->payload, sizeof(device_configStatus_t));
+        multicore_fifoTryPushCore1(FIFO_FRAME_CONFIG, NULL, &received_data); ///@todo RENT DEVICE CONFIGURATION STRUCT 
+        // printf("data received !!!\n");
+        // printf("Received data from IP: %s, Port: %d\n", ip4addr_ntoa(addr), port);
+        // printf("Data: %c\n", p->payload);
         pbuf_free(p);        
     }
 }

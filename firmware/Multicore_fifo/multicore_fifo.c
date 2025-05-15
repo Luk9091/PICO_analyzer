@@ -30,7 +30,7 @@ static void core0_sio_irq(void)
 
     uint8_t config_data = (core0_rx_val & 0x000fff00) >> 8;
     
-    if(core0_rx_val & (1<<20))  //received config. frame AND data frame
+    if(core0_rx_val & (1<<20))  //received config. frame AND data frame <-> currently NOT USED
     {
         update_deviceConfigStatus(config_data);
         /// @todo received data
@@ -180,6 +180,8 @@ bool multicore_fifoTryPushCore1(fifo_frameType_t frame_type, device_configStatus
     if(current_deviceConfig->ADC_PICO_CH2_ENABLE)
         fifo_frame |= (1<<0);   
 
+
+    multicore_fifo_push_blocking_inline(fifo_frame);
 
     return true;
 }
