@@ -1,6 +1,6 @@
 #include "multicore_fifo.h"
 
-static void updata_deviceConfigStatus(uint8_t received_tag);
+static void update_deviceConfigStatus(uint8_t received_tag);
 static void core0_sio_irq(void);
 static void core1_sio_irq(void);
 
@@ -28,17 +28,16 @@ static void core0_sio_irq(void)
     while (multicore_fifo_rvalid()) // fifo always contains only one 32-bit frame
         core0_rx_val = multicore_fifo_pop_blocking();
 
-    uint8_t config_data = (core0_rx_val & 0x000fff00);
-    config_data = config_data>>8;
+    uint8_t config_data = (core0_rx_val & 0x000fff00) >> 8;
     
     if(core0_rx_val & (1<<20))  //received config. frame AND data frame
     {
-        updata_deviceConfigStatus(config_data);
+        update_deviceConfigStatus(config_data);
         /// @todo received data
     }
     
     else if(core0_rx_val & (1<<21))  //received only config. frame
-        updata_deviceConfigStatus(config_data);
+        update_deviceConfigStatus(config_data);
 
 
     else if(core0_rx_val & (1<<22))  //received only data frame
@@ -56,7 +55,7 @@ static void core1_sio_irq(void)
     multicore_fifo_clear_irq();
 }
 
-static void updata_deviceConfigStatus(uint8_t received_tag)
+static void update_deviceConfigStatus(uint8_t received_tag)
 {
     if(received_tag &(1<<ADC_ADS1115_CH1_ENABLE))
         device_status.ADC_ADS1115_CH1_ENABLE = 1;
@@ -116,8 +115,8 @@ static void updata_deviceConfigStatus(uint8_t received_tag)
 bool multicore_fifoTryPushCore0(uint8_t buffer_size, core0_validBufferNumber buffer_number)
 {
     uint32_t buffer_size_t = (uint32_t)buffer_size;
-    uint32_t buffer_number = (uint32_t)buffer_number; buffer_number<<8;
-    uint32_t fifo_frame = (buffer_size_t | buffer_number);
+    uint32_t buffer_number_t = (uint32_t)buffer_number; buffer_number = (buffer_number<<8);
+    uint32_t fifo_frame = (buffer_size_t | buffer_number_t);
     multicore_fifo_push_blocking_inline(fifo_frame);
 
 
@@ -173,11 +172,14 @@ bool multicore_fifoTryPushCore1(fifo_frameType_t frame_type, device_configStatus
 
     /// SET FIFO VALID ADC BUFFER'S
     if(current_deviceConfig->ADC_ADS1115_CH1_ENABLE)
-        fifo_frame |= (1<3);
+        fifo_frame |= (1<<3);
     if(current_deviceConfig->ADC_ADS1115_CH2_ENABLE)
         fifo_frame |= (1<<2);
     if(current_deviceConfig->ADC_PICO_CH1_ENABLE)
         fifo_frame |= (1<<1);
     if(current_deviceConfig->ADC_PICO_CH2_ENABLE)
         fifo_frame |= (1<<0);   
+
+
+    return true;
 }
