@@ -1,5 +1,5 @@
-#ifndef __COMMUNICATION_H__
-#define __COMMUNICATION_H__
+#ifndef __wire_Communication_H__
+#define __wire_Communication_H__
 
 #include <pico/stdlib.h>
 #include <hardware/pio.h>
@@ -20,7 +20,7 @@
 #endif
 
 #define NOWRITE_DELAY_MAX           1024
-#define COMMUNICATION_SPEED_TEST    false
+#define WIRE_COMMUNICATION_SPEED_TEST    false
 
 #if LIB_PICO_STDIO_USB
 static inline int print(const void *str, uint32_t size){
@@ -36,20 +36,20 @@ static inline int print(const void *str, uint32_t size){
 #endif
 
 
-void communication_init();
-void communication_run(PIO pio, uint sm, uint dma_1, uint dma_2, uint *data);
+void wireCommunication_run();
+void wireCommunication_init();
+enum pico_error_codes wireCommunication_valid(char *line);
 
-
-static inline uint communication_read(const char *str);
-void communication_sendProcedure(uint dma_1, uint dam_2, uint *data);
+static inline uint wireCommunication_read(const char *str);
+void wireCommunication_sendWithTimeProcedure();
+void wireCommunication_sendProcedure();
 
 
 extern uint getMainFreq();
 
 
-#if COMMUNICATION_SPEED_TEST
-uint measureTime_tud();
-uint measureTime_uartPutChar();
+#if wireCommunication_SPEED_TEST
+uint measureTime_print();
 uint measureTime_printf();
 #endif
 

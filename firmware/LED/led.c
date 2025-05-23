@@ -8,6 +8,7 @@
 void LED_init(){
     gpio_init(GPIO_INBUILD_LED);
     gpio_set_dir(GPIO_INBUILD_LED, GPIO_OUT);
+    gpio_set_drive_strength(GPIO_INBUILD_LED, GPIO_DRIVE_STRENGTH_2MA);
 }
 
 void LED_on(){
