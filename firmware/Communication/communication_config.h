@@ -45,6 +45,14 @@ typedef struct{
     bool DEVICE_RUN;
 }device_configStatus_t;
 
+typedef struct{
+    bool ADC_PICO_CH1_VALID;
+    bool ADC_PICO_CH2_VALID;
+    bool ADC_ADS1115_CH1_VALID;
+    bool ADC_ADS1115_CH2_VALID;
+}ADC_validBufferStatus;
+
+
 typedef enum{
     FIFO_FRAME_DATA,        // frame containing data
     FIFO_FRAME_CONFIG,      // frame containing configuration information(see "device_configTag_t")

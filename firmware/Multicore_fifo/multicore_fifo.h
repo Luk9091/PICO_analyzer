@@ -43,6 +43,8 @@
 ///BD = 1 - ADC_ADS1115_CH2_VALID,   0 otherwise
 ///CD = 1 - ADC_PICO_CH1_VALID,      0 otherwise
 ///DD = 1 - ADC_PICO_CH2_VALID,      0 otherwise
+///
+/// XX - not used bit's 
 
 
 
@@ -55,7 +57,7 @@ void multicore_fifoInitCore0(void);
 void multicore_fifoInitCore1(void);
 
 bool multicore_fifoTryPushCore0(uint8_t buffer_size, core0_validBufferNumber buffer_number);
-bool multicore_fifoTryPushCore1(fifo_frameType_t frame_type, device_configStatus_t *new_deviceConfig, device_configStatus_t *current_deviceConfig);
+bool multicore_fifoTryPushCore1(fifo_frameType_t frame_type, device_configStatus_t *new_deviceConfig, ADC_validBufferStatus *ADC_bufferStatus);
 
 
 ///@note multicore_fifoTryPushCore0() & multicore_fifoTryPushCore1() are not necessary because of fifo rvalid IRQ's

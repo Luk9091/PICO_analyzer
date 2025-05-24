@@ -40,7 +40,7 @@ void wifi_init(void);
 /// @brief Pi Pico send data via WIFI
 /// @param data - --
 /// @param data_size - -- 
-void wifi_sendData(const uint16_t *data, send_dataTag_t tag, size_t data_size);
+void wifi_sendData(const uint16_t *data, send_dataTag_t tag, size_t data_sizeByte);
 
 void print_Ip_Address(void);
 
