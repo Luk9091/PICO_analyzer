@@ -33,7 +33,7 @@ void ADC_standardModeIrq(void)
     ADC_PicoStandardModeCallback(&ADC_picoCh2);
 
     if(ADS1115_ctr%10 == 0) // make 1 ADS1115 measure every 10 Pi Pico embedded ADC
-    {
+    { 
         ADS1115_doubleBufferingCallback(&ADS1115_ch0);
         ADS1115_doubleBufferingCallback(&ADS1115_ch1);
     }
@@ -65,12 +65,23 @@ uint16_t *ADS1115_ADCGetData(uint8_t channel_number)
     }
 }
 
-uint16_t *ADC_PicoStandardModeGetData(void)
+uint16_t *ADC_PicoStandardModeGetData(uint8_t ADC_channelNumber)
 {
-    if(ADC_picoCh1.current_buffer == 0)
-        return ADC_picoCh1.buffer_1.data;
-    else
-        return ADC_picoCh1.buffer_2.data;
+    switch(ADC_channelNumber)
+    {
+        case(0):
+            if(ADC_picoCh1.current_buffer == 0)
+                return ADC_picoCh1.buffer_1.data;
+            else
+                return ADC_picoCh1.buffer_2.data;
+        break;
 
+        case(1):
+            if(ADC_picoCh2.current_buffer == 0)
+                return ADC_picoCh2.buffer_1.data;
+            else
+                return ADC_picoCh2.buffer_2.data;
+        break;
+    }
     return NULL;
 }

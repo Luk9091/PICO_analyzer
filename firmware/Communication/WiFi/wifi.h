@@ -26,10 +26,11 @@
 
 typedef struct{
     uint16_t device_status;
-    uint16_t *ADC_ADS1115BufferCh0;//[ADC_ADS1115SampleNumber];
-    uint16_t *ADC_ADS1115BufferCh1;//[ADC_ADS1115SampleNumber];
-    uint16_t *ADC_PicoBuffer;//[ADC_PicoSampleNumber];                  //Pi Pico embedded ADC data(remember PicoAdc = {Ch1, Ch2, Ch1, Ch2, ....})
-    uint16_t *digital_analyzerBuffer;     //TO DO -> CHANGE BUFFER to PTR
+    uint16_t *ADC_ADS1115BufferCh0;
+    uint16_t *ADC_ADS1115BufferCh1;
+    uint16_t *ADC_PicoBufferCh0; 
+    uint16_t *ADC_PicoBufferCh1;                  
+    uint16_t *digital_analyzerBuffer;     
 }send_bufferFrame;
 
 

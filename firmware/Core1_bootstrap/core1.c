@@ -4,7 +4,6 @@ static void core1_entry(void);
 static bool core1_timerIrq(struct repeating_timer *t);
 
 
-
 send_bufferFrame frame = {123};
 
 void core1_init(void)
@@ -14,6 +13,8 @@ void core1_init(void)
 
 static void core1_entry(void)
 {
+    wifi_init();
+    
     
     ADC_bootStrap();
     sleep_ms(500);
@@ -21,37 +22,41 @@ static void core1_entry(void)
     static repeating_timer_t ADC_irqTimer;
     add_repeating_timer_us(200, core1_timerIrq, NULL, &ADC_irqTimer);
 
-    wifi_init();
-
     while(true)
     {
         tight_loop_contents(); //nop
     }
-
 }
 
+uint64_t timer2 = 0;
 static bool core1_timerIrq(struct repeating_timer *t)
 {
     static uint32_t data_ctr = 0;
     ADC_standardModeIrq();
+    printf("\r");
 
-    if(data_ctr >= 500) // equals to 500 ADC_Pico samples and 50 ADS1115 samples
+    if(data_ctr >= 500) // equals to 500 ADC_Pico samples and 50 ADS1115 samples & executes one times per second
     {
+       frame.ADC_ADS1115BufferCh0  = ADS1115_ADCGetData(ADS1115_channel_0); 
+       wifi_sendData(frame.ADC_ADS1115BufferCh0, TAG_ADC_ADS1115_CH_1, ADC_ADS1115SampleNumber * sizeof(uint16_t));
+ 
+       frame.ADC_ADS1115BufferCh1  = ADS1115_ADCGetData(ADS1115_channel_1); printf("%d\n", frame.ADC_ADS1115BufferCh1[10]);
+       wifi_sendData(frame.ADC_ADS1115BufferCh1, TAG_ADC_ADS1115_CH_2, ADC_ADS1115SampleNumber * sizeof(uint16_t));
+ 
+       frame.ADC_PicoBufferCh0     = ADC_PicoStandardModeGetData(0);
+       wifi_sendData(frame.ADC_PicoBufferCh0, TAG_ADC_PICO, ADC_PicoSampleNumber * sizeof(uint16_t));
 
-        frame.ADC_ADS1115BufferCh0  = ADS1115_ADCGetData(ADS1115_channel_0);
-        wifi_sendData(frame.ADC_ADS1115BufferCh0, TAG_ADC_ADS1115_CH_1, ADC_ADS1115SampleNumber * sizeof(uint16_t));
+       frame.ADC_PicoBufferCh1     = ADC_PicoStandardModeGetData(1);
+       wifi_sendData(frame.ADC_PicoBufferCh1, TAG_ADC_PICO, ADC_PicoSampleNumber * sizeof(uint16_t));
+ 
+       //frame.digital_analyzerBuffer= DigitalAnalyzerGetBuffer  
+       //wifi_sendData(frame.digital_analyzerBuffer, TAG_DIGITAL_SCOPE, 256*sizeof(uint));
+       
+       //fifo_routineCore1();
 
-        frame.ADC_ADS1115BufferCh1  = ADS1115_ADCGetData(ADS1115_channel_1);
-        wifi_sendData(frame.ADC_ADS1115BufferCh1, TAG_ADC_ADS1115_CH_2, ADC_ADS1115SampleNumber * sizeof(uint16_t));
 
-        frame.ADC_PicoBuffer        = ADC_PicoStandardModeGetData();
-        wifi_sendData(frame.ADC_PicoBuffer, TAG_ADC_PICO, ADC_PicoSampleNumber * sizeof(uint16_t));
-
-        //frame.digital_analyzerBuffer= DigitalAnalyzerGetBuffer  
-        wifi_sendData(frame.digital_analyzerBuffer, TAG_DIGITAL_SCOPE, 256*sizeof(uint));
-        
-        //fifo_routineCore1();
         data_ctr = 0;
     }
     data_ctr++;
+    //timer2 = time_us_64();
 }

@@ -212,10 +212,10 @@ float ADS1115_dataConvert(int16_t data)
 
 bool ADS1115_setChannelDoubleBuffering(uint8_t channel_number, uint32_t buffer_size, ADS1115_doubleBufferState *BufferState)
 {  
-    if(channel_number > 3)
+     if(channel_number > 3)
         return true;
-
-    if(buffer_size = 0)
+ 
+     if(buffer_size == 0)
         return true;
     
     if(BufferState == NULL)
@@ -250,13 +250,13 @@ void ADS1115_doubleBufferingCallback(ADS1115_doubleBufferState *buffer_state)
     {
         if (buffer_state->current_buffer == 0)
         {
-            ring_bufferClear(&buffer_state->buffer_1);  // clear buffer
+            //ring_bufferClear(&buffer_state->buffer_1);  // clear buffer
             buffer_state->data_counter = 0;
             buffer_state->current_buffer =  1;          // swap buffer
         }
         else
         {
-            ring_bufferClear(&buffer_state->buffer_0);   // clear buffer
+            //ring_bufferClear(&buffer_state->buffer_0);   // clear buffer
             buffer_state->data_counter = 0;
             buffer_state->current_buffer = 0;            // swap buffer
         }
