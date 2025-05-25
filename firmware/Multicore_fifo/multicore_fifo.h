@@ -48,15 +48,25 @@
 
 
 
-/// @brief 
-/// @param  
+/// @brief Core 0(primary core) fifo initialization
+/// @param - --
 void multicore_fifoInitCore0(void);
 
-/// @brief 
-/// @param  
+/// @brief Core 1(secondary) fifo initialization
+/// @param - --
 void multicore_fifoInitCore1(void);
 
+/// @brief Core 0 helper function - try add valid data buffer number and size to fifo
+/// @param buffer_size - --
+/// @param buffer_number - --
+/// @return true if everything goes correct, false otherwise
 bool multicore_fifoTryPushCore0(uint8_t buffer_size, core0_validBufferNumber buffer_number);
+
+/// @brief Core 1 helper function - try add received from PC config data and/or valid ADC buffer 
+/// @param frame_type - 100(data frame), 010(config frame), 001(data and config frame) 
+/// @param new_deviceConfig - received new device config frame, NULL otherwise
+/// @param ADC_bufferStatus - valid buffer status, NULL otherwise
+/// @return true if everything goes correct, false otherwise
 bool multicore_fifoTryPushCore1(fifo_frameType_t frame_type, device_configStatus_t *new_deviceConfig, ADC_validBufferStatus *ADC_bufferStatus);
 
 

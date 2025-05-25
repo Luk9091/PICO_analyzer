@@ -43,6 +43,9 @@ void wifi_init(void);
 /// @param data_size - -- 
 void wifi_sendData(const uint16_t *data, send_dataTag_t tag, size_t data_sizeByte);
 
+
+/// @brief print(pi pico) IP address
+/// @param - --
 void print_Ip_Address(void);
 
 
