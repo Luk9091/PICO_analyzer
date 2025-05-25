@@ -15,7 +15,7 @@ void ADC_PicoStandardModeInit(uint8_t channel_number, uint32_t buffer_size, Pico
     adc_init();
     adc_gpio_init(ADC_picoGetChannelPin(channel_number));
     //adc_set_clkdiv(ADC_PicoADCClkDiv); //5kHz sampling rate
-    adc_set_clkdiv(0); //The fastest ADC sampling rate
+    //adc_set_clkdiv(0); //The fastest ADC sampling rate
 
     buffer_state->channel_number = channel_number;
     ring_bufferInit(&buffer_state->buffer_1, buffer_size);

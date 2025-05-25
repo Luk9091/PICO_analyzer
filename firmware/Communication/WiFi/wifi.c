@@ -57,9 +57,6 @@ static void wifi_receiveCallback(void *arg, struct udp_pcb *pcb, struct pbuf *p,
     {
         memcpy(&received_data, p->payload, sizeof(device_configStatus_t));
         multicore_fifoTryPushCore1(FIFO_FRAME_CONFIG, &received_data, NULL); 
-        // printf("data received !!!\n");
-        // printf("Received data from IP: %s, Port: %d\n", ip4addr_ntoa(addr), port);
-        // printf("Data: %c\n", p->payload
         pbuf_free(p);        
     }
 }

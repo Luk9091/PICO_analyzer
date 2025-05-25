@@ -15,7 +15,7 @@
 #define ADC_PicoPinCh_0 26          
 #define ADC_PicoPinCh_1 27
 
-#define ADC_PicoSampleNumber 500    // 500 samples = samples from channel_0 + samples from channel_1
+#define ADC_PicoSampleNumber 500    // 500 samples 
 #define ADC_PicoADCClkDiv 100.0f    // 100.0f <-> 5kHz 
 
 #define ADC_picoGetChannelPin(ch) ((ch) == 0 ? 26 : 0) | ((ch) == 1 ? 27 : 0) | ((ch) == 2 ? 28 : 0)
