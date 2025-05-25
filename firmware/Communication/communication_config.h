@@ -5,7 +5,8 @@
 typedef enum{
     TAG_OK = 0,
     TAG_ERROR = -1,
-    TAG_ADC_PICO,
+    TAG_ADC_PICO_CH_1,
+    TAG_ADC_PICO_CH_2,
     TAG_ADC_ADS1115_CH_1,
     TAG_ADC_ADS1115_CH_2,
     TAG_DIGITAL_SCOPE
