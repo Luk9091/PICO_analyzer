@@ -22,19 +22,20 @@
 
 typedef struct{
     uint16_t current_buffer;
+    uint16_t ADC_buffer_0[2 * ADC_PicoSampleNumber];
     uint16_t ADC_buffer_1[2 * ADC_PicoSampleNumber];
-    uint16_t ADC_buffer_2[2 * ADC_PicoSampleNumber];
     int DMA_channel;
     dma_channel_config DMA_cfg;
-}Pico_adcDmaModeState;
+}Pico_adcChannelConfigDmaMode;
 
 /// @brief standard mode including only double buffering <-> require timer irq pooling 
 typedef struct{
-    uint16_t    channel_number; // channel number
-    uint32_t    current_buffer; // current buffer where new samples are saved
-    ring_buffer buffer_1;         
-    ring_buffer buffer_2;
-}Pico_adcStandardMode;
+    uint32_t data_counter;      // valid data counter
+    uint16_t channel_number;    // channel number
+    uint32_t current_buffer;    // current buffer where new samples are saved
+    ring_buffer buffer_0;         
+    ring_buffer buffer_1;
+}Pico_adcChannelConfig;
 
 /// @brief - initialize Pi Pico embedded selected ADC 
 /// @param ADC_channel - --
@@ -46,23 +47,20 @@ void ADC_PicoInit(uint8_t ADC_channel);
 /// @param buffer_state - struct containing double buffering data
 /// 
 /// @param ADC_freq - 1kHz
-void ADC_PicoStandardModeInit(uint8_t channel_number, uint32_t buffer_size, Pico_adcStandardMode *buffer_state);
+void ADC_PicoStandardModeInit(uint8_t channel_number, uint32_t buffer_size, Pico_adcChannelConfig *buffer_state);
 
 /// @brief standard double buffering mode callback
 /// @param buffer_state - --
-void ADC_PicoStandardModeCallback(Pico_adcStandardMode *buffer_state);
+void ADC_PicoStandardModeCallback(Pico_adcChannelConfig *buffer_state);
 
 /// @brief initialize Pi Pico embedded ADC in Circle mode with DMA
 /// @param  - --
 /// @attention this mode use ADC channel 0 and channel 1 
-void ADC_PicoDMAModeInit(void);
-
+void ADC_PicoDmaModeInit(void);
 
 /// @brief Pi pico double buffering with DMA received data getter
 /// @param - --
 /// @return ptr to fully filled data buffer 
-uint16_t *ADC_PicoDMAModeGetData(void);
-
-uint32_t ADC_PicoDMAModeGetCapacity(void);
+uint16_t *ADC_PicoDmaModeGetData(void);
 
 #endif
