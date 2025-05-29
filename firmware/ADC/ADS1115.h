@@ -5,11 +5,13 @@
 #include "hardware/i2c.h"
 #include "hardware/timer.h"
 #include "hardware/gpio.h"
+#include "hardware/irq.h"
 #include "ring_buffer.h"
 
 #define ADS1115_SDAPin 20
 #define ADS1115_SCLPin 21
 #define ADS1115_I2CInstance i2c0
+#define ADS1115_alertRdyGpio 22
 
 #define ADS1115_Address         0x48
 #define ADS1115_conversionReg   0b00000000
@@ -70,6 +72,8 @@ typedef struct{
     uint8_t COMP_POL_state;
     uint8_t COMP_LAT_state;
     uint8_t COMP_QUE_state;
+
+    bool is_convReadyMode;
 }ADS1115_configState;
 
 
@@ -123,11 +127,15 @@ float ADS1115_dataConvert(int16_t data);
 /// @param buffer_size      - --
 /// @param ADS1115_doubleBufferState_t - data structure containing double buffering mode data 
 /// @return true - Error occurred, false otherwise
-bool ADS1115_setChannelDoubleBuffering(uint8_t channel_number, uint32_t buffer_size, ADS1115_channelConfig *BufferState);
+void ADS1115_setChannelDoubleBuffering(uint8_t channel_number, uint32_t buffer_size, ADS1115_channelConfig *BufferState);
 
 /// @brief double buffering mode callback
 /// @param channel_number - --
 /// @param double_bufferState - data structure containing double buffering mode data 
 void ADS1115_routineCallback(ADS1115_channelConfig *buffer_state);
 
+
+void ADS1115_setConvReadyMode(bool enable, void(*ADS1115_convReadyIrq)(uint gpio, uint32_t events));
+
+void ADS1115_routineCallbackWithGpioAlert(void);
 #endif

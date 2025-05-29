@@ -1,7 +1,14 @@
 #include "ADS1115.h"
 
+static void ADS1115_convReadyIrq(uint gpio, uint32_t events);
+static uint8_t ADS1115_currentChannel = 0;
+
 // ADS1115 current settings //
 static ADS1115_configState ADS1115_state_t = {0};
+
+// ADS1115 double buffering mode - private buffer's(copy) pointers
+static ADS1115_channelConfig *ADS1115_ch0 = NULL;
+static ADS1115_channelConfig *ADS1115_ch1 = NULL;
 
 void ADS1115_writeReg(uint8_t reg_mode, uint16_t data)
 {
@@ -43,6 +50,7 @@ void ADS1115_init(void)
     ADS1115_state_t.COMP_POL_state    = ADS1115_compPolActiveLow; 
     ADS1115_state_t.COMP_LAT_state    = ADS1115_compLatNoLatching; 
     ADS1115_state_t.COMP_QUE_state    = ADS1115_compQueDisable; 
+    ADS1115_state_t.is_convReadyMode  = false;
 }
 
 void ADS1115_setOperationMode(uint8_t mode)
@@ -157,7 +165,6 @@ uint16_t ADS1115_getSample(uint8_t channel)
     ADS1115_readReg(ADS1115_configReg, &ADS1115_state);
     ADS1115_state |= (1<<15);
     ADS1115_writeReg(ADS1115_configReg, ADS1115_state); //start conversion
-    //sleep_us(800); 
 
     uint16_t ADS1115_isBusy = 0;
     ADS1115_readReg(ADS1115_configReg, &ADS1115_isBusy);
@@ -210,21 +217,20 @@ float ADS1115_dataConvert(int16_t data)
     return voltage;
 }
 
-bool ADS1115_setChannelDoubleBuffering(uint8_t channel_number, uint32_t buffer_size, ADS1115_channelConfig *BufferState)
+
+void ADS1115_setChannelDoubleBuffering(uint8_t channel_number, uint32_t buffer_size, ADS1115_channelConfig *BufferState)
 {  
      if(channel_number > 3 || buffer_size == 0)
-        return true;
+        return;
     
     if(BufferState == NULL)
-        return true;
+        return;
 
     BufferState->data_counter   = 0;
     BufferState->channel_number = channel_number;
     ring_bufferInit(&BufferState->buffer_0, buffer_size);
     ring_bufferInit(&BufferState->buffer_1, buffer_size);
     BufferState->current_buffer = 0;
-
-    return false;
 }
 
 void ADS1115_routineCallback(ADS1115_channelConfig *buffer_state)
@@ -260,4 +266,100 @@ void ADS1115_routineCallback(ADS1115_channelConfig *buffer_state)
             buffer_state->current_buffer = 0;            // swap buffer
         }
     }
+}
+
+void ADS1115_setModeWithGpioAlert(bool enable, void(*ADS1115_convReadyIrq)(uint gpio, uint32_t events), 
+ADS1115_channelConfig *buffer_stateConfig0, ADS1115_channelConfig *buffer_stateConfig1)
+{
+    if(enable)
+    {
+        if(buffer_stateConfig0 == NULL || buffer_stateConfig1 == NULL)
+            return;
+
+        uint16_t ADS1115_state = 0;
+        ADS1115_readReg(ADS1115_LOThreshReg, &ADS1115_state);
+        ADS1115_state &= ~(1<<15);
+        ADS1115_writeReg(ADS1115_LOThreshReg, ADS1115_state);
+
+        ADS1115_readReg(ADS1115_HiThreshReg, &ADS1115_state);
+        ADS1115_state |= (1<<15);
+        ADS1115_writeReg(ADS1115_HiThreshReg, ADS1115_state);
+
+        ADS1115_readReg(ADS1115_configReg, &ADS1115_state);
+        ADS1115_state &= ~((1<<0) | (1<<1));
+        ADS1115_writeReg(ADS1115_configReg, ADS1115_state);
+
+        ADS1115_state_t.is_convReadyMode = true;
+        ADS1115_state_t.COMP_QUE_state = ADS1115_compQueAfterOne; 
+
+
+        gpio_init(ADS1115_alertRdyGpio);
+        gpio_set_dir(ADS1115_alertRdyGpio, GPIO_IN);
+        gpio_pull_down(ADS1115_alertRdyGpio);
+        gpio_set_irq_enabled_with_callback(ADS1115_alertRdyGpio, GPIO_IRQ_EDGE_RISE, true, ADS1115_convReadyIrq);
+
+        ADS1115_ch0 = buffer_stateConfig0;
+        ADS1115_ch1 = buffer_stateConfig1;
+    }
+
+    else
+    {
+        uint16_t ADS1115_state = 0;
+        ADS1115_readReg(ADS1115_LOThreshReg, &ADS1115_state);
+        ADS1115_state |= (1<<15);
+        ADS1115_writeReg(ADS1115_LOThreshReg, ADS1115_state);
+
+        ADS1115_readReg(ADS1115_HiThreshReg, &ADS1115_state);
+        ADS1115_state &= ~(1<<15);
+        ADS1115_writeReg(ADS1115_HiThreshReg, ADS1115_state);
+
+        ADS1115_readReg(ADS1115_configReg, &ADS1115_state);
+        ADS1115_state &= ((1<<0) | (1<<1));
+        ADS1115_writeReg(ADS1115_configReg, ADS1115_state);
+
+        ADS1115_state_t.is_convReadyMode = false;
+        ADS1115_state_t.COMP_QUE_state = ADS1115_compQueDisable;
+    }
+
+}
+
+void ADS1115_routineCallbackWithGpioAlert(void)
+{
+    ADS1115_setChannel(ADS1115_channel_0);
+
+    /// BEGIN CONVERSION IN CHANNEL 0 ///
+    uint16_t ADS1115_state = 0; 
+    ADS1115_readReg(ADS1115_configReg, &ADS1115_state);
+    ADS1115_state |= (1<<15); // set start conversion flag
+    ADS1115_writeReg(ADS1115_configReg, ADS1115_state);
+}
+
+static void ADS1115_convReadyIrq(uint gpio, uint32_t events)
+{
+    uint16_t raw_data = 0;
+    static uint8_t current_channel = ADS1115_channel_0;
+
+    if(gpio == ADS1115_alertRdyGpio && (events & GPIO_IRQ_EDGE_RISE)) 
+    {
+        ADS1115_readReg(ADS1115_conversionReg, &raw_data);
+
+        if(current_channel == ADS1115_channel_0)
+        {
+            // save data todo //
+
+            ADS1115_setChannel(ADS1115_channel_1);
+            uint16_t ADS1115_state = 0; 
+            ADS1115_readReg(ADS1115_configReg, &ADS1115_state);
+            ADS1115_state |= (1<<15);
+            ADS1115_writeReg(ADS1115_configReg, ADS1115_state); //start conversion
+
+            current_channel = ADS1115_channel_1;
+        }
+        
+        else if(current_channel == ADS1115_channel_1)
+        {
+            //save data to do//
+            current_channel = ADS1115_channel_0;
+        }
+    }       
 }
