@@ -218,6 +218,8 @@ float ADS1115_dataConvert(int16_t data)
 }
 
 
+
+
 void ADS1115_setChannelDoubleBuffering(uint8_t channel_number, uint32_t buffer_size, ADS1115_channelConfig *BufferState)
 {  
      if(channel_number > 3 || buffer_size == 0)
@@ -233,19 +235,19 @@ void ADS1115_setChannelDoubleBuffering(uint8_t channel_number, uint32_t buffer_s
     BufferState->current_buffer = 0;
 }
 
-void ADS1115_routineCallback(ADS1115_channelConfig *buffer_state)
+void ADS1115_saveData(ADS1115_channelConfig *buffer_state, uint16_t new_adcSample)
 {
     if(buffer_state == NULL)
         return;
 
     if(buffer_state->current_buffer == 0)
     {
-        ring_bufferPush(&buffer_state->buffer_0, ADS1115_getSample(buffer_state->channel_number));
+        ring_bufferPush(&buffer_state->buffer_0, new_adcSample);
         buffer_state->data_counter++;
     }
     else
     {
-        ring_bufferPush(&buffer_state->buffer_1, ADS1115_getSample(buffer_state->channel_number));
+        ring_bufferPush(&buffer_state->buffer_1, new_adcSample);//ADS1115_getSample(buffer_state->channel_number)
         buffer_state->data_counter++;
     }
 
@@ -268,8 +270,7 @@ void ADS1115_routineCallback(ADS1115_channelConfig *buffer_state)
     }
 }
 
-void ADS1115_setModeWithGpioAlert(bool enable, void(*ADS1115_convReadyIrq)(uint gpio, uint32_t events), 
-ADS1115_channelConfig *buffer_stateConfig0, ADS1115_channelConfig *buffer_stateConfig1)
+void ADS1115_setModeWithGpioAlert(bool enable, ADS1115_channelConfig *buffer_stateConfig0, ADS1115_channelConfig *buffer_stateConfig1)
 {
     if(enable)
     {
@@ -314,7 +315,7 @@ ADS1115_channelConfig *buffer_stateConfig0, ADS1115_channelConfig *buffer_stateC
         ADS1115_writeReg(ADS1115_HiThreshReg, ADS1115_state);
 
         ADS1115_readReg(ADS1115_configReg, &ADS1115_state);
-        ADS1115_state &= ((1<<0) | (1<<1));
+        ADS1115_state &= ~((1<<0) | (1<<1));
         ADS1115_writeReg(ADS1115_configReg, ADS1115_state);
 
         ADS1115_state_t.is_convReadyMode = false;
@@ -345,7 +346,7 @@ static void ADS1115_convReadyIrq(uint gpio, uint32_t events)
 
         if(current_channel == ADS1115_channel_0)
         {
-            // save data todo //
+            ADS1115_saveData(ADS1115_ch0, raw_data);
 
             ADS1115_setChannel(ADS1115_channel_1);
             uint16_t ADS1115_state = 0; 
@@ -358,7 +359,8 @@ static void ADS1115_convReadyIrq(uint gpio, uint32_t events)
         
         else if(current_channel == ADS1115_channel_1)
         {
-            //save data to do//
+            ADS1115_setChannel(ADS1115_channel_0);
+            ADS1115_saveData(ADS1115_ch1, raw_data);
             current_channel = ADS1115_channel_0;
         }
     }       

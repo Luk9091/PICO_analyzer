@@ -131,11 +131,11 @@ void ADS1115_setChannelDoubleBuffering(uint8_t channel_number, uint32_t buffer_s
 
 /// @brief double buffering mode callback
 /// @param channel_number - --
-/// @param double_bufferState - data structure containing double buffering mode data 
-void ADS1115_routineCallback(ADS1115_channelConfig *buffer_state);
+/// @param new_adcSample - -- 
+void ADS1115_saveData(ADS1115_channelConfig *buffer_state, uint16_t new_adcSample);
 
 
-void ADS1115_setConvReadyMode(bool enable, void(*ADS1115_convReadyIrq)(uint gpio, uint32_t events));
+void ADS1115_setModeWithGpioAlert(bool enable, ADS1115_channelConfig *buffer_stateConfig0, ADS1115_channelConfig *buffer_stateConfig1);
 
 void ADS1115_routineCallbackWithGpioAlert(void);
 #endif

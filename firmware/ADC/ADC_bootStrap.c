@@ -5,24 +5,25 @@ static ADS1115_channelConfig ADS1115_ch1 = {0};
 static Pico_adcChannelConfig ADC_picoCh0 = {0};
 static Pico_adcChannelConfig ADC_picoCh1 = {0};
 
+
 void ADC_bootStrap(void)
 {
     /// ADS1115 initialization
     ADS1115_init();
     ADS1115_setChannelDoubleBuffering(ADS1115_channel_0, ADC_ADS1115SampleNumber, &ADS1115_ch0);
     ADS1115_setChannelDoubleBuffering(ADS1115_channel_1, ADC_ADS1115SampleNumber, &ADS1115_ch1);
+    ADS1115_setModeWithGpioAlert(true, &ADS1115_ch0, &ADS1115_ch1);
 
     /// PI Pico(embedded) ADC initialization 
-    /// ADC_PicoDMAModeInit(); /// - due to only one dma in RP2040 and its urgent need in digital part we don't use DMA mode in ADC
     ADC_PicoStandardModeInit(ADC_PicoChannel_0, ADC_PicoSampleNumber, &ADC_picoCh0);
     ADC_PicoStandardModeInit(ADC_PicoChannel_1, ADC_PicoSampleNumber, &ADC_picoCh1);
 }
 
-void ADC_DMAModeIrq(void)
+void ADC_DmaModeIrq(void)
 {
     /// ADS1115 I2C pooling routine ///
-    ADS1115_routineCallback(&ADS1115_ch0);
-    ADS1115_routineCallback(&ADS1115_ch1);
+    ADS1115_saveData(&ADS1115_ch0, ADS1115_getSample(ADS1115_channel_0));
+    ADS1115_saveData(&ADS1115_ch1, ADS1115_getSample(ADS1115_channel_1));
 }
 
 void ADC_standardModeIrq(void)
@@ -35,8 +36,9 @@ void ADC_standardModeIrq(void)
     if(++ADS1115_ctr >= 10)
     {
         ADS1115_ctr = 0; 
-        ADS1115_routineCallback(&ADS1115_ch0);
-        ADS1115_routineCallback(&ADS1115_ch1);
+        //ADS1115_routineCallback(&ADS1115_ch0, ADS1115_getSample(ADS1115_channel_0));
+        //ADS1115_routineCallback(&ADS1115_ch1, ADS1115_getSample(ADS1115_channel_1));
+        ADS1115_routineCallbackWithGpioAlert();
     }
 
     ADS1115_ctr++;
@@ -61,8 +63,7 @@ uint16_t *ADS1115_ADCGetData(uint8_t channel_number)
         break;
 
         default:
-            return NULL;
-            
+            return NULL;       
     }
 }
 
@@ -86,3 +87,4 @@ uint16_t *ADC_PicoStandardModeGetData(uint8_t ADC_channelNumber)
     }
     return NULL;
 }
+

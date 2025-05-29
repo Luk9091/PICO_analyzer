@@ -22,7 +22,7 @@ uint16_t *ADS1115_ADCGetData(uint8_t channel_number);
 uint16_t *ADC_PicoStandardModeGetData(uint8_t ADC_channelNumber);
 
 
-void ADC_DMAModeIrq(void);
+void ADC_DmaModeIrq(void);
 void ADC_standardModeIrq(void);
 
 #endif
