@@ -53,8 +53,16 @@
     logic ports=ieee,
     logic ports/scale=0.7,
 }
+\usepgfplotslibrary{external}
+\tikzexternalize[prefix=figs/]
+
 
 \usetikzlibrary{arrows.meta, positioning}
+
+\usepackage[polish]{babel}
+\usepackage{csquotes}
+\usepackage[sorting=none]{biblatex}
+\bibliography{bibliography.bib}
 
 \usepackage{listings}
 \lstset{
@@ -126,4 +134,10 @@ literate=%
         Krzysztof Płonka,\\
         Paweł Olbrych
     \end{flushright}
+
+
+    \newpage
+    \pagenumbering{gobble}
+    \nocite{*}
+    \printbibliography
 \end{document}

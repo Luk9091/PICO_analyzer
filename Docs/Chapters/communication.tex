@@ -34,7 +34,7 @@ Analizator do komunikacji wykorzystuje dwie metody transmisji: WIFI lub USB.
 
 
 \subsection{Komunikacja przewodowa - USB}
-    Układ RP2040 jak i RP2350 wyposażone są w kontrolery $USB 2.0$ umożliwiające transmisję z maksymalną szybkością $12Mbps$.
+    Układ RP2040 jak i RP2350 wyposażone są w kontrolery $USB 1.2$ umożliwiające transmisję z maksymalną prędkością $12Mbps$.
     Jednak aby wykorzystać maksymalną przepustowość kanału, niezbędne jest stworzenie dodatkowego sterownika, po stronie komputera odbiorczego.
     Aby maksymalnie uprościć proces przesyłania danych, oraz zapewnić jak największą szybkość transmisji, kontroler USB został ustawiony w tryb CDC (Communication Device Class),
     pozwalający na emulację komunikacji szeregowej.
@@ -56,3 +56,53 @@ Analizator do komunikacji wykorzystuje dwie metody transmisji: WIFI lub USB.
 
     Jak widać wykorzystanie sprzętowego kontrolera USB niesie ze sobą olbrzymią przewagę.
     A dodatkowe wyeliminowanie, funkcji formatującej pozwala przyspieszyć prędkość ponad pięciokrotnie!
+
+
+\subsection{Ramka transmisyjna}
+    Powyższa analiza pozwoliła, zbudować warstwę fizyczną (\citetitle{Model_TCP_IP} \cite{Model_TCP_IP}).
+    Następnym krokiem, powinna być (zgodnie z modelem TCP/IP) warstwa internetowa, jednak w przypadku sieci PAN, ten problemem rozwiązuje się samoistnie.
+    Także ostatnim krokiem poprzedzającym powstanie interfejsu użytkownika, zostaje zdefiniowanie ramki transmisyjnej.
+
+    \subsubsection{Wielkość ramki danych}
+        Wybór szerokości ramki, okazuje się nie trywialnym zadaniem i jest próbą znalezienia złotego środka między ograniczeniami sprzętowymi (pamięć RAM mikrokontrolera),
+        czy wymogami standardów komunikacji (np. czas dostępu do okna transmisyjnego).
+
+        W przypadku transmisji USB zgodnie z dokumentacją standardu \citetitle{USB20} \cite{USB20} maksymalna długość ramki jest ograniczona 64 bajtów.
+        Co oznacza, że wszystkie ramki dłuższe niż 64 bajty, będą przez kontroler USB rozdzielane na paczki po 64 bajty.
+        Z tego względu, dobrym pomysłem wydaje się ramka o rozmiarze będącym całkowitą wielokrotnością 64.
+
+        Inna sytuacja występuje podczas przesyłania danych bezprzewodowo.
+        Ograniczeniem transmisji nie jest głębokość rami (od 0 do nawet 2304 bajtów danych \citetitle{WiFi} \cite{WiFi}),
+        natomiast synchroniczność przesyłania danych w ściśle określonych oknach czasowych.
+
+        Podsumowując sensownym wydaję się ramka zawierająca między 256 a 512 bajtów.
+    
+    \subsection{Pola danych}
+        Po określeniu rozmiaru danych, należy ustalić sposób ułożenia danych.
+        Proponowanym przez autorów rozwiązanie przedstawia rysunek \ref{fig:frame}.
+
+        \begin{figure}[!ht]
+            \centering
+            \begin{circuitikz}
+                \draw
+                    (0, 0) node [draw, rectangle, minimum width = 2cm, minimum height = 2cm, align = center]{Tag\\2 bajty}
+                    (2, 0) node [draw, rectangle, minimum width = 2cm, minimum height = 2cm, align = center]{Addition\\2 bajty}
+                    (7, 0) node [draw, rectangle, minimum width = 8cm, minimum height = 2cm, align = center]{Payload\\252 - 508 bajtów}
+                ;
+            \end{circuitikz}
+            \caption{Przykładowa ramka transmisyjna}
+            \label{fig:frame}
+        \end{figure}
+
+        Opis pol w ramce
+        \begin{itemize}
+            \item Tag -- pole indetyfikacji, zawierające informację o tym co przenosi dana ramka,
+            \item Addition -- pole wypełniające, pole zawierające dwa zerowe bajty, możliwe do wykorzystania w przyszłości,
+            \item Payload -- pole z odpowiednimi danymi.
+        \end{itemize}
+    
+    \subsection{Ułożenie danych}
+        Moduł analizatora stanów logicznych pozwala na dużą dowolność w ustawionej konfiguracji.
+        Użytkownik może między innymi ustawić zapis próbek cyfrowych wraz z sygnaturą.
+        Wymusza to ograniczenia co do rozmiaru rozmiaru payload'u - jego głębokość musi być wielokrotnością 4 bajtów.
+        Dzięki zastosowaniu tego ograniczenia, dane mogą być wysłane z przeplotem.

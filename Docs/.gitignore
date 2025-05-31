@@ -8,3 +8,9 @@ build
 *.fdb_latexmk
 *.log
 main.pdf
+figs
+*.auxlock
+*.bbl
+*.bcf
+*.blg
+*.run.xml
