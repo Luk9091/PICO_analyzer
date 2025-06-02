@@ -24,7 +24,7 @@ QWidget(parent),
     connect(&deviceSelector, &Serial_ComboBox::lostPort, this, &Serial_UI::portClose);
 }
 
-void Serial_UI::addSerialInstance(QSharedPointer<Serial> sharedSerial){
+void Serial_UI::addSerialInstance(QPointer<Serial> sharedSerial){
     serial = sharedSerial;
 }
 
@@ -62,6 +62,7 @@ void Serial_ComboBox::updateDeviceList(){
 
     auto devList = getDevList();
     addItems(devList);
+    addItem("/dev/pts/6");
     if (!devList.contains(current)){
         emit lostPort();
     }

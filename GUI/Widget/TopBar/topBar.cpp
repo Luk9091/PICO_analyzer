@@ -1,7 +1,6 @@
 #include "topBar.hpp"
 
 
-
 TopBar::TopBar(QWidget *parent):
 QWidget(parent),
     id(0)
@@ -22,8 +21,8 @@ void TopBar::place(){
     QLabel *mode_label = new QLabel("Mode:", this);
     QLabel *buffer_label = new QLabel("Buffer:", this);
     mode_selector = new QComboBox(this);
-    preBuffer_edit = new QLineEdit(this);
-    buffer_edit = new QLineEdit(this);
+    preBuffer_edit  = new ValueEdit(0, 0, 65'535, this);
+    buffer_edit     = new ValueEdit(0, 0, 65'535, this);
 
     QLabel *trigMode_label = new QLabel("Trigger:", this);
     QLabel *trigSrc_label  = new QLabel("Source:", this);
@@ -66,6 +65,7 @@ void TopBar::place(){
     });
 
     connect(run_button, &QPushButton::clicked, this, [this](){
+        emit sendConfig(DEVICE_RUN);
         emit runCaption();
     });
 }

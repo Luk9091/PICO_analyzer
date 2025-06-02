@@ -54,12 +54,27 @@ ValueEdit::ValueEdit(int min, int max, QWidget *parent):
 {
     setRange(min, max);
 }
+ValueEdit::ValueEdit(int value, int min, int max, QWidget *parent):
+    ValueEdit(min, max, parent)
+{
+    setValue(value);
+}
 
-QString ValueEdit::getNumberValue(){
+int ValueEdit::getValue(){
     bool ok;
     int base;
     int value = convert2Int(text(), &ok, &base);
+    return value;
+}
+
+QString ValueEdit::getNumberValue(){
+    int value = getValue();
     return QString::number(value);
+}
+
+void ValueEdit::setValue(int value){
+    
+    setText(QString::number(value));
 }
 
 void ValueEdit::setRange(int min, int max){

@@ -39,12 +39,12 @@ private:
     QPushButton         connectionButton;
     Serial_ComboBox     deviceSelector;
 
-    QSharedPointer<Serial> serial;
+    QPointer<Serial> serial;
 
 public:
     Serial_UI(QWidget *parent = nullptr);
     Serial_UI(const QString& serialDevName, QWidget *parent = nullptr);
-    void addSerialInstance(QSharedPointer<Serial> sharedSerial);
+    void addSerialInstance(QPointer<Serial> sharedSerial);
     // ~Serial_UI();
 
 private:

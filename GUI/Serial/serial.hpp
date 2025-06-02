@@ -11,6 +11,10 @@
 QStringList getDevList();
 
 
+typedef union {
+    uint32_t u32;
+    char  u8[4];
+} toByte;
 
 
 class Serial: public QObject{
@@ -18,6 +22,7 @@ class Serial: public QObject{
 private:
     QSerialPort device;
     QQueue<QByteArray> readQueue;
+    bool setPort;
 
     bool busy;
 public:
@@ -34,15 +39,17 @@ public:
     bool release();
 
     int write(const QString& str);
+    int writeInt(const uint32_t data);
     int read(QString& str);
-    // int readLine(QString& out);
-    // int readUntil(void *data, int size = 1);
+    int read(QVector<uint16_t>& data);
+
 
     bool readQueue_isEmpty();
     int  readQueue_len();
 
 signals:
-    void lineReceive(const QString& line);
+    void receivedData();
+
 
 private slots:
     void readyRead_handler();

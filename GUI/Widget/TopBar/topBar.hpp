@@ -10,6 +10,8 @@
 #include <QLineEdit>
 #include "valueEdit.hpp"
 
+#include "communicationConfig.h"
+
 class TopBar: public QWidget{
     Q_OBJECT
 private:
@@ -17,8 +19,8 @@ private:
     QPushButton *run_button;
     QGridLayout *layout;
     QComboBox   *mode_selector;
-    QLineEdit   *buffer_edit;
-    QLineEdit   *preBuffer_edit;
+    ValueEdit   *buffer_edit;
+    ValueEdit   *preBuffer_edit;
     QComboBox   *trigMode_selector;
     QComboBox   *trigSrc_selector;
     QLineEdit   *sampleFreq_setter;
@@ -33,5 +35,7 @@ private:
 
 signals:
     void addChart(uint gpio, const QString& label);
+    // void sendConfig(const QString& data);
+    void sendConfig(const uint32_t data);
     void runCaption();
 };

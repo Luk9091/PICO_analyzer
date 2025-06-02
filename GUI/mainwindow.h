@@ -7,11 +7,14 @@
 #include <QVBoxLayout>
 #include <QScrollArea>
 #include <QScrollBar>
+#include <QTimer>
 
 #include "serial.hpp"
 #include "topBar.hpp"
 #include "serial_ui.hpp"
-#include "digitalChart.hpp"
+#include "chart.hpp"
+// #include "digitalChart.hpp"
+#include "addChartWindow.hpp"
 
 class MainWindow : public QMainWindow
 {
@@ -23,7 +26,8 @@ private:
     QScrollArea *charts_scroll;
     QVBoxLayout *charts_layout;
     QWidget     *charts_container;
-    QList<DigitalChart*> charts;
+    QList<Chart*> charts;
+    QTimer      chartUpdate_timer;
     
 
     QGridLayout *layout;
@@ -31,18 +35,28 @@ private:
 
     Serial serial;
     
+    bool addChartWindow_isOpen = false;
+    AddChartWindow *addChartWindow = nullptr;
 
     QVector<uint16_t> data;
-    QVector<uint16_t> timeStamp;
+    QVector<uint16_t> time;
 
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-private:
-    void addChart(uint gpio, const QString& label);
-    void removeChart(uint index);
+protected:
+    void closeEvent(QCloseEvent *event) override;
+
+private slots:
+    void addChart(Chart *chart);
     void updateChart();
     void moveChartAxis(int scrollValue);
+
+    void storeNewData();
+    void runCaption();
+
+    void openAddChatWindow();
+    void onCloseAddChartWindow();
 };
 #endif // MAINWINDOW_H

@@ -36,6 +36,9 @@ QObject(parent), device(this)
 
     if (open){
         device.open(QIODevice::ReadWrite);
+        setPort = true;
+    } else {
+        setPort = false;
     }
 
     busy = false;
@@ -43,22 +46,29 @@ QObject(parent), device(this)
 
 
 Serial::~Serial(){
-    if (device.isOpen()){
+    if (isOpen()){
         device.close();
     }
 }
 
 bool Serial::isOpen(){
+    if (!setPort) return false;
     return device.isOpen();
 }
 
 bool Serial::open(const QString& port){
-    if (device.isOpen()) return false;
+    if (setPort){
+        if (device.isOpen()) return false;
+    }
 
     if (!port.isEmpty()){
         device.setPortName(port);
-    }
-    return device.open(QIODevice::ReadWrite);
+        setPort = true;
+        return device.open(QIODevice::ReadWrite);
+    } 
+
+    setPort = false;
+    return false;
 }
 
 void Serial::close(){
@@ -84,9 +94,20 @@ bool Serial::release(){
 
 
 int Serial::write(const QString& str){
+    if (!isOpen()) return 0;
     const QByteArray message = str.toUtf8();
     int status = device.write(message);
     return status;
+}
+
+int Serial::writeInt(const uint32_t data){
+    if (!isOpen()) return 0;
+    QByteArray message {};
+    toByte convert = {.u32 = data};
+    for (uint i = 0; i < 4; i++){
+        message.append(convert.u8[3-i]);
+    }
+    return device.write(message);
 }
 
 int Serial::read(QString& str){
@@ -96,6 +117,22 @@ int Serial::read(QString& str){
     str = QString::fromUtf8(data);
     return str.length();
 }
+
+int Serial::read(QVector<uint16_t>& data){
+    if (readQueue.isEmpty()) return 0;
+
+    QByteArray byteArray = readQueue.dequeue();
+    QDataStream stream(byteArray);
+
+    while (!stream.atEnd()){
+        quint16 value;
+        stream >> value;
+        data.append(value);
+    }
+
+    return byteArray.length()/2;
+}
+
 
 bool Serial::readQueue_isEmpty(){
     return readQueue.isEmpty();
@@ -110,4 +147,5 @@ void Serial::readyRead_handler(){
     buffer = device.read(SERIAL_MSG_MAX_SIZE);
 
     readQueue.enqueue(buffer);
+    emit receivedData();
 }
