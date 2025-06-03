@@ -7,6 +7,8 @@
 #include "hardware/gpio.h"
 #include "hardware/irq.h"
 #include "ring_buffer.h"
+#include "hardware/sync.h"
+#include "hardware/structs/i2c.h"
 
 #define ADS1115_SDAPin 20
 #define ADS1115_SCLPin 21
@@ -85,16 +87,39 @@ typedef struct{
     ring_buffer buffer_1;       // second swapping buffer
 }ADS1115_channelConfig;
 
+typedef enum{
+    I2C_READ_PHASE_IDLE     = 0,
+    I2C_READ_PHASE_WRITE    = 1,
+    I2C_READ_PHASE_READ     = 2,
+    I2C_READ_PHASE_DONE     = 3,
+    I2C_READ_PHASE_ERROR    = -1
+}I2C_irqReadPhase;
 
-/// @brief ADS1115 write data
-/// @param reg_mode - one of 4 available device registers 
-/// @param data     - data to save in register
-void ADS1115_writeReg(uint8_t reg_mode, uint16_t data);
+typedef enum{
+    I2C_WRITE_PHASE_IDLE    = 0,
+    I2C_WRITE_PHASE_WRITE   = 1,
+    I2C_WRITE_PHASE_DONE    = 2,
+    I2C_WRITE_PHASE_ERROR   = -1
+}I2C_irqWritePhase;
 
-/// @brief ADS1115 read data
-/// @param reg_mode - one of 4 available device registers 
-/// @param buffer   - buffer to store read data
-void ADS1115_readReg(uint8_t reg_mode, uint16_t *buffer);
+typedef struct{
+    /// ADS1115_writeRegAsync variable part ///
+    uint8_t user_configRegTypeW;     // ADS1115 config register type           
+    uint8_t user_dataToWriteW[2];    // uint16_t = [uint8_t | uint8_t]
+    uint8_t user_dataToWriteIndexW;  // point's to next dataToWrite array element
+    /// ********* ///
+
+    /// ADS1115_readRegAsync variable part ///
+    uint16_t *user_dataReceivedR;   // data received from ADS1115
+    bool user_dataReceivedValid;    // true - received full frame(uint16_t)
+    uint8_t user_configRegTypeR;    // uint16_t = [uint8_t | uint8_t]
+    uint8_t user_dataReceivedIndexR;// indicates received data from device
+    /// ********* ///
+
+    bool I2C_transmissionError;     // true - error occurred, 0 otherwise
+    I2C_irqReadPhase  I2C_irqReadPhase_t;
+    I2C_irqWritePhase I2C_irqWritePhase_t;
+}I2C_irqTransmissionState;
 
 /// @brief ADS1115 initialize 
 void ADS1115_init(void);
@@ -132,10 +157,13 @@ void ADS1115_setChannelDoubleBuffering(uint8_t channel_number, uint32_t buffer_s
 /// @brief double buffering mode callback
 /// @param channel_number - --
 /// @param new_adcSample - -- 
-void ADS1115_saveData(ADS1115_channelConfig *buffer_state, uint16_t new_adcSample);
+void ADS1115_doubleBufferingSaveData(ADS1115_channelConfig *buffer_state, uint16_t new_adcSample);
 
 
 void ADS1115_setModeWithGpioAlert(bool enable, ADS1115_channelConfig *buffer_stateConfig0, ADS1115_channelConfig *buffer_stateConfig1);
 
-void ADS1115_routineCallbackWithGpioAlert(void);
+//void ADS1115_routineCallbackWithGpioAlert(void);
+
+bool ADS1115_irqModeGetData(uint16_t *data);
+void ADS1115_irqModeRoutine(void);
 #endif

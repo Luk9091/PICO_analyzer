@@ -89,6 +89,7 @@ target_link_libraries(${PROJECT_NAME}
     hardware_adc
     pico_util
     pico_cyw43_arch_lwip_threadsafe_background
+    hardware_sync
 )
 
 pico_enable_stdio_usb(${PROJECT_NAME}  1)

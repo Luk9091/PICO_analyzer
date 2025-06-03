@@ -25,10 +25,10 @@ static void core1_entry(void)
 
     while(true)
     {        
-        uint32_t mask = save_and_disable_interrupts();   
+        //uint32_t mask = save_and_disable_interrupts();   
         bool do_send = wifi_sendReady;                   
         wifi_sendReady = false;                          
-        restore_interrupts(mask);  
+        //restore_interrupts(mask);  
         if(do_send)
         {
             frame.ADC_ADS1115BufferCh0  = ADS1115_ADCGetData(ADS1115_channel_0); 
@@ -50,8 +50,8 @@ static void core1_entry(void)
             wifi_sendReady = false;
         }
 
-        cyw43_arch_poll();
-        sleep_ms(100);
+        //cyw43_arch_poll();
+        sleep_ms(10);
     }
 }
 
