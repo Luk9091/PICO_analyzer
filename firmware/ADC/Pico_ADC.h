@@ -44,9 +44,8 @@ void ADC_PicoInit(uint8_t ADC_channel);
 /// @brief initialize double buffering Pi Pico selected ADC standard mode
 /// @param channel_number - --
 /// @param buffer_size - --
-/// @param buffer_state - struct containing double buffering data
-/// 
-/// @param ADC_freq - 1kHz
+/// @param buffer_state - struct containing double buffering state and buffers
+/// @param ADC_freq - --
 void ADC_PicoStandardModeInit(uint8_t channel_number, uint32_t buffer_size, Pico_adcChannelConfig *buffer_state);
 
 /// @brief standard double buffering mode callback

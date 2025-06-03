@@ -13,5 +13,4 @@
 /// @param - --
 void core1_init(void);
 
-
 #endif

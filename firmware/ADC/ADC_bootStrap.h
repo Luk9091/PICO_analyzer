@@ -8,21 +8,21 @@
 #include <hardware/timer.h>
 
 
-/// @brief set up both(ADS1115 and Pi Pico ADC) ADC's
+/// @brief Sets up both the ADS1115 and Pi Pico ADCs.
 /// @param - --  
 void ADC_bootStrap(void);
+
+/// @brief ADS1115 & Pico ADC - standard mode IRQ. Use this IRQ handler in your repeating loop to perform periodic measurements.
+/// @param  - --
+void ADC_standardModeIrq(void);
 
 /// @brief ADS1115 received samples getter
 /// @param channel_number - --
 uint16_t *ADS1115_ADCGetData(uint8_t channel_number);
 
-/// @brief get Pi Pico standard mode current  buffer
+/// @brief Gets the proper buffer in standard mode for the Pi Pico ADC.
 /// @param channel - --
-/// @return pointer to current buffer
+/// @return pointer to proper buffer
 uint16_t *ADC_PicoStandardModeGetData(uint8_t ADC_channelNumber);
-
-
-void ADC_DmaModeIrq(void);
-void ADC_standardModeIrq(void);
 
 #endif

@@ -19,7 +19,7 @@
 #define UDP_port 4444
 #define SSID "PicoProbe"
 #define server_IP "192.168.0.1"
-#define password "my_secure_pass"
+#define password "my_secure_pass" 
 
 
 /// !!!! @todo -> HOW TO RESOLVE MULTI USER CASE !!!! /// 
@@ -42,7 +42,6 @@ void wifi_init(void);
 /// @param data - --
 /// @param data_size - -- 
 void wifi_sendData(const uint16_t *data, send_dataTag_t tag, size_t data_sizeByte);
-
 
 /// @brief print(pi pico) IP address
 /// @param - --

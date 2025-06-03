@@ -2,7 +2,7 @@
 
 static Pico_adcChannelConfigDmaMode DMA_state = {0};
 static void ADC_PicoDmaHandler(void);
-uint64_t timer = 0;
+
 
 void ADC_PicoStandardModeInit(uint8_t channel_number, uint32_t buffer_size, Pico_adcChannelConfig *buffer_state)
 {

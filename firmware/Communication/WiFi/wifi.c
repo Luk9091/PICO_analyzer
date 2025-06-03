@@ -34,7 +34,7 @@ static void wifi_receiveInit(void)
         receive_pcb = udp_new();
         if(receive_pcb == NULL)
         {
-            printf("Failed to create UDP PCB\n");
+            //printf("Failed to create UDP PCB\n");
             return;
         }
 
@@ -44,11 +44,15 @@ static void wifi_receiveInit(void)
             if (err == ERR_OK) 
                 udp_recv(receive_pcb, wifi_receiveCallback, NULL);
             else 
-                printf("Failed to bind UDP PCB\n");
+            {
+                //printf("Failed to bind UDP PCB\n");
+            }
         }
         else 
-            printf("Failed to create UDP PCB\n");
+        {
+            //printf("Failed to create UDP PCB\n");
         }
+    }
 }
 
 static void wifi_receiveCallback(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *addr, u16_t port)
@@ -75,13 +79,15 @@ void wifi_sendData(const uint16_t *data, send_dataTag_t tag, size_t data_sizeByt
         memcpy(payload + 1, data, data_sizeByte);
         err_t err = udp_sendto(send_pcb, p, &receiver_ipAddress, UDP_port);
         if (err != ERR_OK) 
-            printf("Failed to send UDP packet !!!\n");
+        {
+            // printf("Failed to send UDP packet !!!\n");
+        }
 
         pbuf_free(p);
     }
     else
     {
-        printf("Failed to allocate pbuf!\n");
+        // printf("Failed to allocate pbuf!\n");
     }
 }
 
@@ -90,10 +96,10 @@ void print_Ip_Address(void)
     struct netif *netif = netif_list;
     while (netif != NULL) {
         if (netif_is_up(netif) && netif->ip_addr.addr != 0) {
-            printf("IP address: %s\n", ip4addr_ntoa((ip4_addr_t *)&netif->ip_addr));
+            //printf("IP address: %s\n", ip4addr_ntoa((ip4_addr_t *)&netif->ip_addr));
             return;
         }
         netif = netif->next;
     }
-    printf("Unable to get IP address\n");
+    // printf("Unable to get IP address\n");
 }

@@ -19,13 +19,6 @@ void ADC_bootStrap(void)
     ADC_PicoStandardModeInit(ADC_PicoChannel_1, ADC_PicoSampleNumber, &ADC_picoCh1);
 }
 
-void ADC_DmaModeIrq(void)
-{
-    /// ADS1115 I2C pooling routine ///
-    ADS1115_saveData(&ADS1115_ch0, ADS1115_getSample(ADS1115_channel_0));
-    ADS1115_saveData(&ADS1115_ch1, ADS1115_getSample(ADS1115_channel_1));
-}
-
 void ADC_standardModeIrq(void)
 {
     static uint32_t ADS1115_ctr = 0;
@@ -33,12 +26,12 @@ void ADC_standardModeIrq(void)
     ADC_PicoStandardModeCallback(&ADC_picoCh0);
     ADC_PicoStandardModeCallback(&ADC_picoCh1);
 
-    if(++ADS1115_ctr >= 10)
+    if(ADS1115_ctr >= 10)
     {
         ADS1115_ctr = 0; 
-        //ADS1115_routineCallback(&ADS1115_ch0, ADS1115_getSample(ADS1115_channel_0));
-        //ADS1115_routineCallback(&ADS1115_ch1, ADS1115_getSample(ADS1115_channel_1));
-        ADS1115_routineCallbackWithGpioAlert();
+        ADS1115_doubleBufferingSaveData(&ADS1115_ch0, ADS1115_getSample(ADS1115_channel_0));
+        ADS1115_doubleBufferingSaveData(&ADS1115_ch1, ADS1115_getSample(ADS1115_channel_1));
+     
     }
 
     ADS1115_ctr++;
@@ -87,4 +80,3 @@ uint16_t *ADC_PicoStandardModeGetData(uint8_t ADC_channelNumber)
     }
     return NULL;
 }
-
