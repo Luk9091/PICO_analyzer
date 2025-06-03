@@ -11,13 +11,17 @@
 #include "dma.h"
 #include "led.h"
 
-static bool _transferData = false;
+#include "communication_config.h"
+
+static inline enum pico_error_codes wireCommunication_validator(char *line);
+
+static bool transferData = false;
 
 void waitUntilRun(){
     do{
         LED_toggle();
         sleep_ms(100);
-    } while (!_transferData);
+    } while (!transferData);
     LED_on();
 }
 
@@ -46,7 +50,7 @@ void UART_rx_cb()
     char readMsg[MESSAGE_MAX_LEN];
     
     if (wireCommunication_read(readMsg)){
-        wireCommunication_valid(readMsg);
+        wireCommunication_validator(readMsg);
 #if LIB_PICO_STDIO_USB
         tud_cdc_write_flush();
 #endif
@@ -100,104 +104,107 @@ void wireCommunication_init(){
 }
 
 
-static inline char *nextToken(){
-    return strtok(0, " \n");
+static inline uint16_t nextToken(char *line, uint *index){
+    uint16_t data = 
+        line[(*index)*4 + 0] << 24 | line[(*index)*4 + 1] << 16 |
+        line[(*index)*4 + 2] << 8  | line[(*index)*4 + 3] << 0;
+    (*index)++;
+    return data;
 }
 
 static inline enum pico_error_codes wireCommunication_validator(char *line){
-    char *token = strtok(line, " ");
-    if(_transferData && strncmp(token, "DONE", 4) == PICO_OK){
-        _transferData = false;
-        print("\nSTOP\n", 6);
+    int index = 0;
+    uint token = nextToken(line, &index);
+
+    if(transferData && token == CMD_DEVICE_RUN){
+        transferData = false;
+        uint ret = TAG_OK;
+        print(&ret, 4);
     }
-    else if (_transferData){
+    else if (transferData){
         return PICO_ERROR_NOT_PERMITTED;
     }
-    else if(strncmp(token, "RUN", 3) == PICO_OK){
-        char *ok;
-        token = nextToken();
-        if (token == 0) return PICO_ERROR_INVALID_ARG;
-        int timerFreq = strtol(token, &ok, 10);
-        if (*ok != PICO_OK) return PICO_ERROR_INVALID_ARG;
-
-        ANALYZE_triggeredInit(timerFreq);
-        _transferData = true;
-    }
-    else if(strncmp(token, "CONTINUE", 8) == PICO_OK){
-        char *ok;
-        token = nextToken();
-        if (token == 0) return PICO_ERROR_INVALID_ARG;
-        int sampleFreq = strtol(token, &ok, 10);
-        if (*ok != PICO_OK) return PICO_ERROR_INVALID_ARG;
-
-        ANALYZE_continueInit(sampleFreq);
-        _transferData = true;
-    }
-    else if(strncmp(token, "COUNT", 5) == PICO_OK){
-        char *ok;
-        int args[2] = {};
-        for (uint i = 0; i < 2; i++){
-            token = nextToken();
-            if (token == 0) return PICO_ERROR_INVALID_ARG;
-            args[i] = strtol(token, &ok, 10);
-            if (*ok != PICO_OK){
-                return PICO_ERROR_INVALID_ARG;
-            }
-        }
-
-        ANALYZE_countInit(args[0], args[1]);
-        _transferData = true;
-        return PICO_OK;
-    }
-    else if(strncmp(token, "TRIGGER", 7) == 0){
-        token = nextToken();
-        if (token == 0) return PICO_ERROR_INVALID_ARG;
-        char *ok;
-        int triggerPin = strtol(token, &ok, 10);
-        if (*ok != PICO_OK){
-            return PICO_ERROR_INVALID_ARG;
-        }
-
-        ANALYZE_setTrigger(triggerPin);
-        return PICO_OK;
-    }
-    else if(strncmp(token, "HELLO", 5) == PICO_OK){
-        print("Raspberry PI PICO\n", 18);
-        char freqBuff[32] = {0};
-        uint freq = getMainFreq(); 
-        
-        sprintf(freqBuff, "Clock: %3iMHz\n", freq);
-        print(freqBuff, strlen(freqBuff));
-    }
     else {
-        return PICO_ERROR_IO;
+        switch (token)
+        {
+        case CMD_DEVICE_RUN:{
+            transferData = true;
+        } break;
+
+        case CMD_DIGITAL_MODE_TRIGGERED:{
+            token = nextToken(line, &index);
+            if (token == 0) return PICO_ERROR_INVALID_ARG;
+            ANALYZE_triggeredInit(token);
+        } break;
+
+        case CMD_DIGITAL_MODE_FREERUN:{
+            token = nextToken(line, &index);
+            if (token == 0) return PICO_ERROR_INVALID_ARG;
+
+            ANALYZE_continueInit(token);
+        } break;
+
+        case CMD_DIGITAL_MODE_COUNT:{
+            int args[2] = {};
+            for (uint i = 0; i < 2; i++){
+                token = nextToken(line, &index);
+                if (token == 0) return PICO_ERROR_INVALID_ARG;
+                args[i] = token;
+            }
+            ANALYZE_countInit(args[0], args[1]);
+            transferData = true;
+            return PICO_OK;
+        }
+
+        case CMD_DIGITAL_SET_TRIGGER_PIN:{
+        // else if(strncmp(token, "TRIGGER", 7) == 0){
+            token = nextToken(line, &index);
+            if (token == 0) return PICO_ERROR_INVALID_ARG;
+
+            ANALYZE_setTrigger(token);
+            return PICO_OK;
+        }
+
+        case CMD_PICO_HELLO:{
+            print("Raspberry PI PICO\n", 18);
+            char freqBuff[32] = {0};
+            uint freq = getMainFreq(); 
+            
+            sprintf(freqBuff, "Clock: %3iMHz\n", freq);
+            print(freqBuff, strlen(freqBuff));
+        }
+            
+        default:
+            return PICO_ERROR_IO;
+        }
     }
+
     return PICO_OK;
 
 }
 
 
-enum pico_error_codes wireCommunication_valid(char *line){
-    enum pico_error_codes error = wireCommunication_validator(line);
+// enum pico_error_codes wireCommunication_valid(char *line){
+//     enum pico_error_codes error = wireCommunication_validator(line);
 
-    switch (error)
-    {
-    case PICO_ERROR_NOT_PERMITTED:
-    // No permitted send operation
-    // Doesn't interrupt send stream
-        break;
-    case PICO_OK:
-        print("OK\n", 3);
-        break;
-    case PICO_ERROR_INVALID_ARG:
-        print("Invalid argument\n", 17);
-        break;
-    default:
-        print("Syntax error\n", 13);
-        break;
-    }
-    return error;
-}
+//     switch (error)
+//     {
+//     case PICO_ERROR_NOT_PERMITTED:
+//     // No permitted send operation
+//     // Doesn't interrupt send stream
+//         break;
+//     case PICO_OK:
+//         print("OK\n", 3);
+//         break;
+//     case PICO_ERROR_INVALID_ARG:
+//         print("Invalid argument\n", 17);
+//         break;
+//     default:
+//         print("Syntax error\n", 13);
+//         break;
+//     }
+//     return error;
+// }
 
 
 
@@ -207,12 +214,13 @@ void wireCommunication_sendWithTimeProcedure(){
     uint32_t nowriteDelay = 0;
     uint32_t dmaSel = 0;
 
-    while (_transferData){
+    while (transferData){
         uint32_t dmaIndex = dma_getCurrentIndex(dmaSel);
         if (index != dmaIndex){
-            // print((uint8_t*)(timeStamp  + index), 2);
-            // print((uint8_t*)(sampleData + index), 2);
-            printf("Index: %4u, dmaIndex: %4u, time: %4hu, data: 0x%X\n", index, dmaIndex, (uint16_t)(timeStamp[index]), (uint16_t)(sampleData[index]));
+            int count = print((uint8_t*)(timeStamp  + index), 2);
+            count = print((uint8_t*)(sampleData + index), 2);
+            print("Count: %u", count);
+            // printf("Index: %4u, dmaIndex: %4u, time: %4hu, data: 0x%X\n", index, dmaIndex, (uint16_t)(timeStamp[index]), (uint16_t)(sampleData[index]));
             index++;
 
             if (index >= DATA_SIZE){
@@ -251,16 +259,28 @@ void wireCommunication_sendWithTimeProcedure(){
 #endif
 }
 
-void wireCommunication_sendProcedure(){
+static inline int addHeader(send_dataTag_t mode){
+    uint16_t padding = 0;
+    print((uint8_t*)mode, 2);
+    print((uint8_t*)padding, 2);
+    return 4;
+}
+
+void wireCommunication_sendProcedure(send_dataTag_t mode){
     uint32_t index = 0;
     uint32_t nowriteDelay = 0;
     uint32_t dmaSel = 0;
+    uint32_t count = MESSAGE_MAX_LEN;
 
-    while (_transferData){
+    while (transferData){
         uint32_t dmaIndex = dma_getCurrentIndex(dmaSel);
         if (index != dmaIndex){
-            // print((uint8_t*)(sampleData + index), 2);
-            printf("Index: %4i, dmaIndex: %4i, data: 0x%X\n", index, dmaIndex, (uint16_t)(sampleData[index]));
+            if (count >= MESSAGE_MAX_LEN-4){
+                addHeader(mode);
+                count = 0;
+            }
+            count += print((uint8_t*)(sampleData + index), 2);
+            // printf("Index: %4i, dmaIndex: %4i, data: 0x%X\n", index, dmaIndex, (uint16_t)(sampleData[index]));
             index++;
 
             if (index >= (DATA_SIZE*2)){

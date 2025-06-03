@@ -38,7 +38,7 @@ static inline int print(const void *str, uint32_t size){
 
 void wireCommunication_run();
 void wireCommunication_init();
-enum pico_error_codes wireCommunication_valid(char *line);
+// enum pico_error_codes wireCommunication_valid(char *line);
 
 static inline uint wireCommunication_read(const char *str);
 void wireCommunication_sendWithTimeProcedure();
