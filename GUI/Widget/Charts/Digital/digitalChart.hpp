@@ -9,6 +9,6 @@ private:
 public:
     DigitalChart(uint GPIO, QWidget *parent = nullptr);
 
-    void setSeries      (QVector<uint16_t> &data, qreal timeSpan) override;
-    void setSeries      (QVector<uint16_t> &data, QVector<uint16_t> timeSpan) override;
+    void setSeries      (std::array<uint16_t, 65536> &data, qreal timeSpan) override;
+    void setSeries      (std::array<uint16_t, 65536> &data, std::array<uint16_t, 65536> &timeSpan) override;
 };

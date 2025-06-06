@@ -34,17 +34,36 @@ void ValueEdit::validator(){
     QString prefix = "";
     if (base == 16) prefix = "0x";
     else if (base == 2) prefix = "0x";
-    
+
+
     if (value > maximum){
         setText(prefix + QString::number(maximum, base).toUpper());
     } else if (value < minimum){
         setText(prefix + QString::number(minimum, base).toUpper());
+    } else {
+        value = roundToStep(value);
+        setText(prefix + QString::number(value, base).toUpper());
     }
+    storeValue = value;
 }
+
+
+int ValueEdit::roundToStep(int value){
+    if (step == 1) return value;
+
+    int remainder = value % step;
+    if (remainder < step / 2) {
+        return value - remainder;
+    }
+    
+    return value + (step - remainder);
+}
+
 
 ValueEdit::ValueEdit(QWidget *parent):
     QLineEdit(parent)
 {
+    step = 1;
     correct = false;
     connect(this, &QLineEdit::editingFinished, this, &ValueEdit::validator);
 }
@@ -54,32 +73,41 @@ ValueEdit::ValueEdit(int min, int max, QWidget *parent):
 {
     setRange(min, max);
 }
+
 ValueEdit::ValueEdit(int value, int min, int max, QWidget *parent):
     ValueEdit(min, max, parent)
 {
     setValue(value);
 }
 
+ValueEdit::ValueEdit(int value, int min, int max, int step, QWidget *parent):
+    ValueEdit(value, min, max, parent)
+{
+    setStep(step);
+    validator();
+}
+
+
 int ValueEdit::getValue(){
-    bool ok;
-    int base;
-    int value = convert2Int(text(), &ok, &base);
-    return value;
+    return storeValue;
 }
 
 QString ValueEdit::getNumberValue(){
-    int value = getValue();
-    return QString::number(value);
+    return QString::number(storeValue);
 }
 
 void ValueEdit::setValue(int value){
-    
     setText(QString::number(value));
 }
 
 void ValueEdit::setRange(int min, int max){
     minimum = min;
     maximum = max;
+}
+
+void ValueEdit::setStep(uint value){
+    if (value <= 0) value = 1;
+    step = value;
 }
 
 bool ValueEdit::isCorrect(){

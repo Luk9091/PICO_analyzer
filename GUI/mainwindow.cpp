@@ -35,12 +35,16 @@ QMainWindow(parent),
     connect(topBar, &TopBar::runCaption,    this, &MainWindow::runCaption);
     // connect(charts_scroll->horizontalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::moveChartAxis);
     connect(&chartUpdate_timer, &QTimer::timeout, this, &MainWindow::updateChart);
+    connect(&serial, &Serial::receivedData,  this, &MainWindow::storeNewData);
 
-    chartUpdate_timer.setInterval(50);
+    chartUpdate_timer.setInterval(100);
 }
 
 
 void MainWindow::addChart(Chart *chart){
+    bool pauseTimer = chartUpdate_timer.isActive();
+    chartUpdate_timer.stop();
+
     chart->setParent(charts_scroll);
     connect(chart, &Chart::removeMe, this, [this, chart](){
         layout->removeWidget(chart);
@@ -50,31 +54,68 @@ void MainWindow::addChart(Chart *chart){
  
     charts_layout->addWidget(chart, 0, Qt::AlignTop);
     charts.append(chart);
+
+    if (pauseTimer) chartUpdate_timer.start();
 }
 
-void MainWindow::runCaption(){
-    // updateChart();
-    for (auto chart: charts){
-        chart->clear();
+void MainWindow::runCaption(bool state, QVector<uint32_t> toSend){
+    QVector<uint32_t> run;
+    if (state){
+        serial.clear();
+        for (auto chart: charts){
+            chart->clear();
+        }
+        data.clear();
+        time.clear();
+
+        serial.writeInt(toSend);
+        run.append(CMD_DEVICE_RUN);
+
+        chartUpdate_timer.start();
+    } else {
+        chartUpdate_timer.stop();
+        run.append(CMD_DEVICE_STOP);
     }
-    data.clear();
-    time.clear();
 
-
-    connect(&serial, &Serial::receivedData,  this, &MainWindow::storeNewData);
-    chartUpdate_timer.start();
+    serial.writeInt(run);
 }
 
 void MainWindow::storeNewData(){
-    serial.read(data);
+    QVector<uint16_t> read;
+    int32_t tag = serial.read(read);
+
+    if (data.length() >= topBar->getSampleLimit()){
+        data.clear();
+        time.clear();
+    }
+
+    switch (tag){
+        case TAG_DIGITAL:{
+            data.append(read);
+        }break;
+        case TAG_DIGITAL_TIMER:{
+            for(uint i = 0; i < read.length(); i++){
+                if (i % 2 == 0){
+                    data.append(read.at(i));
+                } else {
+                    time.append(read.at(i));
+                }
+            }
+        }break;
+
+        
+        default:
+            break;
+    }
 }
 
 void MainWindow::updateChart(){
     for (auto chart: charts){
+        // if (time.size)
         if (time.length() == data.length() && time.length()){
             chart->setSeries(data, time);
         } else {
-            chart->setSeries(data, 1);
+            chart->setSeries(data, 0.2);
         }
     }
 }

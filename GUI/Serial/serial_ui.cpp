@@ -62,7 +62,7 @@ void Serial_ComboBox::updateDeviceList(){
 
     auto devList = getDevList();
     addItems(devList);
-    addItem("/dev/pts/6");
+    addItem("/dev/pts/7");
     if (!devList.contains(current)){
         emit lostPort();
     }

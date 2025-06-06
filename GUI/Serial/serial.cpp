@@ -1,5 +1,6 @@
 #include "serial.hpp"
-#include <QDebug>
+
+#include "communicationConfig.h"
 
 QStringList getDevList(){
     QStringList list;
@@ -62,6 +63,7 @@ bool Serial::open(const QString& port){
     }
 
     if (!port.isEmpty()){
+        clear();
         device.setPortName(port);
         setPort = true;
         return device.open(QIODevice::ReadWrite);
@@ -72,8 +74,17 @@ bool Serial::open(const QString& port){
 }
 
 void Serial::close(){
+    QVector<uint32_t> data;
+    data.append(CMD_DEVICE_STOP);
+    writeInt(data);
+
     device.close();
-    busy = false;
+}
+
+void Serial::clear(){
+    release();
+    writeQueue.clear();
+    readQueue.clear();
 }
 
 
@@ -96,18 +107,36 @@ bool Serial::release(){
 int Serial::write(const QString& str){
     if (!isOpen()) return 0;
     const QByteArray message = str.toUtf8();
-    int status = device.write(message);
-    return status;
+    if (!isBusy()){
+        writeWithQueue();
+    }
+    return message.length();
+    // return device.write(message);
 }
 
-int Serial::writeInt(const uint32_t data){
+int Serial::writeInt(const QVector<uint32_t>& data){
     if (!isOpen()) return 0;
     QByteArray message {};
-    toByte convert = {.u32 = data};
-    for (uint i = 0; i < 4; i++){
-        message.append(convert.u8[3-i]);
+
+    for (uint i = 0; i < data.length(); i++){
+        toByte convert = {.u32 = data.at(i)};
+        for (uint i = 0; i < 4; i++){
+            message.append(convert.u8[3-i]);
+        }
     }
-    return device.write(message);
+
+    char EOL = 0;
+    for (uint i = 0; i < 4; i++){
+        message.append(EOL);
+    }
+
+    writeQueue.enqueue(message);
+
+    if (!isBusy()){
+        writeWithQueue();
+    }
+    return message.length();
+    // return device.write(message);
 }
 
 int Serial::read(QString& str){
@@ -122,15 +151,18 @@ int Serial::read(QVector<uint16_t>& data){
     if (readQueue.isEmpty()) return 0;
 
     QByteArray byteArray = readQueue.dequeue();
-    QDataStream stream(byteArray);
 
-    while (!stream.atEnd()){
-        quint16 value;
-        stream >> value;
-        data.append(value);
+    int32_t tag = 0;
+    for (uint i = 0; i < byteArray.length(); i += 2){
+        uint16_t value = byteArray.at(i+1) << 8 | byteArray.at(i) << 0;
+        if (i < 2){
+            tag |= value;
+        } else if (i >= 4) {
+            data.append(value);
+        }
     }
 
-    return byteArray.length()/2;
+    return tag;
 }
 
 
@@ -143,9 +175,31 @@ int Serial::readQueue_len(){
 }
 
 void Serial::readyRead_handler(){
+    if (!device.isOpen()) return;
     QByteArray buffer;
     buffer = device.read(SERIAL_MSG_MAX_SIZE);
+    int tag = buffer[3] << 24 | buffer[2] << 16 | buffer[1] << 8 | buffer[0];
 
-    readQueue.enqueue(buffer);
-    emit receivedData();
+    if (tag == TAG_OK){
+        writeWithQueue();
+    }
+    else if (tag < TAG_OK){
+        writeQueue.clear();
+        release();
+    }
+    else if (tag > TAG_OK) {
+        readQueue.enqueue(buffer);
+        emit receivedData();
+    }
+}
+
+void Serial::writeWithQueue(){
+    if (writeQueue.isEmpty()){
+        release();
+        return;
+    }
+
+    take();
+    auto message = writeQueue.dequeue();
+    device.write(message);
 }

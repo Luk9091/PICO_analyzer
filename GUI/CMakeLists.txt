@@ -23,6 +23,9 @@ qt_add_executable(${PROJECT_NAME}
     Widget/Charts/chart.cpp
     Widget/Charts/Digital/digitalChart.cpp
     Widget/Charts/Analog/analogChart.cpp
+
+
+    Array2D/array2d.cpp
 )
 
 include_directories(${PROJECT_NAME}
@@ -35,6 +38,8 @@ include_directories(${PROJECT_NAME}
     Widget/Charts
     Widget/Charts/Digital
     Widget/Charts/Analog
+
+    Array2D
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE 
