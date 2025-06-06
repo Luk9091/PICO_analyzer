@@ -42,9 +42,7 @@ private:
     bool addChartWindow_isOpen = false;
     AddChartWindow *addChartWindow = nullptr;
 
-    // Array2D<uint16_t, 65536> data;
-    QVector<uint16_t> data;
-    QVector<uint16_t> time;
+    Array2D<uint16_t, 65536> data;
 
 public:
     MainWindow(QWidget *parent = nullptr);

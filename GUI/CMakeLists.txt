@@ -25,7 +25,7 @@ qt_add_executable(${PROJECT_NAME}
     Widget/Charts/Analog/analogChart.cpp
 
 
-    Array2D/array2d.cpp
+    # Array2D/array2d.cpp
 )
 
 include_directories(${PROJECT_NAME}

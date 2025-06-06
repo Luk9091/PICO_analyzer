@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <span>
 // #include <pair>
 #include <QWidget>
 
@@ -12,7 +13,7 @@ private:
     std::array <T, sizeArray> _y;
 
     // std::size_t _size size;
-    std::size_t _length;
+    std::size_t _length = 0;
 
 
 public:
@@ -27,7 +28,13 @@ public:
     std::pair<std::array<T, sizeArray>&, std::array<T, sizeArray>&> get(); 
     std::array<T, sizeArray>& get_X();
     std::array<T, sizeArray>& get_Y();
+    
+    std::span<T> get_X(std::size_t from, std::size_t to);
+    std::span<T> get_Y(std::size_t from, std::size_t to);
 
-
+    std::size_t length();
 
 };
+
+
+#include "array2d_imp.hpp"

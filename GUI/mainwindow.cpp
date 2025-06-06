@@ -66,7 +66,6 @@ void MainWindow::runCaption(bool state, QVector<uint32_t> toSend){
             chart->clear();
         }
         data.clear();
-        time.clear();
 
         serial.writeInt(toSend);
         run.append(CMD_DEVICE_RUN);
@@ -84,22 +83,15 @@ void MainWindow::storeNewData(){
     QVector<uint16_t> read;
     int32_t tag = serial.read(read);
 
-    if (data.length() >= topBar->getSampleLimit()){
-        data.clear();
-        time.clear();
-    }
-
     switch (tag){
         case TAG_DIGITAL:{
-            data.append(read);
+            for(uint i = 0; i < read.length(); i++){
+                data.append(read.at(i), 1);
+            }
         }break;
         case TAG_DIGITAL_TIMER:{
-            for(uint i = 0; i < read.length(); i++){
-                if (i % 2 == 0){
-                    data.append(read.at(i));
-                } else {
-                    time.append(read.at(i));
-                }
+            for(uint i = 0; i < read.length(); i += 2){
+                data.append(read.at(i), read.at(i+1));
             }
         }break;
 
@@ -111,12 +103,7 @@ void MainWindow::storeNewData(){
 
 void MainWindow::updateChart(){
     for (auto chart: charts){
-        // if (time.size)
-        if (time.length() == data.length() && time.length()){
-            chart->setSeries(data, time);
-        } else {
-            chart->setSeries(data, 0.2);
-        }
+        chart->setSeries(data.get_Y(0, 1000), data.get_X(0, 1000));
     }
 }
 

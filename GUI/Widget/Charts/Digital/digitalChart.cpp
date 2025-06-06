@@ -9,22 +9,21 @@ Chart("Logic", "GPIO: " + QString::number(GPIO), parent),
 
 
 
-void DigitalChart::setSeries(std::array<uint16_t, 65536> &data, qreal timeSpan){
-    // if (data.isEmpty()) return;
-    // series.clear();
-    // for (uint i = 0; i < data.length()-1; i++){
-    //     series.append(timeSpan*i, (data.at(i) >> gpio) & 1);
-    //     series.append(timeSpan*i, (data.at(i+1) >> gpio) & 1);
-    // }
-    // series.append(timeSpan*(data.length()-1), (data.back() >> gpio) & 1);
+void DigitalChart::setSeries(std::span<uint16_t> data, qreal timeSpan){
+    series.clear();
+    for (uint i = 0; i < data.size()-1; i++){
+        series.append(timeSpan*i, (data[i] >> gpio) & 1);
+        series.append(timeSpan*i, (data[i+1] >> gpio) & 1);
+    }
+    series.append(timeSpan*(data.size()-1), (data.back() >> gpio) & 1);
 }
 
-void DigitalChart::setSeries(std::array<uint16_t, 65536> &data, std::array<uint16_t, 65536> &timeSpan){
-    // series.clear();
-    // for (uint i = 0; i < data.length()-1; i++){
-    //     series.append(timeSpan.at(i), (data.at(i) >> gpio) & 1);
-    //     series.append(timeSpan.at(i), (data.at(i+1) >> gpio) & 1);
-    // }
-    // series.append(timeSpan.at(data.length()-1), (data.back() >> gpio) & 1);
+void DigitalChart::setSeries(std::span<uint16_t> data, std::span<uint16_t> timeSpan){
+    series.clear();
+    for (uint i = 0; i < data.size()-1; i++){
+        series.append(timeSpan[i], (data[i] >> gpio) & 1);
+        series.append(timeSpan[i], (data[i+1] >> gpio) & 1);
+    }
+    series.append(timeSpan.back(), (data.back() >> gpio) & 1);
 }
 

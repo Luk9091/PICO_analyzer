@@ -2,6 +2,7 @@
 
 
 #include <QVector>
+#include <span>
 
 #include <QWidget>
 #include <QMenu>
@@ -43,8 +44,8 @@ public:
     void setMax         (qreal value);
     void setTickInterval(qreal span);
 
-    virtual void setSeries      (std::array<uint16_t, 65536> &data, qreal timeSpan) {};
-    virtual void setSeries      (std::array<uint16_t, 65536> &data, std::array<uint16_t, 65536> &timeSpan) {};
+    virtual void setSeries      (std::span<uint16_t> data, qreal timeSpan) {};
+    virtual void setSeries      (std::span<uint16_t> data, std::span<uint16_t> timeSpan) {};
     virtual void setSeries      (QVector<uint16_t> &data, qreal timeSpan) {};
     virtual void setSeries      (QVector<uint16_t> &data, QVector<uint16_t> timeSpan) {};
 
