@@ -10,8 +10,8 @@ void ADC_bootStrap(void)
 {
     /// ADS1115 initialization
     ADS1115_init();
-    ADS1115_setChannelDoubleBuffering(ADS1115_channel_0, ADC_ADS1115SampleNumber, &ADS1115_ch0);
-    ADS1115_setChannelDoubleBuffering(ADS1115_channel_1, ADC_ADS1115SampleNumber, &ADS1115_ch1);
+    ADS1115_setChannelDoubleBuffering(ADS1115_channel_2, ADC_ADS1115SampleNumber, &ADS1115_ch0);
+    ADS1115_setChannelDoubleBuffering(ADS1115_channel_3, ADC_ADS1115SampleNumber, &ADS1115_ch1);
     ADS1115_setModeWithGpioAlert(true, &ADS1115_ch0, &ADS1115_ch1);
 
     /// PI Pico(embedded) ADC initialization 
@@ -29,8 +29,8 @@ void ADC_standardModeIrq(void)
     if(ADS1115_ctr >= 10)
     {
         ADS1115_ctr = 0; 
-        ADS1115_doubleBufferingSaveData(&ADS1115_ch0, ADS1115_getSample(ADS1115_channel_0));
-        ADS1115_doubleBufferingSaveData(&ADS1115_ch1, ADS1115_getSample(ADS1115_channel_1));
+        ADS1115_doubleBufferingSaveData(&ADS1115_ch0, ADS1115_getSample(ADS1115_channel_2));
+        ADS1115_doubleBufferingSaveData(&ADS1115_ch1, ADS1115_getSample(ADS1115_channel_3));
      
     }
 
@@ -41,14 +41,14 @@ uint16_t *ADS1115_ADCGetData(uint8_t channel_number)
 {
     switch(channel_number)
     {
-        case(ADS1115_channel_0):
+        case(ADS1115_channel_2):
              if(ADS1115_ch0.current_buffer == 0)
                 return ADS1115_ch0.buffer_1.data;
              else 
                 return ADS1115_ch0.buffer_0.data;
         break;
 
-        case(ADS1115_channel_1): 
+        case(ADS1115_channel_3): 
             if(ADS1115_ch1.current_buffer == 0)
                 return ADS1115_ch1.buffer_1.data;
             else 

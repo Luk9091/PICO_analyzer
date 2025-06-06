@@ -32,14 +32,14 @@ static void core1_entry(void)
         restore_interrupts(mask);  
         if(do_send)
         {
-            frame.ADC_ADS1115BufferCh0  = ADS1115_ADCGetData(ADS1115_channel_0); 
-            //wifi_sendData(frame.ADC_ADS1115BufferCh0, TAG_ADC_ADS1115_CH_1, ADC_ADS1115SampleNumber * sizeof(uint16_t));
+            frame.ADC_ADS1115BufferCh0  = ADS1115_ADCGetData(ADS1115_channel_2); 
+            wifi_sendData(frame.ADC_ADS1115BufferCh0, TAG_ADC_ADS1115_CH_1, ADC_ADS1115SampleNumber * sizeof(uint16_t));
  
-            frame.ADC_ADS1115BufferCh1  = ADS1115_ADCGetData(ADS1115_channel_1); 
-            //wifi_sendData(frame.ADC_ADS1115BufferCh1, TAG_ADC_ADS1115_CH_2, ADC_ADS1115SampleNumber * sizeof(uint16_t));
+            frame.ADC_ADS1115BufferCh1  = ADS1115_ADCGetData(ADS1115_channel_3); 
+            wifi_sendData(frame.ADC_ADS1115BufferCh1, TAG_ADC_ADS1115_CH_2, ADC_ADS1115SampleNumber * sizeof(uint16_t));
     
             frame.ADC_PicoBufferCh0     = ADC_PicoStandardModeGetData(0);
-            //wifi_sendData(frame.ADC_PicoBufferCh0, TAG_ADC_PICO_CH_1, ADC_PicoSampleNumber * sizeof(uint16_t));
+            wifi_sendData(frame.ADC_PicoBufferCh0, TAG_ADC_PICO_CH_1, ADC_PicoSampleNumber * sizeof(uint16_t));
 
             frame.ADC_PicoBufferCh1     = ADC_PicoStandardModeGetData(1);
             wifi_sendData(frame.ADC_PicoBufferCh1, TAG_ADC_PICO_CH_2, ADC_PicoSampleNumber * sizeof(uint16_t));
