@@ -23,12 +23,12 @@ uint ANALYZE_getSampleFreq();
 
 void ANALYZE_enable(bool run);
 bool ANALYZE_timerIsOn();
-void ANALYZE_setTrigger(uint pin);
+// void ANALYZE_setTrigger(uint pin);
 
 
-void ANALYZE_triggeredInit(uint timeFreq);
+void ANALYZE_triggeredInit(uint timeFreq, uint triggerPin);
 void ANALYZE_continueInit(uint sampleFreq);
-void ANALYZE_countInit(uint countSample, uint sampleFreq);
+void ANALYZE_countInit(uint countSample, uint sampleFreq, uint triggerPin);
 
 void ANALYZE_deinit();
 

@@ -46,7 +46,7 @@ static bool core1_timerIrq(struct repeating_timer *t)
         //printf("ADC: %d\n", frame.ADC_PicoBuffer[1]);
         wifi_sendData(frame.ADC_PicoBuffer, TAG_ADC_PICO, ADC_PicoSampleNumber * sizeof(uint16_t));
 
-        wifi_sendData(frame.digital_analyzerBuffer, TAG_DIGITAL_SCOPE, 256*sizeof(uint));
+        wifi_sendData(frame.digital_analyzerBuffer, TAG_DIGITAL, 256*sizeof(uint));
         
         
         data_ctr = 0;

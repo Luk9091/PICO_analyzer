@@ -35,10 +35,14 @@ static inline int print(const void *str, uint32_t size){
 }
 #endif
 
+static inline int printTag(int32_t data){
+    print(&data, 4);
+}
+
+
 
 void wireCommunication_run();
 void wireCommunication_init();
-// enum pico_error_codes wireCommunication_valid(char *line);
 
 static inline uint wireCommunication_read(const char *str);
 void wireCommunication_sendWithTimeProcedure();

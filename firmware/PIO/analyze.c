@@ -12,9 +12,6 @@ static uint sm;
 static uint offset;
 
 
-static uint triggerPin;
-static uint sampleFreq;
-static uint countSamples;
 static bool timer;
 
 
@@ -65,12 +62,12 @@ void ANALYZE_init(){
     gpio_set_dir_in_masked(read_mask);
     gpio_set_dir(TRIGGER_GPIO, false);
 
-    triggerPin = TRIGGER_GPIO;
-    sampleFreq = 100*MHz;
-    countSamples = DATA_SIZE;
-    timer = false;
+    // triggerPin = TRIGGER_GPIO;
+    // sampleFreq = 100*MHz;
+    // countSamples = DATA_SIZE;
+    // timer = false;
 
-    ANALYZE_triggeredInit(1);
+    ANALYZE_triggeredInit(1, TRIGGER_GPIO);
 
 }
 
@@ -89,13 +86,8 @@ bool ANALYZE_timerIsOn(){
     return timer;
 }
 
-void ANALYZE_setTrigger(uint pin){
-    triggerPin= pin;
-    ANALYZE_MODE = NONE_ANALYZE;
-}
 
-
-void ANALYZE_triggeredInit(uint timerFreq){
+void ANALYZE_triggeredInit(uint timerFreq, uint triggerPin){
     ANALYZE_deinit();
     pio_claim_free_sm_and_add_program_for_gpio_range(&triggered_read_program, &pio, &sm, &offset, LSB_GPIO, PIO_NUM_PIN, true);
     triggered_read_program_init(pio, sm, offset, LSB_GPIO, PIO_NUM_PIN, triggerPin);
@@ -122,7 +114,7 @@ void ANALYZE_continueInit(uint sampleFreq){
 }
 
 
-void ANALYZE_countInit(uint countSample, uint sampleFreq){
+void ANALYZE_countInit(uint countSample, uint sampleFreq, uint triggerPin){
     timer = false;
     ANALYZE_deinit();
     pio_claim_free_sm_and_add_program_for_gpio_range(&count_read_program, &pio, &sm, &offset, LSB_GPIO, PIO_NUM_PIN, true);

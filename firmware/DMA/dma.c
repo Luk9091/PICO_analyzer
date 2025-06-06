@@ -8,13 +8,13 @@
 //#include "ADC/ADS1115.h"
 //#include "ADC/Pico_ADC.h"
 
-static volatile uint16_t dataArray[DATA_SIZE * 2] = {0};
-volatile uint16_t *sampleData = dataArray;
-volatile uint16_t *timeStamp  = dataArray + (DATA_SIZE);
+static uint16_t dataArray[DATA_SIZE * 2] = {0};
+uint16_t *sampleData = dataArray;
+uint16_t *timeStamp  = dataArray + (DATA_SIZE);
 
 static uint dataSize;
 
-static inline bool _DMA_config(volatile void *writeAddress, const volatile void *readAddress, uint dreq, uint dma, dma_channel_config *config, bool priority, bool doubleSize){
+static inline bool dma_config(const void *writeAddress, const void *readAddress, uint dreq, uint dma, dma_channel_config *config, bool priority, bool doubleSize){
     channel_config_set_transfer_data_size(config, DMA_SIZE_16);
     channel_config_set_read_increment(config, false);
     channel_config_set_write_increment(config, true);
@@ -36,7 +36,7 @@ static inline bool _DMA_config(volatile void *writeAddress, const volatile void 
     return true;
 }
 
-void _dma_1_handler(){
+void dma_1_handler(){
     if (dma_hw->ints0 & (1 << DMA_DATA_0)){
         dma_hw->ints0 = 1 << DMA_DATA_0;
         dma_channel_set_write_addr(DMA_DATA_0, sampleData, false);
@@ -60,7 +60,7 @@ void _dma_1_handler(){
     }
 }
 
-// void _dma_2_handler(){
+// void dma_2_handler(){
 //     dma_hw->ints1 = 1 << DMA_DATA_1;
 //     dma_channel_set_write_addr(DMA_DATA_1, sampleData, false);
 //     dma_channel_set_trans_count(DMA_DATA_1, DATA_SIZE, false);
@@ -92,7 +92,7 @@ bool DMA_clear(){
 }
 
 
-int DMA_PIOconfig(volatile void *writeAddress, const volatile void *readAddress, uint dreq, uint dma_1, uint dma_2, bool priority, bool doubleSize){
+int DMA_PIOconfig(const void *writeAddress, const void *readAddress, uint dreq, uint dma_1, uint dma_2, bool priority, bool doubleSize){
     if (!dma_channel_is_claimed(dma_1)){
         dma_channel_claim(dma_1);
         dma_channel_claim(dma_2);
@@ -106,11 +106,11 @@ int DMA_PIOconfig(volatile void *writeAddress, const volatile void *readAddress,
 
     dma_channel_set_irq0_enabled(dma_1, true);
     dma_channel_set_irq0_enabled(dma_2, true);
-    irq_set_exclusive_handler(DMA_IRQ_0, _dma_1_handler);
+    irq_set_exclusive_handler(DMA_IRQ_0, dma_1_handler);
     irq_set_enabled(DMA_IRQ_0, true);
 
-    _DMA_config(writeAddress, readAddress, dreq, dma_1, &config_1, priority, doubleSize);
-    _DMA_config(writeAddress, readAddress, dreq, dma_2, &config_2, priority, doubleSize);
+    dma_config(writeAddress, readAddress, dreq, dma_1, &config_1, priority, doubleSize);
+    dma_config(writeAddress, readAddress, dreq, dma_2, &config_2, priority, doubleSize);
 
     return 0;
 }
@@ -134,7 +134,7 @@ void DMA_setEnable(uint dmaChannel, bool enabled){
     dma_channel_set_config(dmaChannel, &config, enabled);
 }
 
-volatile uint dma_getCurrentIndex(uint dmaChannel){
+uint dma_getCurrentIndex(uint dmaChannel){
     dma_channel_hw_t *channel = dma_channel_hw_addr(dmaChannel);
     uint transfer_count = channel->al3_transfer_count;
     return dataSize - transfer_count;
