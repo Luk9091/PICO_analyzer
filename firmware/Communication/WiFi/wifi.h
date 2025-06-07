@@ -13,7 +13,6 @@
 
 #include "ADS1115.h"
 #include "Pico_ADC.h"
-#include "multicore_fifo.h"
 #include "communication_config.h"
 
 #define UDP_port 4444

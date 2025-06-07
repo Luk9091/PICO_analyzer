@@ -7,7 +7,7 @@ static dhcp_server_t dhcp_server;
 static struct udp_pcb *send_pcb = NULL;
 static struct udp_pcb *receive_pcb = NULL;
 static ip_addr_t receiver_ipAddress = {0};
-static device_configStatus_t received_data;
+// static device_configStatus_t received_data;
 
 void wifi_init(void)
 {
@@ -51,14 +51,13 @@ static void wifi_receiveInit(void)
         }
 }
 
-static void wifi_receiveCallback(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *addr, u16_t port)
-{
-    if (p != NULL)
-    {
-        memcpy(&received_data, p->payload, sizeof(device_configStatus_t));
-        multicore_fifoTryPushCore1(FIFO_FRAME_CONFIG, &received_data, NULL); 
-        pbuf_free(p);        
-    }
+static void wifi_receiveCallback(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *addr, u16_t port){
+//     if (p != NULL)
+//     {
+//         memcpy(&received_data, p->payload, sizeof(device_configStatus_t));
+//         multicore_fifoTryPushCore1(FIFO_FRAME_CONFIG, &received_data, NULL); 
+//         pbuf_free(p);        
+//     }
 }
 
 void wifi_sendData(const uint16_t *data, send_dataTag_t tag, size_t data_sizeByte)

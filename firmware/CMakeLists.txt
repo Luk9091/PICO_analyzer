@@ -46,7 +46,6 @@ add_executable(${PROJECT_NAME}
     ADC/ADC_bootStrap.c
 
     Ring_buffer/ring_buffer.c
-    Multicore_fifo/multicore_fifo.c
     Core1_bootstrap/core1.c
 )
 

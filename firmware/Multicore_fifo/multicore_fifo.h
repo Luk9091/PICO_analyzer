@@ -67,7 +67,7 @@ bool multicore_fifoTryPushCore0(uint8_t buffer_size, core0_validBufferNumber buf
 /// @param new_deviceConfig - received new device config frame, NULL otherwise
 /// @param ADC_bufferStatus - valid buffer status, NULL otherwise
 /// @return true if everything goes correct, false otherwise
-bool multicore_fifoTryPushCore1(fifo_frameType_t frame_type, device_configStatus_t *new_deviceConfig, ADC_validBufferStatus *ADC_bufferStatus);
+// bool multicore_fifoTryPushCore1(fifo_frameType_t frame_type, device_configStatus_t *new_deviceConfig, ADC_validBufferStatus *ADC_bufferStatus);
 
 
 ///@note multicore_fifoTryPushCore0() & multicore_fifoTryPushCore1() are not necessary because of fifo rvalid IRQ's

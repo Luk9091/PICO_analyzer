@@ -17,7 +17,6 @@ typedef enum{
 
 /// @brief Device configuration available TAG 
 typedef enum{
-<<<<<<< HEAD
     CMD_DEVICE_RUN                      = 1,
     CMD_DEVICE_STOP                     = -1,
 
