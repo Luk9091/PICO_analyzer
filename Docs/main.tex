@@ -53,8 +53,8 @@
     logic ports=ieee,
     logic ports/scale=0.7,
 }
-\usepgfplotslibrary{external}
-\tikzexternalize[prefix=figs/]
+%\usepgfplotslibrary{external}
+%\tikzexternalize[prefix=figs/]
 
 
 \usetikzlibrary{arrows.meta, positioning}
@@ -116,7 +116,7 @@ literate=%
     \end{titlepage}
 
     \pagenumbering{Roman}
-        \include{shorts.tex}
+        %\include{shorts.tex}
         \tableofcontents
         \newpage
     \pagenumbering{arabic}
@@ -127,6 +127,7 @@ literate=%
     \include{Chapters/analyzer_desctiption}
     \include{Chapters/ADC_description}
     \include{Chapters/communication}
+    \include{Chapters/Core_tasks}
 
     \vfill
     \begin{flushright}

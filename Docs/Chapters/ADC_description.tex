@@ -26,7 +26,7 @@ Analizator wykorzystuje dwa przetworniki ADC:
 \subsubsection{Konfiguracja.}
 Przetwornik wewnętrzny skonfigurowano w następujący sposób:
     \begin{itemize}
-        \item $f_{s}$ = 5 kHz (z racji wykorzystania dwóch kanałów: $f_{sch1}$ = 2.5 kHz, $f_{sch1}$ = 2.5 kHz)
+        \item $f_{sch1}$ = 5 kHz, $f_{sch1}$ = 5 kHz
         \item Wyzwalanie konwersji : wyzwalanie za pomocą timera. 
     \end{itemize}
 
@@ -45,7 +45,7 @@ Przetwornik wewnętrzny skonfigurowano w następujący sposób:
 \subsection{Zewnętrzny przetwornik ADC(ADS1115)}
 Przetwornik zewnętrzny skonfigurowano w następujący sposób:
 \begin{itemize}
-    \item $f_{s}$ = 860 Hz(z racji wykorzystania dwóch kanałów: $f_{sch1}$ = 430 Hz, $f_{sch1}$ = 430 Hz)
+    \item $f_{sch1}$ = 500 Hz, $f_{sch1}$ = 500 Hz
     \item Wyzwalanie konwersji : wyzwalanie za pomocą timera. 
     \item Komunikacja : I2C (prędkość: 400kHz)
 \end{itemize}
@@ -62,19 +62,20 @@ Do komunikacji z mikrokontrolerem, ADS1115 wykorzystuje interfejs I2C skonfiguro
     ]
     
     % ADC
-    \node[buffer, fill=blue!10] (adc) {ADC};
+   \node[buffer, fill=blue!30, align=center] (adc) {ADC 0\\ADC 1\\ADC 3\\ADC 4};
     
     % Buffers
-    \node[buffer, fill=yellow!30, right=3cm of adc] (bufA) {Bufor A};
-    \node[buffer, fill=orange!30, below=2cm of bufA] (bufB) {Bufor B};
+    \node[buffer, fill=blue!30, right=3cm of adc] (bufA) {Bufor A};
+    \node[buffer, fill=blue!30, below=2cm of bufA] (bufB) {Bufor B};
     
     % Arrows from ADC
     \draw[arrow] (adc) -- node[above] {Próbkowanie} (bufA);
     
     % Processing
-    \node[buffer, fill=green!20, right=2cm of bufA] (procA) {Przetwarzanie / Wysyłanie};
+    \node[buffer, fill=blue!30, right=2cm of bufA] (procA) {Przetwarzanie / Wysyłanie};
     
-    \draw[arrow] (bufB) -- node[below, sloped] {wysyłanie} (procA);
+    \draw[arrow] (bufB.east) -| ++(4.43cm, 1cm) -| (procA.south); % wiem że wartość 4.43 to
+   %lipa ale nie miałem czasu rozkminia o co chodzi, przepraszam
     %\draw[arrow] (bufA) -- (procA);
     
     % Swapping arrows (loop)
