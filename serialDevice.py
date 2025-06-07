@@ -1,4 +1,4 @@
-import os, pty
+import os, pty, os
 from threading import Thread
 from time import sleep
 
@@ -6,6 +6,7 @@ last = 0
 
 master, slave = pty.openpty()
 slave_name = os.ttyname(slave)
+
 print(f"Serial port: {slave_name}")
 
 
@@ -16,6 +17,8 @@ try:
             break
 
         print(data)
+        out = b"\0\0\0\0"
+        os.write(master, out)
 except KeyboardInterrupt:
     pass
 
