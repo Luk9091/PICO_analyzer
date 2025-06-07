@@ -75,7 +75,7 @@ Analizator do komunikacji wykorzystuje dwie metody transmisji: WIFI lub USB.
         Ograniczeniem transmisji nie jest głębokość rami (od 0 do nawet 2304 bajtów danych \citetitle{WiFi} \cite{WiFi}),
         natomiast synchroniczność przesyłania danych w ściśle określonych oknach czasowych.
 
-        Podsumowując sensownym wydaję się ramka zawierająca między 256 a 512 bajtów.
+        Podsumowując sensownym wydaję się ramka zawierająca między 64 a 512 bajtów.
     
     \subsection{Pola danych}
         Po określeniu rozmiaru danych, należy ustalić sposób ułożenia danych.
@@ -87,7 +87,7 @@ Analizator do komunikacji wykorzystuje dwie metody transmisji: WIFI lub USB.
                 \draw
                     (0, 0) node [draw, rectangle, minimum width = 2cm, minimum height = 2cm, align = center]{Tag\\2 bajty}
                     (2, 0) node [draw, rectangle, minimum width = 2cm, minimum height = 2cm, align = center]{Addition\\2 bajty}
-                    (7, 0) node [draw, rectangle, minimum width = 8cm, minimum height = 2cm, align = center]{Payload\\252 - 508 bajtów}
+                    (7, 0) node [draw, rectangle, minimum width = 8cm, minimum height = 2cm, align = center]{Payload\\60 - 508 bajtów}
                 ;
             \end{circuitikz}
             \caption{Przykładowa ramka transmisyjna}
