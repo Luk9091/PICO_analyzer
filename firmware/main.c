@@ -40,22 +40,22 @@ int main()
 {
     stdio_init_all();
     core1_init();
-    //LED_init();
-    //wireCommunication_init();
-    //TIMER_init(TIMER_SLICE, 1000);
-    //ANALYZE_init();
-    //
-    //
-    //
-    //while(1){
-    //    DMA_clear();
-    //    wireCommunication_run();
-    //    ANALYZE_enable(false);
-    //}
-    while(1)
-    {
-        sleep_ms(1000);
-        //printf("jolo\n");
+
+
+    wireCommunication_init();
+    TIMER_init(TIMER_SLICE, 1000);
+    ANALYZE_init();
+    
+    
+    
+    while(1){
+        DMA_clear();
+        wireCommunication_run();
+        ANALYZE_enable(false);
     }
+    //while(1)
+    //{
+    //    sleep_ms(1000);
+    //}
 }
 
