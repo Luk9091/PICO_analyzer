@@ -51,8 +51,15 @@ Schemat blokowy analizatora przedstawiono poniżej.
 \usePortrait{}
 
     Płytka PCB analizatora stanów logicznych o wymiarach 74.3mm x 59mm została zaprojektowana w oprogramowaniu Altium.
-    Do poprowadzenia sygnałów miedzy blokami funkcyjnymi wykorzystano ścieżki o szerokości 10mil (0.254mm) oraz przelotki o wymiarach 0.3mm/0.6mm (otwór/średnica padu).
-    Zasilanie 5V dla przetwornicy TPS79301DBVR obniżającej napięcie do 3.3V poprowadzono na warstwie 1. 
+    Do poprowadzenia sygnałów miedzy blokami funkcyjnymi wykorzystano ścieżki na warstwie 1 i 4 o szerokości 10mil (0.254mm)
+    oraz przelotki o wymiarach 0.3mm/0.6mm (otwór/średnica padu). Z uwagi na zastosowany stackup warstwa 2 i 3 pełnią funkcję
+    ciągłej masy skracając drogę powrotu prądu sygnałowego (return path), co redukuje szumy i emisję EMI.
+    W celu zapewnienia jednoczesnego próbkowania sygnałów wejściowych w analizatorze stanów logicznych, zachowano mniejwięcej 
+    jednakowe długości ścieżek sygnałowych prowadzących do wejść mikrokontrolera. Różnice długości prowadzą do zmian w czasie propagacji
+    sygnału, co może powodować błędnę rozpoznanie stanów logicznych lub zakłócenia synchronizacji danych. Zastosowano również
+    przelotki typu \textit{via stitching} poprawiające ciągłość potencjału masy. Widok plików gerber warsty 1 oraz 4 przedstawiono
+    na rysunku 4.3 i 4.4.
+    
 
 % \subsection{Stackup}
 \paragraph{Stackup}
@@ -64,6 +71,20 @@ Schemat blokowy analizatora przedstawiono poniżej.
         \label{fig:stackup}
     \end{figure}
 
+     \begin{figure}[!ht]
+        \centering
+        \includegraphics[width = 0.8\textwidth]{gerber_top.jpg}
+        \caption{Widok pliku gerber warstwy 1 }
+        \label{fig:gerber_top}
+    \end{figure}
+
+    \begin{figure}[!ht]
+        \centering
+        \includegraphics[width = 0.8\textwidth]{gerber_bottom.jpg}
+        \caption{Widok pliku gerber warstwy 4 }
+        \label{fig:gerber_bottom}
+    \end{figure}
+ 
 
 \subsection{Symulacje filtrów wejściowych}
 Poniżej przedstawiono charakterystyki filtrów wejściowych sekcji analogowej.
