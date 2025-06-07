@@ -6,6 +6,14 @@
 
 #define TIMER_SLICE (0)
 
+/*!
+ * \brief Set tick freq of pwm timer
+ * \ingroup pwm
+ * 
+ * \param slice number of pwm slice
+ * \param tick_period time in ns between two tick, change step: 5 (ns)
+ *                     - max 1275ns
+*/
 uint TIMER_init(uint slice, uint tickPeriod_ns);
 
 
@@ -18,7 +26,7 @@ uint TIMER_init(uint slice, uint tickPeriod_ns);
  * \param tick_period time in ns between two tick, change step: 5 (ns)
  *                     - max 1275ns
 */
-void TIMER_setTickPeriod(uint slice, uint tick_period_ns);
+void TIMER_setTickPeriod(uint slice, uint tickPeriod_ns);
 
 void TIMER_setFreq(uint slice, uint freq);
 

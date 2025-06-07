@@ -23,8 +23,10 @@ void TIMER_setTickPeriod(uint slice, uint tick_period_ns){
 }
 
 void TIMER_setFreq(uint slice, uint freq){
-    uint div = 200 * MHz / freq;
+    // freq = freq * 2;
+    uint8_t div = 200 * MHz / freq;
+    uint8_t frac = ((200*MHz % freq) * 16) / freq;
     pwm_set_enabled(slice, false);
-    pwm_set_clkdiv_int_frac4(slice, div, 0);
+    pwm_set_clkdiv_int_frac4(slice, div, frac);
     pwm_set_enabled(slice, true);
 }

@@ -7,12 +7,12 @@
 #include "hardware/timer.h"
 #include "pico/stdlib.h"
 #include "DMA/dma.h"
-#include "../ring_buffer/ring_buffer.h"
+#include "ring_buffer.h"
 
 #define ADC_PicoChannel_0 0         // ADC 0 Input Pin  <-> ADC 0 channel
 #define ADC_PicoChannel_1 1         // ADC 1 Input Pin  <-> ADC 1 channel
 #define ADC_PicoChannel_2 2         // ADC 2 Input Pin  <-> ADC 2 channel
-#define ADC_PicoPinCh_0 26
+#define ADC_PicoPinCh_0 26          
 #define ADC_PicoPinCh_1 27
 
 #define ADC_PicoSampleNumber 500    // 500 samples = samples from channel_0 + samples from channel_1

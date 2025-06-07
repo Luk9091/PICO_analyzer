@@ -41,13 +41,65 @@ Schemat blokowy analizatora przedstawiono poniżej.
 
 
 
-\subsection{Schematy ideowe analizatora}
-\subsubsection{Układ wejściowy}
-\subsubsection{Układ mikrokontrolera}
-\subsubsection{Układ przetwornika analogowo-cyfrowego}
+\useNormalLandscape{}
+\section{Schemat ideowy analizatora}
+    \begin{figure}[!ht]
+        \centering
+        \includegraphics[width = 0.9\textwidth]{schematic.png}
+        \caption{Schemat ideowy analizatora stanów logicznych}
+    \end{figure}
+\usePortrait{}
+
+    Płytka PCB analizatora stanów logicznych o wymiarach 74.3mm x 59mm została zaprojektowana w oprogramowaniu Altium.
+    Do poprowadzenia sygnałów miedzy blokami funkcyjnymi wykorzystano ścieżki o szerokości 10mil (0.254mm) oraz przelotki o wymiarach 0.3mm/0.45mm (otwór/średnica padu).
+    Zasilanie 5V dla przetwornicy TPS79301DBVR obniżającej napięcie do 3.3V poprowadzono na warstwie 3. 
+
+% \subsection{Stackup}
+\paragraph{Stackup}
+    Na rysunku \ref{fig:stackup}, przedstawiono wybrany stackup PCB proponowany przez firmę JLC PCB do projektów 4-o warstwowych.
+    \begin{figure}[!ht]
+        \centering
+        \includegraphics[width = 0.8\textwidth]{stackup.png}
+        \caption{Stackup zalecany przez firmę JLC PCB}
+        \label{fig:stackup}
+    \end{figure}
 
 
-
-
-
-
+\subsection{Symulacje filtrów wejściowych}
+Poniżej przedstawiono charakterystyki filtrów wejściowych sekcji analogowej.
+\begin{figure}[!ht]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            width = 0.45\textwidth,
+            grid = both,
+            % axis lines= middle,
+            % axis line style={->},
+            xmin = 100, xmax = 10e3,
+            xmode=log,
+            title= Filtr ADS1115,
+            ylabel = wzmocnienie ${[dB]}$,
+            xlabel = częstotliwość ${[log(Hz)]}$
+        ]
+            \addplot table [x = freq, y =voltage, col sep = comma]{Measure/filter_ADS1115.csv};
+            % \addplot table [x = duty, y = speedL, col sep = comma]{Measure/speed.csv};
+        \end{axis}
+    \end{tikzpicture}
+    \begin{tikzpicture}
+        \begin{axis}[
+            width = 0.45\textwidth,
+            grid = both,
+            % axis lines= middle,
+            % axis line style={->},
+            xmin = 1e4, xmax = 3e6,
+            xmode=log,
+            title= Filtr PICO,
+            ylabel = wzmocnienie ${[dB]}$,
+            xlabel = częstotliwość ${[log(Hz)]}$
+        ]
+            \addplot table [x = freq, y =voltage, col sep = comma]{Measure/filter_PICO.csv};
+            % \addplot table [x = duty, y = speedL, col sep = comma]{Measure/speed.csv};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Wykresy tłumienia filtrów wejściowych}
+\end{figure}
