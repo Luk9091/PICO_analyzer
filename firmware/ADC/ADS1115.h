@@ -79,7 +79,7 @@ typedef struct{
     uint16_t current_buffer;    // current buffer where new samples are saved
     ring_buffer buffer_0;       // first swapping buffer
     ring_buffer buffer_1;       // second swapping buffer
-}ADS1115_doubleBufferState;
+}ADS1115_channelConfig;
 
 
 /// @brief ADS1115 write data
@@ -123,11 +123,11 @@ float ADS1115_dataConvert(int16_t data);
 /// @param buffer_size      - --
 /// @param ADS1115_doubleBufferState_t - data structure containing double buffering mode data 
 /// @return true - Error occurred, false otherwise
-bool ADS1115_setChannelDoubleBuffering(uint8_t channel_number, uint32_t buffer_size, ADS1115_doubleBufferState *BufferState);
+bool ADS1115_setChannelDoubleBuffering(uint8_t channel_number, uint32_t buffer_size, ADS1115_channelConfig *BufferState);
 
 /// @brief double buffering mode callback
 /// @param channel_number - --
 /// @param double_bufferState - data structure containing double buffering mode data 
-void ADS1115_doubleBufferingCallback(ADS1115_doubleBufferState *buffer_state);
+void ADS1115_routineCallback(ADS1115_channelConfig *buffer_state);
 
 #endif
