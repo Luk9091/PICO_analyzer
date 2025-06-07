@@ -7,7 +7,7 @@ include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
 include($ENV{PICO_SDK_PATH}/tools/CMakeLists.txt)
 
 project(main C CXX ASM)
-set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD 23)
 set(CMAKE_CXX_STANDARD 17)
 
 pico_sdk_init()
@@ -30,7 +30,6 @@ add_executable(${PROJECT_NAME}
     ADC/ADC_bootStrap.c
 
     Ring_buffer/ring_buffer.c
-    Multicore_fifo/multicore_fifo.c
     Core1_bootstrap/core1.c
 )
 

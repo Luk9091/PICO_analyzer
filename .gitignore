@@ -3,7 +3,6 @@ __pycache__
 build
 TEST.txt
 
-
 # LaTeX autobuild ignore
 *.aux
 *.fls

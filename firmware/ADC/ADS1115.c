@@ -210,18 +210,15 @@ float ADS1115_dataConvert(int16_t data)
     return voltage;
 }
 
-bool ADS1115_setChannelDoubleBuffering(uint8_t channel_number, uint32_t buffer_size, ADS1115_doubleBufferState *BufferState)
+bool ADS1115_setChannelDoubleBuffering(uint8_t channel_number, uint32_t buffer_size, ADS1115_channelConfig *BufferState)
 {  
-    if(channel_number > 3)
-        return true;
-
-    if(buffer_size = 0)
+     if(channel_number > 3 || buffer_size == 0)
         return true;
     
     if(BufferState == NULL)
         return true;
 
-    BufferState->data_counter = 0;
+    BufferState->data_counter   = 0;
     BufferState->channel_number = channel_number;
     ring_bufferInit(&BufferState->buffer_0, buffer_size);
     ring_bufferInit(&BufferState->buffer_1, buffer_size);
@@ -230,7 +227,7 @@ bool ADS1115_setChannelDoubleBuffering(uint8_t channel_number, uint32_t buffer_s
     return false;
 }
 
-void ADS1115_doubleBufferingCallback(ADS1115_doubleBufferState *buffer_state)
+void ADS1115_routineCallback(ADS1115_channelConfig *buffer_state)
 {
     if(buffer_state == NULL)
         return;
@@ -246,20 +243,21 @@ void ADS1115_doubleBufferingCallback(ADS1115_doubleBufferState *buffer_state)
         buffer_state->data_counter++;
     }
 
+    
+    // Check buffers capacity(and swap if one is full)
     if(buffer_state->data_counter >= buffer_state->buffer_1.buffer_size) // buffer is full
     {
         if (buffer_state->current_buffer == 0)
         {
-            ring_bufferClear(&buffer_state->buffer_1);  // clear buffer
+            //ring_bufferClear(&buffer_state->buffer_1);  // clear buffer
             buffer_state->data_counter = 0;
             buffer_state->current_buffer =  1;          // swap buffer
         }
         else
         {
-            ring_bufferClear(&buffer_state->buffer_0);   // clear buffer
+            //ring_bufferClear(&buffer_state->buffer_0);   // clear buffer
             buffer_state->data_counter = 0;
             buffer_state->current_buffer = 0;            // swap buffer
         }
     }
 }
-

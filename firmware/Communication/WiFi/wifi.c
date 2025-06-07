@@ -7,6 +7,7 @@ static dhcp_server_t dhcp_server;
 static struct udp_pcb *send_pcb = NULL;
 static struct udp_pcb *receive_pcb = NULL;
 static ip_addr_t receiver_ipAddress = {0};
+// static device_configStatus_t received_data;
 
 void wifi_init(void)
 {
@@ -50,32 +51,27 @@ static void wifi_receiveInit(void)
         }
 }
 
-static void wifi_receiveCallback(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *addr, u16_t port)
-{
-    if (p != NULL)
-    {
-        receive_bufferFrame received_data;
-        memcpy(&received_data, p->payload, sizeof(receive_bufferFrame));
-        //queue_try_add(&queue_Server_To_Pico, &received_data);
-            printf("data received !!!\n");
-            printf("Received data from IP: %s, Port: %d\n", ip4addr_ntoa(addr), port);
-            printf("Data: %c\n", p->payload);
-        pbuf_free(p);        
-    }
+static void wifi_receiveCallback(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *addr, u16_t port){
+//     if (p != NULL)
+//     {
+//         memcpy(&received_data, p->payload, sizeof(device_configStatus_t));
+//         multicore_fifoTryPushCore1(FIFO_FRAME_CONFIG, &received_data, NULL); 
+//         pbuf_free(p);        
+//     }
 }
 
-void wifi_sendData(const uint16_t *data, send_dataTag_t tag, size_t data_size)
+void wifi_sendData(const uint16_t *data, send_dataTag_t tag, size_t data_sizeByte)
 {
-    uint16_t tag_16 = (uint16_t)tag;
+    int16_t tag_16 = (int16_t)tag;
 
-    struct pbuf *p = pbuf_alloc(PBUF_TRANSPORT, data_size + sizeof(tag_16), PBUF_RAM);
+    struct pbuf *p = pbuf_alloc(PBUF_TRANSPORT, data_sizeByte + sizeof(tag_16), PBUF_RAM);
     dhcp_getUserIP(&receiver_ipAddress);
 
     if (p != NULL)
     {
-        uint8_t *payload = (uint8_t *)p->payload;
-        memcpy(payload, &tag_16, sizeof(tag_16));
-        memcpy(payload + sizeof(tag_16), data, data_size);
+        uint16_t *payload = (uint16_t*)p->payload;
+        payload[0] = tag_16; //memcpy(payload, &tag_16, sizeof(tag_16));
+        memcpy(payload + 1, data, data_sizeByte);
         err_t err = udp_sendto(send_pcb, p, &receiver_ipAddress, UDP_port);
         if (err != ERR_OK) 
             printf("Failed to send UDP packet !!!\n");
