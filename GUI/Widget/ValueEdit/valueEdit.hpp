@@ -26,4 +26,7 @@ public:
     void setRange(int min, int max);
     void setStep(uint value = 1);
     bool isCorrect();
+
+signals:
+    void validData();
 };

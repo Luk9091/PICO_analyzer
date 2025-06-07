@@ -33,6 +33,7 @@ protected:
     QGroupBox   *titleBox;
 
     QLabel      *name;
+    uint        length = 0;
 
 public:
     Chart(const QString& name_line, const QString& second_line, bool analog, QWidget *parent = nullptr);
@@ -53,7 +54,7 @@ public:
     void move           (qreal value);
 
 protected:
-    void mouseMoveEvent(QMouseEvent *event);
+    // void mouseMoveEvent(QMouseEvent *event);
 
 
     QGroupBox *placeDescription(const QString& name_line, const QString& second_line);

@@ -74,10 +74,6 @@ bool Serial::open(const QString& port){
 }
 
 void Serial::close(){
-    QVector<uint32_t> data;
-    data.append(CMD_DEVICE_STOP);
-    writeInt(data);
-
     device.close();
 }
 

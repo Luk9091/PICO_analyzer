@@ -14,7 +14,7 @@ uint16_t *timeStamp  = dataArray + (DATA_SIZE);
 
 static uint dataSize;
 
-static inline bool dma_config(const void *writeAddress, const void *readAddress, uint dreq, uint dma, dma_channel_config *config, bool priority, bool doubleSize){
+static inline bool dma_config(void *writeAddress, const volatile void *readAddress, uint dreq, uint dma, dma_channel_config *config, bool priority, bool doubleSize){
     channel_config_set_transfer_data_size(config, DMA_SIZE_16);
     channel_config_set_read_increment(config, false);
     channel_config_set_write_increment(config, true);
@@ -92,7 +92,7 @@ bool DMA_clear(){
 }
 
 
-int DMA_PIOconfig(const void *writeAddress, const void *readAddress, uint dreq, uint dma_1, uint dma_2, bool priority, bool doubleSize){
+int DMA_PIOconfig(void *writeAddress, const volatile void *readAddress, uint dreq, uint dma_1, uint dma_2, bool priority, bool doubleSize){
     if (!dma_channel_is_claimed(dma_1)){
         dma_channel_claim(dma_1);
         dma_channel_claim(dma_2);

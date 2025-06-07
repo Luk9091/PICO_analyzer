@@ -9,21 +9,13 @@ Chart("Logic", "GPIO: " + QString::number(GPIO), parent),
 
 
 
-void DigitalChart::setSeries(std::span<uint16_t> data, qreal timeSpan){
-    series.clear();
-    for (uint i = 0; i < data.size()-1; i++){
-        series.append(timeSpan*i, (data[i] >> gpio) & 1);
-        series.append(timeSpan*i, (data[i+1] >> gpio) & 1);
-    }
-    series.append(timeSpan*(data.size()-1), (data.back() >> gpio) & 1);
-}
-
 void DigitalChart::setSeries(std::span<uint16_t> data, std::span<uint16_t> timeSpan){
-    series.clear();
-    for (uint i = 0; i < data.size()-1; i++){
-        series.append(timeSpan[i], (data[i] >> gpio) & 1);
-        series.append(timeSpan[i], (data[i+1] >> gpio) & 1);
+    uint data_size = data.size();
+    if (data_size == 0) return;
+    uint bit;
+    for (uint i = 0; i < data_size; i++){
+        bit = (data[i] >> gpio) & 1;
+        series.replace(i, timeSpan[i], bit);
     }
-    series.append(timeSpan.back(), (data.back() >> gpio) & 1);
 }
 

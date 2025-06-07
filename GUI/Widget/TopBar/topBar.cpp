@@ -22,7 +22,7 @@ void TopBar::place(){
     QLabel *buffer_label = new QLabel("Buffer:", this);
     mode_selector = new QComboBox(this);
     timerOn_checkBox = new QCheckBox("Timer", this);
-    buffer_edit     = new ValueEdit(16384, 1, 65'536, this);
+    buffer_edit     = new ValueEdit(256, 1, 512, this);
 
     QLabel *trigMode_label = new QLabel("Trigger:", this);
     QLabel *trigSrc_label  = new QLabel("Source:", this);
@@ -32,7 +32,7 @@ void TopBar::place(){
     QLabel *sampleFreq_label = new QLabel("Sample freq:", this);
     QLabel *basePosition_label = new QLabel("Base position:", this);
     sampleFreq_setter = new ValueEdit(5'000, 5'000, 200'000'000, 1'000, this);
-    basePosition_setter = new QLineEdit(this);
+    basePosition_setter = new ValueEdit(0, 0, 63487, this);
 
 
     layout->addWidget(add_button,               0, 0, 2, 1);
@@ -59,7 +59,6 @@ void TopBar::place(){
     buffer_edit->setFixedWidth(72);
     run_button->setCheckable(true);
 
-    QString name = "Created";
     connect(add_button, &QPushButton::clicked, this, [this](){
         addChart(id, "Created");
         id++;
@@ -79,6 +78,9 @@ void TopBar::place(){
     triggerSource_selector->addItem("Internal");
     onChangeTriggerList(triggerSource_selector->currentIndex());
     connect(triggerSource_selector, &QComboBox::currentIndexChanged, this, &TopBar::onChangeTriggerList);
+
+    connect(buffer_edit, &ValueEdit::validData, this, &TopBar::resizeCharts);
+    connect(basePosition_setter, &ValueEdit::validData, this, &TopBar::resizeCharts);
 }
 
 
@@ -156,10 +158,18 @@ void TopBar::onRunClicked(){
 }
 
 
-int TopBar::getSampleLimit(){
+uint TopBar::getSampleLimit(){
     return buffer_edit->getValue();
+}
+
+uint TopBar::getBasePosition(){
+    return basePosition_setter->getValue();
 }
 
 bool TopBar::isRun(){
     return run_button->isChecked();
+}
+
+bool TopBar::isTimer(){
+    return timerOn_checkBox->isChecked();
 }

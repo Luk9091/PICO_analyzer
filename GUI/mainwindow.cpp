@@ -4,8 +4,8 @@
 MainWindow::MainWindow(QWidget *parent):
 QMainWindow(parent),
     central(this),
-    serial(this),
-    chartUpdate_timer(this)
+    serial(this)
+    // chartUpdate_timer(this)
 {
     setWindowTitle("Signal viewer");
 
@@ -30,20 +30,22 @@ QMainWindow(parent),
     charts_scroll->setWidget(charts_container);
 
 
-    connect(topBar, &TopBar::addChart,      this, &MainWindow::openAddChatWindow);
-    connect(topBar, &TopBar::sendConfig,    &serial, &Serial::writeInt);
-    connect(topBar, &TopBar::runCaption,    this, &MainWindow::runCaption);
+    connect(topBar, &TopBar::addChart,      this,       &MainWindow::openAddChatWindow);
+    connect(topBar, &TopBar::sendConfig,    &serial,    &Serial::writeInt);
+    connect(topBar, &TopBar::runCaption,    this,       &MainWindow::runCaption);
+    connect(topBar, &TopBar::resizeCharts,  this,       &MainWindow::resizeCharts);
     // connect(charts_scroll->horizontalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::moveChartAxis);
-    connect(&chartUpdate_timer, &QTimer::timeout, this, &MainWindow::updateChart);
+    // connect(&chartUpdate_timer, &QTimer::timeout, this, &MainWindow::updateChart);
     connect(&serial, &Serial::receivedData,  this, &MainWindow::storeNewData);
 
-    chartUpdate_timer.setInterval(100);
+    data.set_x_lin();
+    // chartUpdate_timer.setInterval(100);
 }
 
 
 void MainWindow::addChart(Chart *chart){
-    bool pauseTimer = chartUpdate_timer.isActive();
-    chartUpdate_timer.stop();
+    // bool pauseTimer = chartUpdate_timer.isActive();
+    // chartUpdate_timer.stop();
 
     chart->setParent(charts_scroll);
     connect(chart, &Chart::removeMe, this, [this, chart](){
@@ -51,59 +53,75 @@ void MainWindow::addChart(Chart *chart){
         charts.removeOne(chart);
         chart->deleteLater();
     });
+
+    if (!chart->isAnalog()){
+        uint startWith = topBar->getBasePosition();
+        uint endTo = startWith + topBar->getSampleLimit();
+        chart->setRange(startWith, endTo);
+    }
  
     charts_layout->addWidget(chart, 0, Qt::AlignTop);
     charts.append(chart);
 
-    if (pauseTimer) chartUpdate_timer.start();
+    // if (pauseTimer) chartUpdate_timer.start();
 }
 
 void MainWindow::runCaption(bool state, QVector<uint32_t> toSend){
     QVector<uint32_t> run;
+    serial.clear();
+
+    run.append(CMD_DEVICE_STOP);
+    serial.writeInt(run);
+    run.clear();
+
     if (state){
-        serial.clear();
+        data.clear();
         for (auto chart: charts){
             chart->clear();
         }
-        data.clear();
-
+        data.set_x_lin();
         serial.writeInt(toSend);
         run.append(CMD_DEVICE_RUN);
-
-        chartUpdate_timer.start();
-    } else {
-        chartUpdate_timer.stop();
-        run.append(CMD_DEVICE_STOP);
-    }
-
+    } 
     serial.writeInt(run);
 }
 
 void MainWindow::storeNewData(){
     QVector<uint16_t> read;
     int32_t tag = serial.read(read);
+    qDebug() << data.length();
 
     switch (tag){
         case TAG_DIGITAL:{
             for(uint i = 0; i < read.length(); i++){
-                data.append(read.at(i), 1);
+                data.append(read.at(i));
             }
+            // if (data.length() >= topBar->getBasePosition() && data.length() <= topBar->getSampleLimit() + 30){
+            // }
         }break;
         case TAG_DIGITAL_TIMER:{
             for(uint i = 0; i < read.length(); i += 2){
                 data.append(read.at(i), read.at(i+1));
             }
+            // if (data.length() >= topBar->getBasePosition() && data.length() <= topBar->getSampleLimit() + 30){
+                // updateChart();
+            // }
         }break;
-
-        
         default:
             break;
+    }
+
+    if (data.length() >= topBar->getBasePosition() && data.length() <= topBar->getSampleLimit() + 30){
+        updateChart();
     }
 }
 
 void MainWindow::updateChart(){
+    uint startWith = topBar->getBasePosition();
+    uint endTo = startWith + topBar->getSampleLimit();
+
     for (auto chart: charts){
-        chart->setSeries(data.get_Y(0, 1000), data.get_X(0, 1000));
+        chart->setSeries(data.get_Y(startWith, endTo), data.get_X(startWith, endTo));
     }
 }
 
@@ -111,6 +129,17 @@ void MainWindow::moveChartAxis(int scrollValue){
     for (auto chart: charts){
         chart->move(scrollValue);
     }
+}
+
+void MainWindow::resizeCharts(){
+    uint startWith = topBar->getBasePosition();
+    uint endTo = startWith + topBar->getSampleLimit();
+    for (auto chart : charts){
+        if (!chart->isAnalog()){
+            chart->setRange(startWith, endTo);
+        }
+    }
+    updateChart();
 }
 
 

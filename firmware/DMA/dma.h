@@ -18,7 +18,7 @@
 extern uint16_t *sampleData;
 extern uint16_t *timeStamp ;
 
-int DMA_PIOconfig(const void *writeAddress, const void *readAddress, uint dreq, uint dma_1, uint dma_2, bool priority, bool doubleSize);
+int DMA_PIOconfig(void *writeAddress, const volatile void *readAddress, uint dreq, uint dma_1, uint dma_2, bool priority, bool doubleSize);
 void DMA_setEnable(uint dmaChannel, bool enable);
 void DMA_chain(uint dma_1, uint dma_2, bool chain);
 

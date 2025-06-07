@@ -28,6 +28,7 @@ void ValueEdit::validator(){
         correct = false;
         return;
     }
+    if (value == storeValue) return;
 
 
     correct = true;
@@ -45,6 +46,7 @@ void ValueEdit::validator(){
         setText(prefix + QString::number(value, base).toUpper());
     }
     storeValue = value;
+    emit(validData());
 }
 
 
@@ -97,6 +99,7 @@ QString ValueEdit::getNumberValue(){
 }
 
 void ValueEdit::setValue(int value){
+    storeValue = value;
     setText(QString::number(value));
 }
 

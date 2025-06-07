@@ -27,13 +27,15 @@ private:
     QComboBox   *triggerMode_selector;
     QComboBox   *triggerSource_selector;
     ValueEdit   *sampleFreq_setter;
-    QLineEdit   *basePosition_setter;
+    ValueEdit   *basePosition_setter;
 
     int id;
 public:
     TopBar(QWidget *patent = nullptr);
-    int getSampleLimit();
     bool isRun();
+    uint getSampleLimit();
+    uint getBasePosition();
+    bool isTimer();
 
 private:
     void place();
@@ -47,5 +49,5 @@ signals:
     // void sendConfig(const QString& data);
     void sendConfig(const QVector<uint32_t> data);
     void runCaption(bool state, QVector<uint32_t> data);
-
+    void resizeCharts();
 };

@@ -120,11 +120,13 @@ static inline enum pico_error_codes wireCommunication_validator(char *line){
     int index = 0;
     int token = nextToken(line, &index);
 
-    if(transferData && token == CMD_DEVICE_STOP){
+    if(token == CMD_DEVICE_STOP){
+        if (transferData){
 #if LIB_PICO_STDIO_USB
-        tud_cdc_write_flush();
+            tud_cdc_write_flush();
 #endif
-        transferData = false;
+            transferData = false;
+        }
     }
     else if (transferData){
         return PICO_ERROR_NOT_PERMITTED;

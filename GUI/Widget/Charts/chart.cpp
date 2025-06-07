@@ -1,8 +1,6 @@
 #include "chart.hpp"
 
 
-
-
 Chart::Chart(const QString& name_line, const QString& second_line, QWidget *parent):
 QWidget(parent),
     layout(this),
@@ -18,9 +16,8 @@ QWidget(parent),
     chart.setMargins(QMargins(0, 0, 0, 0));
 
     axisX.setTickType(QValueAxis::TicksDynamic);
-    axisX.setTickInterval(10);
     axisX.setMinorTickCount(1);
-    setRange(0, 100);
+    setRange(0, 256);
 
     axisY.hide();
     axisY.setMax(1.1);
@@ -60,9 +57,6 @@ void Chart::showContextMenu(const QPoint &pos){
     if (select == deleteAction){
         emit removeMe();
     }
-    // else if (select == renameAction){
-    //     qDebug() << "Rename action";
-    // } 
 
 }
 
@@ -71,7 +65,23 @@ bool Chart::isAnalog(){
 }
 
 void Chart::setRange(qreal min, qreal max){
-    axisX.setRange(min, max+1);
+    axisX.setRange(min, max);
+    axisX.setTickInterval((max - min)/10);
+
+    int diff = max - min;
+
+    if (length != diff){
+        if (diff < length){
+            for(int i = 0; i < length - diff; i++){
+                series.remove(length - i);
+            }
+        } else{
+            for(int i = length; i < diff; i++){
+                series.append(length + i + min, 0);
+            }
+        }
+        length = diff;
+    }
 }
 void Chart::setMax(qreal value){
     axisX.setMax(value);
@@ -82,7 +92,9 @@ void Chart::setTickInterval(qreal span){
 
 
 void Chart::clear(){
-    series.clear();
+    for (int i = 0; i < length; i++){
+        series.replace(i, i, 0);
+    }
 }
 
 
@@ -90,9 +102,9 @@ void Chart::move(qreal value){
     axisX.setRange(axisX.min() + value, axisX.max() + value);
 }
 
-void Chart::mouseMoveEvent(QMouseEvent *event){
-    // qDebug() << event->pos();
-}
+// void Chart::mouseMoveEvent(QMouseEvent *event){
+//     // qDebug() << event->pos();
+// }
 
 
 
