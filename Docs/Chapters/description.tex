@@ -13,6 +13,49 @@
         W celu zapewnienia responsywności, aplikacja powinna dzielić wyświetlanie oraz przetwarzanie danych na oddzielne wątki.
     \end{itemize}
 
+\subsection{Przegląd dostępnych rozwiązań}
+    \begin{enumerate}
+        \item Analog Discovery 3.
+        \newline AD3 to przenośne, wielofunkcyjne narzędzie pomiarowe wyposażone min.:
+        oscyloskop, generator sygnałów, analizator logiczny oraz multimetr.
+        \begin{figure}[!ht]
+        \centering
+        \includegraphics[width=0.6\textwidth]{AD3.png}
+        \caption{Analog Discovery 3}
+        \label{fig:AD3}
+    \end{figure}
+
+    AD3 charakteryzuje się min. parametrami takimi jak:
+    \begin{enumerate}[label=\arabic*.]
+        \item Oscyloskop: rozdzielczość ADC: 14 bitów, liczba kanałów: 2, prędkość próbkowania: do 200 MS/s
+        \item Analizator Stanów logicznych: liczba kanałów: 16, prędkość próbkowania: do 200 MS/s
+        \item Generator: rozdzielczość DAC: 14 bitów, maksymalna częstotliwość (dla sin(x)): do 20 MHz, 
+        liczba kanałów: 2 analogowe
+        \item Cena ~1900 (DigiKey)
+    \end{enumerate}
+
+    \item PicoScope 3404D. 
+    \newline PicoScope to przenośny oscyloskop USB z 4 kanałami analogowymi i
+    16 kanałami cyfrowymi. Urządzenie posiada dodatkowo wbudowany generator
+    sygnałów oraz zaawansowane funkcje analizy protokołów i sygnałów.
+        \begin{figure}[!ht]
+        \centering
+        \includegraphics[width=0.6\textwidth]{PicoScope.png}
+        \caption{PicoScope 3404D}
+        \label{fig:PicoScope}
+    \end{figure}
+
+    PicoScope 3404D charakteryzuje się min. parametrami takimi jak:
+    \begin{enumerate}[label=\arabic*.]
+        \item Oscyloskop: 14-bit rozdzielczości, 4 kanały, do 1 GS/s próbkowania (do 10 GS/s z trybem ETS)
+        \item Analizator stanów logicznych: 16 kanałów, prędkość próbkowania: do 100 MS/s próbkowania
+        \item Generator: 14-bit rozdzielczości DAC, maksymalna częstotliwość(dla sin(x)): do 20 MHz 
+    \end{enumerate}
+
+    \end{enumerate}
+
+
+
 \subsection{Założenia sprzętowe}
     \begin{enumerate}
         \item Analizator stanów logicznych, jako układ pomiarowy nie powinien obciążać prądowo
@@ -34,7 +77,7 @@
         \item Oprogramowanie mikrokontrolera w maksymalnym stopniu powinno opierać się na
         zasobach sprzętowych układu takich jak DMA, timery, akceleratory IO (PIO) itp. .
     \end{enumerate}
-    
+
 \subsection{Podział obowiązków}
     \textbf{Łukasz Przystupa}
     \begin{enumerate}
