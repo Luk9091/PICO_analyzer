@@ -1,6 +1,87 @@
 \section{Opis sposobu zarządzanie zadaniami w systemie dwurdzeniowym analizatora.}
 
+Analizator stanów logicznych ze względu na bardzo rozbudowany system kontrolno-pomiarowy
+został zaprojektowany tak aby podzielić konieczne do zrealizowania zadania na dwa dostępne w 
+rp2040 rdzenie. \\
+Rdzeń 0 jest głównym rdzeniem(masterem) który pełni nadrzędną rolę w sterowaniu całym urządzeniem,
+natomiast rdzeń 1 pełni rolę podrzędną(slave'a) odpowiedzialnego za komunikację bezprzewodową oraz akwizycje danych analogowych.
+Dokładny opis zadań realizowanych przez poszczególne rdzenie przedstawiono poniżej.
+
 \begin{itemize}
-    \item 
+    \item Rdzeń 0
+    Rdzeń 0 (podstawowy rdzeń mikrokontrolera rp2040) odpowiedzialny jest min. za:
+    \begin{itemize}
+        \item Oczekiwanie na sygnał wyzwalający pomiar (trigger)
+        \item Zapisanie czasu pomiędzy wystąpieniami sygnału trigger (opcjonalnie) 
+        \item Zbieranie danych z wejść cyfrowych z wykorzystaniem DMA
+        \item Wysyłanie zebranych danych pomiarowych przez interfejs USB do komputera użytkownika
+    \end{itemize}
+
+    \item Rdzeń 1
+    Rdzeń 1 odpowiedzialny jest za:
+    \begin{itemize}
+        \item Próbkowanie sygnału z kanału 0 przetwornika ADC ADS1115
+        \item Próbkowanie sygnału z kanału 1 przetwornika ADC ADS1115
+        \item Próbkowanie sygnału z kanału 3 wbudowanego przetwornika ADC RP2040
+        \item Próbkowanie sygnału z kanału 4 wbudowanego przetwornika ADC RP2040
+        \item Wysyłanie zebranych danych przez WIFI do komputera użytkownika
+        \item Wysyłanie zebranych danych pomiarowych do rdzenia 0
+        \item Wysyłanie odebranych danych sterujących do rdzenia 0 (jeżeli takie odebrano)
+        \item Odbieranie danych sterujących od aplikacji użytkownika
+        \item Przydzielanie adresu IP użytkownikowi który połączy się z analizatorem 
+    \end{itemize}
+
+    \item Komunikacja między rdzeniem 0 i rdzeniem 1
+    \begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}[
+        corebox/.style={
+            rectangle,
+            draw=blue!55,
+            line width=1mm,
+            fill=blue!20,
+            rounded corners,
+            minimum width=7cm,
+            minimum height=10cm,
+            align=left,
+            text width=6cm,
+            font=\bfseries
+        },
+        arrow/.style={
+            <->,
+            ultra thick,
+            draw=blue!70
+        }
+    ]
+
+    % Box for Core 0
+    \node[corebox, label=above:{\textbf{Rdzeń 0}}] (core0) {
+        \begin{enumerate}
+            \item Czekaj na sygnał wyzwalający (trigger)
+            \item Zapisz czas między wystąpieniami sygnału trigger (opcjonalnie) 
+            \item Zbierz dane z wejść cyfrowych z wykorzystaniem DMA
+            \item Wysyślij zebrane dane przez interfejs USB do komputera użytkownika
+        \end{enumerate}
+    };
+
+    % Box for Core 1
+    \node[corebox, right=3cm of core0, label=above:{\textbf{Rdzeń 1}}] (core1) {
+        \begin{enumerate}
+            \item Zbierz dane z przetworników ADS1115 oraz Pico ADC
+            \item Wyślij zebrane dane przez Wi-Fi do komputera użytkownika
+            \item Wyślij zebrane dane do rdzenia 0
+            \item Odbierz dane sterujące(jeżeli take są)
+            \item Przydziel adres IP użytkownikowi
+        \end{enumerate}
+    };
+
+    % Arrow between cores
+    \draw[arrow] (core0.east) -- node[above, font=\bfseries] {FIFO} (core1.west);
+
+    \end{tikzpicture}
+    \caption{Podział zadań między rdzeniami mikrokontrolera}
+\end{figure}
+
 
 \end{itemize}
+
