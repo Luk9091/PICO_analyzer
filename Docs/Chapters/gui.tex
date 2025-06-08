@@ -71,4 +71,18 @@
         druga zielona dioda LED tym razem dostępna na Raspberry Pi Pico, której miganie symbolizuje poprawny start analizatora oraz gotowość do rozpoczęcia pomiarów.
         Następnie po wybraniu trybu pracy i wciśnięciu przycisku \textit{RUN} w aplikacji graficznej, analizator rozpoczyna pracę,
         co sygnalizowane jest przez zatrzymanie się błyskającej diody.
+    
+    \subsection{Do dokończenia}
+        Aktualna wersja aplikacji nie pozwala na komunikację sieciową, nie zawiera także implementacji Wyświetlanie sygnałów analogowych.
+
+    \subsection{Błędy w kodzie}
+        W aktualnej wersji GUI pozwala na analizowanie próbek cyfrowych, wybór trigger'a oraz dynamiczne generowanie wykresów.
+        Jednak ze względu na błąd w kodzie, analizator nie zmienia częstotliwości próbkowania, podczas wybrania wewnętrznego wyzwalania - ustawiona jest domyślna częstotliwość 5kHz.
         
+        Dodatkowo, podczas analizy wyzwalanej zewnętrznym trigger'em aplikacja czasami zamyka się z błędem \textit{,,IOT instruction (core dumped)''}.
+        Problem ten, nie występuje podczas pracy na wewnętrznym taktowaniu.
+
+        Ostatnim bugiem w aplikacji, jest niepoprawne czyszczenie bufora komunikacji przewodowej.
+        Z jakiegoś powodu, czasem po próbie ponownego uruchomienia analizatora, ten nie reaguje na komendę startu.
+
+
