@@ -1,0 +1,108 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.2 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global}
+    \entry{Model_TCP_IP}{manual}{}
+      \name{author}{1}{}{%
+        {{hash=9aea08f6f5bbaf989c0b347b2e2181b5}{%
+           family={Stelmach},
+           familyi={S\bibinitperiod},
+           given={Damian},
+           giveni={D\bibinitperiod}}}%
+      }
+      \strng{namehash}{9aea08f6f5bbaf989c0b347b2e2181b5}
+      \strng{fullhash}{9aea08f6f5bbaf989c0b347b2e2181b5}
+      \strng{bibnamehash}{9aea08f6f5bbaf989c0b347b2e2181b5}
+      \strng{authorbibnamehash}{9aea08f6f5bbaf989c0b347b2e2181b5}
+      \strng{authornamehash}{9aea08f6f5bbaf989c0b347b2e2181b5}
+      \strng{authorfullhash}{9aea08f6f5bbaf989c0b347b2e2181b5}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Model TCP/IP oraz ISO/OSI}
+      \verb{urlraw}
+      \verb https://pasja-informatyki.pl/sieci-komputerowe/model-tcp-ip-iso-osi/
+      \endverb
+      \verb{url}
+      \verb https://pasja-informatyki.pl/sieci-komputerowe/model-tcp-ip-iso-osi/
+      \endverb
+    \endentry
+    \entry{USB20}{report}{}
+      \name{author}{7}{}{%
+        {{hash=5cdb45d8b2b5ed749b613742b8059afe}{%
+           family={Compaq},
+           familyi={C\bibinitperiod}}}%
+        {{hash=923450657544c7a99df6f64cd9e848c1}{%
+           family={Hewlett-Packard},
+           familyi={H\bibinithyphendelim P\bibinitperiod}}}%
+        {{hash=ff97a9fdede09eaf6e1c8ec9f6a61dd5}{%
+           family={Intel},
+           familyi={I\bibinitperiod}}}%
+        {{hash=d1fa6e937390a5364ab38625ce98ab08}{%
+           family={Lucent},
+           familyi={L\bibinitperiod}}}%
+        {{hash=140864078aeca1c7c35b4beb33c53c34}{%
+           family={Microsoft},
+           familyi={M\bibinitperiod}}}%
+        {{hash=7e70c0503999340437163065dbd1b1b7}{%
+           family={NEC},
+           familyi={N\bibinitperiod}}}%
+        {{hash=c1f456ee3fc507d644eb50420511ad91}{%
+           family={Philips},
+           familyi={P\bibinitperiod}}}%
+      }
+      \strng{namehash}{dd6df5566e50a602137e077e14b013e0}
+      \strng{fullhash}{cf8f3393f8bf71095be8d28c6224816c}
+      \strng{bibnamehash}{dd6df5566e50a602137e077e14b013e0}
+      \strng{authorbibnamehash}{dd6df5566e50a602137e077e14b013e0}
+      \strng{authornamehash}{dd6df5566e50a602137e077e14b013e0}
+      \strng{authorfullhash}{cf8f3393f8bf71095be8d28c6224816c}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Universal Serial Bus Specification}
+      \field{type}{techreport}
+      \field{year}{2000}
+      \verb{urlraw}
+      \verb https://wcours.gel.ulaval.ca/GIF1001/docs/USB_20.pdf
+      \endverb
+      \verb{url}
+      \verb https://wcours.gel.ulaval.ca/GIF1001/docs/USB_20.pdf
+      \endverb
+    \endentry
+    \entry{WiFi}{article}{}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Wikipedia}
+      \field{title}{IEEE 802.11}
+      \verb{urlraw}
+      \verb https://en.wikipedia.org/wiki/IEEE_802.11
+      \endverb
+      \verb{url}
+      \verb https://en.wikipedia.org/wiki/IEEE_802.11
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
