@@ -43,16 +43,21 @@ Schemat blokowy analizatora przedstawiono poniżej.
 \subsection{Schemat ideowy analizatora}
     \begin{figure}[!ht]
         \centering
-        \includegraphics[width = 0.9\textwidth]{schematic.png}
+        \includegraphics[width = 0.9\textwidth]{schematic.jpg}
         \caption{Schemat ideowy analizatora stanów logicznych}
     \end{figure}
 \usePortrait{}
 
     W schemacie aplikacji do zabezpiecznia stopnia wejściowego analizatora dodano możliwość wlutowania rezystora ograniczająceg
-    prąd wejściowy oraz zastosowano szybkie diody Zenera na 3.6V chronic go przed przepięciam napięciowymi. Układ taki działa
-    również jako dolnoprzepustowy filtr RC, a z uwagi na małą pojemność diody (400pF), nie tłumi on sygnałów cyfrowych w paśmie
-    pracy analizatora. Z kolei dla stabilnej pracy LDO oraz filtracji zakłóceń wysokoczęstotliwościowych, oprócz rekomendacji
-    noty katalogowej, dodano po 3 kondensatory decaplingujace (3.3uF) na wejście oraz wyjście układu. 
+    prąd wejściowy oraz zastosowano szybkie diody Zenera na 3.6V chroniąc go przed przepięciam napięciowymi. Układ taki działa
+    również jako dolnoprzepustowy filtr RC, a z uwagi na małą pojemność diody ($400pF$), może tłumić on sygnały cyfrowe w paśmie
+    pracy analizatora.
+    $f_{3\mathrm{dB}} = \frac{1}{2\pi RC}$. 
+    Z kolei dla stabilnej pracy LDO oraz filtracji zakłóceń wysokoczęstotliwościowych, oprócz rekomendacji
+    noty katalogowej, dodano po 3 kondensatory decaplingujące ($3.3uF$) na wejście oraz wyjście układu. Dodano także
+    przycisk monostabilny RESET z kondensatorem (tzw. debouncer) podłaczony do pinu RUN Pi Pico i masy.
+
+
 
 
 \subsection{Opis płytki PCB}
@@ -64,8 +69,8 @@ Schemat blokowy analizatora przedstawiono poniżej.
     jednakowe długości ścieżek sygnałowych prowadzących do wejść mikrokontrolera wykorzystując tzw. meandrowanie.
     Podejście takie było uwarunkowane tym, że różnice długości ścieżek sygnałowych prowadzą do zmian w czasie propagacji
     sygnału, co może powodować błędne rozpoznanie stanów logicznych lub zakłócenia synchronizacji danych. Zmontowane PCB
-    wraz z przed przedstawiono na rysunku \ref{fig:PCB}. Dla układu zaprjektowano też specjalne podstawki chroniące przde zwarciem
-    poprze położeniem na metalowych elemetnach.
+    wraz z przed przedstawiono na rysunku \ref{fig:PCB}. Dla układu zaprjektowano też specjalne podstawki chroniące przded zwarciem
+    poprzez położenie na metalowych elemetnach.
     
 \begin{figure}[H]
         \centering
@@ -76,17 +81,17 @@ Schemat blokowy analizatora przedstawiono poniżej.
 
     \begin{figure}[H]
         \centering
-        \includegraphics[width = 0.8\textwidth]{podstawka.jpg}
+        \includegraphics[width = 0.5\textwidth]{podstawka.jpg}
         \caption{Podstawka z druku 3D}
         \label{fig:podstawka}
     \end{figure}
     
     
 \subsection{Stackup}
-    Na rysunku \ref{fig:stackup}, przedstawiono wybrany stackup PCB proponowany przez firmę JLC PCB do projektów 4-o warstwowych.
+    Na rysunku \ref{fig:stackup} przedstawiono wybrany stackup PCB proponowany przez firmę JLC PCB do projektów 4-o warstwowych.
     Zaletą jego stosowania jest GND na 2 oraz 3 warstwie poprawiajaca ciągłość masy ukałdu oraz skracająca pętle
     prądów powrotnych. Dodatkowo, taki wybór stackaup ogranicza przesłuchy i odbicia pomiędzy dolną i górną warstwą sygnałową
-    czyniąc go dobrym wyborem dla naszej aplikacji. Widok w formacie gerber warsty 1 oraz 4 przedstawiono.
+    czyniąc go dobrym wyborem dla naszej aplikacji. Widok w formacie gerber warsty 1 oraz 4 przedstawiono
     na rysunku \ref{fig:gerber_top} i \ref{fig:gerber_bottom}. 
     \begin{figure}[H]
         \centering
@@ -97,20 +102,41 @@ Schemat blokowy analizatora przedstawiono poniżej.
 
     \begin{figure}[H]
         \centering
-        \includegraphics[width = 0.8\textwidth]{gerber_top.jpg}
+        \includegraphics[width = 0.7\textwidth]{gerber_top.jpg}
         \caption{Widok pliku gerber warstwy 1 }
         \label{fig:gerber_top}
     \end{figure}
 
     \begin{figure}[H]
         \centering
-        \includegraphics[width = 0.8\textwidth]{gerber_bottom.jpg}
+        \includegraphics[width = 0.7\textwidth]{gerber_bottom.jpg}
         \caption{Widok pliku gerber warstwy 4 }
         \label{fig:gerber_bottom}
     \end{figure}
 
+
 \subsection{Symulacje filtrów wejściowych}
-Poniżej przedstawiono charakterystyki filtrów wejściowych sekcji analogowej.
+Poniżej przedstawiono schematy symulacyjne oraz charakterystyki filtrów wejściowych sekcji analogowej.
+Dla układu ADS1115 o częstotliwości próbkowania $860Hz$ zaprojektowano filtr RC pierwszego rzędu o częstotliwość odcięcia $250Hz$ oraz $20dB$ spadku na dekadę.
+W przypadku PICO sytuacja była podobna, lecz tutaj częstotliwość próbkowania wynosiła $500kHz$.
+W tej sytuacji użyto filtru RC drugiego rzędu o częstotliwości odcięcia około $115kHz$ i $40dB$ spadku na dekadę.
+
+
+\begin{figure}[H]
+        \centering
+        \includegraphics[width = 0.7\textwidth]{filter_ADS1115_simulation.jpg}
+        \caption{Układ symulacyjny filtru antyaliasingowego ADS1115}
+        \label{fig:gerber_bottom}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width = 0.7\textwidth]{filter_PICO_simulation.jpg}
+        \caption{Układ symulacyjny filtru antyaliasingowego PICO}
+        \label{fig:gerber_bottom}
+    \end{figure}
+
+
 \begin{figure}[!ht]
     \centering
     \begin{tikzpicture}
