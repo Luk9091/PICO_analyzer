@@ -8,8 +8,6 @@
         pomyłkami użytkownika.
         \item Aplikacji komputerowej - interfejs użytkownika odpowiadający za intuicyjną
         komunikację między użytkownikiem a urządzeniem. 
-        % Aplikacja komputerowa stworzona zostanie z wykorzystaniem framework-u GTKmm oraz języka C++.
-        % GUI będzie wykorzystywać mechanizmy wielowątkowości w celu zapewnienia odpowiedniej kultury pracy z aplikacją. 
         W celu zapewnienia responsywności, aplikacja powinna dzielić wyświetlanie oraz przetwarzanie danych na oddzielne wątki.
     \end{itemize}
 
@@ -18,14 +16,14 @@
         \item Analog Discovery 3.
         \newline AD3 to przenośne, wielofunkcyjne narzędzie pomiarowe wyposażone min.:
         oscyloskop, generator sygnałów, analizator logiczny oraz multimetr.
-        \begin{figure}[!ht]
+        \begin{figure}[H]
         \centering
         \includegraphics[width=0.6\textwidth]{AD3.png}
         \caption{Analog Discovery 3}
         \label{fig:AD3}
     \end{figure}
 
-    AD3 charakteryzuje się min. parametrami takimi jak:
+    AD3 charakteryzuje się parametrami takimi jak:
     \begin{enumerate}[label=\arabic*.]
         \item Oscyloskop: rozdzielczość ADC: 14 bitów, liczba kanałów: 2, prędkość próbkowania: do 200 MS/s
         \item Analizator Stanów logicznych: liczba kanałów: 16, prędkość próbkowania: do 200 MS/s
@@ -38,14 +36,14 @@
     \newline PicoScope to przenośny oscyloskop USB z 4 kanałami analogowymi i
     16 kanałami cyfrowymi. Urządzenie posiada dodatkowo wbudowany generator
     sygnałów oraz zaawansowane funkcje analizy protokołów i sygnałów.
-        \begin{figure}[!ht]
+        \begin{figure}[H]
         \centering
         \includegraphics[width=0.6\textwidth]{PicoScope.png}
         \caption{PicoScope 3404D}
         \label{fig:PicoScope}
     \end{figure}
 
-    PicoScope 3404D charakteryzuje się min. parametrami takimi jak:
+    PicoScope 3404D charakteryzuje się parametrami takimi jak:
     \begin{enumerate}[label=\arabic*.]
         \item Oscyloskop: 14-bit rozdzielczości, 4 kanały, do 1 GS/s próbkowania (do 10 GS/s z trybem ETS)
         \item Analizator stanów logicznych: 16 kanałów, prędkość próbkowania: do 100 MS/s próbkowania
@@ -62,11 +60,11 @@
         \item Analizator stanów logicznych, jako układ pomiarowy nie powinien obciążać prądowo
         urządzenia badanego dlatego system będzie pracował w trybie
         wysokiej impedancji wejściowej.
-        \item Podstawowymi parametrami branymi urządzenia są:
+        \item Podstawowymi parametrami którymi powinien charakteryzować się analizator są:
         \begin{itemize}
-            \item wysoką szybkością próbkowania sygnałów cyfrowych,
-            \item odpowiednią rozdzielczością pomiarowego toru analogowego,
-            \item stabilność pracy,
+            \item Wysoką szybkością próbkowania sygnałów cyfrowych.
+            \item Odpowiednią rozdzielczością pomiarowego toru analogowego.
+            \item Stabilność pracy.
         \end{itemize}
         \item Maksymalna częstotliwość próbkowania sygnałów cyfrowych powinna wynosić co najmniej $f_{\text{sample}} = 50MHz$.
     \end{enumerate}

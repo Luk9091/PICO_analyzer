@@ -1,10 +1,10 @@
-\section{Analizator sygnałów analogowych - test zaprojektowanego systemu}
-    Kolejnym etapem projektowania części do pomiaru sygnałów analogowych było przetestowanie 
-    zaprojektowanie systemu.
+\section{Analizator sygnałów analogowych - test zaprojektowanego systemu.}
+    Kolejnym etapem projektowania układu do pomiaru sygnałów analogowych było przetestowanie 
+    zaprojektowanego systemu.
 
 \subsection{Opis stanowiska pomiarowego.}
-    Pomiary systemu wykonano z użyciem generatora DDS FG-100 DDS FUNCTION GENERATOR.
-    oraz przenośnego oscyloskopu Fnirsi 1c15 jako układu odniesienia z pomocą którego
+    Pomiary wykonano z użyciem generatora \textit{DDS FG-100 DDS FUNCTION GENERATOR}
+    oraz przenośnego oscyloskopu \textit{Fnirsi 1c15} jako układu odniesienia z pomocą którego
     zadawano parametry generowanych sygnałów. Stanowisko pomiarowe przedstawiono poniżej.
 
     \begin{figure}[!ht]
@@ -14,9 +14,9 @@
         \label{fig:stanowisko_pomiarowe}
     \end{figure}
 
-    W celu przeprowadzeniu testów działania systemu które na wczesnym etapie projektu
+    W celu przeprowadzeniu testów działania systemu, które na wczesnym etapie projektu
     mogłyby się odbywać niezależnie od aplikacji graficznej, postanowiono napisać
-    skrypt w języku Python dzieki któremu możliwe było obserwowanie zebranych danych
+    skrypt w języku Python, dzieki któremu możliwe było obserwowanie zebranych danych
     wysyłanych przez WIFI do komputera. Widok aplikacji przedstawiono poniżej.
     
     \begin{figure}[H]
@@ -43,8 +43,8 @@
     \]
     lub nawet więcej.
 
-    Podczas przeprowadzenia testów kryterium badania jakości mierzonych sygnałów była wartość
-    THD(dla 4 harmonicznych) którą definiuje się następująco:
+    Podczas przeprowadzenia testów, kryterium badania jakości mierzonych sygnałów była wartość
+    THD(dla 4 harmonicznych), którą definiuje się następująco:
     \[
     \mathrm{THD}_{dB} = 20 \log_{10} \left( \frac{
     \sqrt{
@@ -75,9 +75,10 @@
         \label{tab:freq_test_results}
     \end{table}
 
-    \subsection{Zaobserwowane problemy z działaniem układu}
+    \subsection{Zaobserwowane problemy z działaniem układu.}
     Jak można było to już wcześniej zauważyć(rys.~\ref{fig:Analog_track_2})
-    jest mocno zniekształcony, jeszcze lepiej widać to na poniższej ilustracji.
+    wykres amplitudowy z ADC Pico jest mocno zniekształcony, jeszcze lepiej
+    widać to na poniższej ilustracji.
      
     \begin{figure}[H]
         \centering
@@ -88,13 +89,13 @@
 
     Charakter wykresu nie jest spowodowany zbyt wysoką częstotliwością podawanego
     sygnału lecz skutkiem działania systemu. Duże zniekształcenia sygnału wynikają
-    z transmisji I2C która z racji na bardzo sprzętowy charakter jeżeli wystąpi blokuje
-    cały rdzeń w skutek czego to co zbiera ADC Pico jest mocno zniekształcone.
+    z transmisji I2C która z racji na bardzo sprzętowy charakter, jeżeli wystąpi blokuje
+    cały rdzeń w skutek, czego to co zbiera ADC Pico jest mocno zniekształcone.
     Podczas projektowania układu podejmowano różne techniki niwelowania takiego zachowania tj.: 
     \begin{enumerate}
-        \item praca z I2C na przerwaniach z wykorzystaniem maszyny stanów
-        \item wykorzystanie wbudowanej funkcjonalności ADS1115 która umożliwia zgłaszanie przez
-        przetwornik zdarzenia zakończenia konwersji przez co nie trzeba na nią czekać tracą czas
+        \item Praca z I2C na przerwaniach z wykorzystaniem maszyny stanów.
+        \item Wykorzystanie wbudowanej funkcjonalności ADS1115 która umożliwia zgłaszanie przez.
+        przetwornik zdarzenia zakończenia konwersji przez co nie trzeba na nią czekać tracąc czas
         rdzenia.
     \end{enumerate}
 
@@ -103,7 +104,7 @@
 
     Niestety ostatecznie nie udało się doprowadzić żadnej z wyżej wymienionych opcji do stanu
     który można by uznać za zadowalający, głównie ze względu na rosnącą złożoność sytemu kontrolno-pomiarowego
-    którego dobrze działająca implementacja jest bardzo pracochłonna i skomplikowana.
+    którego dobrze działająca implementacja okazała się bardzo pracochłonna i skomplikowana.
     
     Dlatego właśnie maksymalna częstotliwość Pico ADC pomimo znacznie większego
     próbkowania ostatecznie okazała się niedużo większa niż znacznie wolniejszego ADS1115.  

@@ -1,11 +1,11 @@
-\section{Schematy funkcjonalne układu}
+\section{Schematy funkcjonalne układu.}
 
-\subsection{Schemat blokowy analizatora}
+\subsection{Schemat blokowy analizatora.}
 Analizator stanów logicznych składa się z 3 głównych bloków:
 \begin{enumerate}
-    \item Układu wejściowego
+    \item Układu wejściowego\\
 Układ wejściowy analizatora zapewnia dostęp do 16 wejść cyfrowych,
-2 szybkich wejść analogowych niskiej rozdzielczości 2 wolnych wejść
+2 szybkich wejść analogowych niskiej rozdzielczości, 2 wolnych wejść
 analogowych dużej rozdzielczości oraz 4 złącz masy. Szczegółowy opis 
 interfejsu wejściowego analizatora przedstawiono poniżej.
 \input{Img/input.tex}
@@ -19,8 +19,8 @@ Opis wyprowadzeń interfejsu:
     \item GND - masa układu 
 \end{enumerate} 
 
-    \item Mikrokontrolera
-    \begin{figure}[!ht]
+    \item Mikrokontrolera(Raspberry Pi Pico RP2040)
+    \begin{figure}[H]
         \centering
         \includegraphics[width=0.6\textwidth]{rp2040_block_diagram.png}
         \caption{RP2040}
@@ -28,7 +28,7 @@ Opis wyprowadzeń interfejsu:
     \end{figure}
 
     \item Przetwornika analogowo-cyfrowego 
-    \begin{figure}[!ht]
+    \begin{figure}[H]
         \centering
         \includegraphics[width=0.6\textwidth]{ADC_block_diagram.png}
         \caption{ADS1115}
@@ -39,10 +39,8 @@ Schemat blokowy analizatora przedstawiono poniżej.
 \input{Img/block_diagram.tex}
 \end{enumerate}
 
-
-
 \useNormalLandscape{}
-\section{Schemat ideowy analizatora}
+\subsection{Schemat ideowy analizatora}
     \begin{figure}[!ht]
         \centering
         \includegraphics[width = 0.9\textwidth]{schematic.png}
@@ -50,35 +48,36 @@ Schemat blokowy analizatora przedstawiono poniżej.
     \end{figure}
 \usePortrait{}
 
-    Płytka PCB analizatora stanów logicznych o wymiarach 74.3mm x 59mm została zaprojektowana w oprogramowaniu Altium.
+    Płytka PCB analizatora stanów logicznych o wymiarach 74.3mm x 59mm została zaprojektowana w oprogramowaniu Altium Designer.
     Do poprowadzenia sygnałów miedzy blokami funkcyjnymi wykorzystano ścieżki na warstwie 1 i 4 o szerokości 10mil (0.254mm)
-    oraz przelotki o wymiarach 0.3mm/0.6mm (otwór/średnica padu). Z uwagi na zastosowany stackup warstwa 2 i 3 pełnią funkcję
+    oraz przelotki o wymiarach 0.3mm/0.6mm (otwór/średnica padu). Z uwagi na zastosowany stackup warstwa 2 i 3 pełni funkcję
     ciągłej masy skracając drogę powrotu prądu sygnałowego (return path), co redukuje szumy i emisję EMI.
-    W celu zapewnienia jednoczesnego próbkowania sygnałów wejściowych w analizatorze stanów logicznych, zachowano mniejwięcej 
-    jednakowe długości ścieżek sygnałowych prowadzących do wejść mikrokontrolera. Różnice długości prowadzą do zmian w czasie propagacji
-    sygnału, co może powodować błędnę rozpoznanie stanów logicznych lub zakłócenia synchronizacji danych. Zastosowano również
-    przelotki typu \textit{via stitching} poprawiające ciągłość potencjału masy. Widok plików gerber warsty 1 oraz 4 przedstawiono
+    W celu zapewnienia jednoczesnego próbkowania sygnałów wejściowych w analizatorze stanów logicznych, starano zachować się
+    jednakowe długości ścieżek sygnałowych prowadzących do wejść mikrokontrolera.
+    Podejście takie było uwarunkowane tym, że różnice długości ścieżek sygnałowych prowadzą do zmian w czasie propagacji
+    sygnału, co może powodować błędne rozpoznanie stanów logicznych lub zakłócenia synchronizacji danych.
+    Widok plików gerber warsty 1 oraz 4 przedstawiono
     na rysunku 4.3 i 4.4.
     
-
-% \subsection{Stackup}
-\paragraph{Stackup}
+\subsection{Stackup}
     Na rysunku \ref{fig:stackup}, przedstawiono wybrany stackup PCB proponowany przez firmę JLC PCB do projektów 4-o warstwowych.
-    \begin{figure}[!ht]
+    \begin{figure}[H]
         \centering
         \includegraphics[width = 0.8\textwidth]{stackup.png}
         \caption{Stackup zalecany przez firmę JLC PCB}
         \label{fig:stackup}
     \end{figure}
 
-     \begin{figure}[!ht]
+
+    BRAKUJE OPISU TYCH GERBERÓW, KTÓRA TO WARSTWA, CO NA NIEJ JEST ITP.
+     \begin{figure}[H]
         \centering
         \includegraphics[width = 0.8\textwidth]{gerber_top.jpg}
         \caption{Widok pliku gerber warstwy 1 }
         \label{fig:gerber_top}
     \end{figure}
 
-    \begin{figure}[!ht]
+    \begin{figure}[H]
         \centering
         \includegraphics[width = 0.8\textwidth]{gerber_bottom.jpg}
         \caption{Widok pliku gerber warstwy 4 }

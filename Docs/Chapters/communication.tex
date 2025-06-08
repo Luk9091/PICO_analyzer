@@ -1,5 +1,5 @@
 \section{Komunikacji analizatora z komputerem użytkownika}
-Analizator do komunikacji wykorzystuje dwie metody transmisji: WIFI lub USB.
+Analizator do komunikacji wykorzystuje dwie metody transmisji: WIFI oraz USB.
 
 \begin{figure}[ht]
     \centering
@@ -26,20 +26,18 @@ Analizator do komunikacji wykorzystuje dwie metody transmisji: WIFI lub USB.
 
 \subsection{Komunikacja bezprzewodowa - WIFI}
     Do komunikacji bezprzewodowej wykorzystano układ CYW43439, dostępny na Raspberry PI Pico. 
-    Jako protokół transmisyjny wykorzystan UDP ze względu na mały narzut
+    Jako protokół transmisyjny wykorzystano UDP ze względu na mały narzut
     obliczeniowy oraz mniejszą latencję, dodatkowo aby współpraca z urządzeniem była maksymalnie prosta ustawiono Pi Pico
     jako punkt dostępu(access point) oraz skonfigurowano na nim serwer DHCP który przydziela adresy
-    IP podłączającym sie do niego użytkownikom. Schemat działania protokołów transmisji
-    odstępnych na pi pico przedstawiono poniżej.
-
+    IP podłączającym sie do niego użytkownikom. 
 
 \subsection{Komunikacja przewodowa - USB}
-    Układ RP2040 jak i RP2350 wyposażone są w kontrolery $USB 1.2$ umożliwiające transmisję z maksymalną prędkością $12Mbps$.
-    Jednak aby wykorzystać maksymalną przepustowość kanału, niezbędne jest stworzenie dodatkowego sterownika, po stronie komputera odbiorczego.
+    Układ RP2040( jak i RP2350) wyposażone są w kontrolery $USB 1.2$ umożliwiające transmisję z maksymalną prędkością $12Mbps$.
+    Jednak aby wykorzystać maksymalną przepustowość kanału, niezbędne jest stworzenie dodatkowego sterownika, po stronie odbiorcy.
     Aby maksymalnie uprościć proces przesyłania danych, oraz zapewnić jak największą szybkość transmisji, kontroler USB został ustawiony w tryb CDC (Communication Device Class),
     pozwalający na emulację komunikacji szeregowej.
 
-    Tak zaprogramowany kontroler, pozwalana na prostą komunikację za pomocą portu szeregowe, z szybkością nieporównywalna z klasycznymi układami \textit{USB UART}.
+    Tak zaprogramowany mikrokontroler, pozwalana na prostą komunikację za pomocą portu szeregowego z szybkością nieporównywalną z klasycznymi układami \textit{USB UART}.\\
     W tabli poniżej przedstawiono uśredniony czas wysłania wiadomości ,,Hello, world$\backslash$n$\backslash$r" w pętli 500 razy, za pomocą różnych rozwiązań:
     \begin{table}[!ht]
         \centering
@@ -55,13 +53,13 @@ Analizator do komunikacji wykorzystuje dwie metody transmisji: WIFI lub USB.
     \end{table}
 
     Jak widać wykorzystanie sprzętowego kontrolera USB niesie ze sobą olbrzymią przewagę.
-    A dodatkowe wyeliminowanie, funkcji formatującej pozwala przyspieszyć prędkość ponad pięciokrotnie!
+    ,a dodatkowe wyeliminowanie funkcji formatującej, pozwala przyspieszyć prędkość ponad pięciokrotnie!
 
 
 \subsection{Ramka transmisyjna}
     Powyższa analiza pozwoliła, zbudować warstwę fizyczną (\citetitle{Model_TCP_IP} \cite{Model_TCP_IP}).
     Następnym krokiem, powinna być (zgodnie z modelem TCP/IP) warstwa internetowa, jednak w przypadku sieci PAN, ten problemem rozwiązuje się samoistnie.
-    Także ostatnim krokiem poprzedzającym powstanie interfejsu użytkownika, zostaje zdefiniowanie ramki transmisyjnej.
+    ,więc ostatnim krokiem poprzedzającym powstanie interfejsu użytkownika, zostaje zdefiniowanie ramki transmisyjnej.
 
     \subsubsection{Wielkość ramki danych}
         Wybór szerokości ramki, okazuje się nie trywialnym zadaniem i jest próbą znalezienia złotego środka między ograniczeniami sprzętowymi (pamięć RAM mikrokontrolera),
@@ -94,7 +92,7 @@ Analizator do komunikacji wykorzystuje dwie metody transmisji: WIFI lub USB.
             \label{fig:frame}
         \end{figure}
 
-        Opis pol w ramce
+        Opis pól w ramce
         \begin{itemize}
             \item Tag -- pole indetyfikacji, zawierające informację o tym co przenosi dana ramka,
             \item Addition -- pole wypełniające, pole zawierające dwa zerowe bajty, możliwe do wykorzystania w przyszłości,
@@ -102,7 +100,7 @@ Analizator do komunikacji wykorzystuje dwie metody transmisji: WIFI lub USB.
         \end{itemize}
     
     \subsection{Ułożenie danych}
-        Moduł analizatora stanów logicznych pozwala na dużą dowolność w ustawionej konfiguracji.
+        Moduł analizatora stanów logicznych w obecnej konfiguracji pozwala na dużą dowolność.
         Użytkownik może między innymi ustawić zapis próbek cyfrowych wraz z sygnaturą.
-        Wymusza to ograniczenia co do rozmiaru rozmiaru payload'u - jego głębokość musi być wielokrotnością 4 bajtów.
+        Wymusza to jednak ograniczenia co do rozmiaru rozmiaru payload'u - jego głębokość musi być wielokrotnością 4 bajtów.
         Dzięki zastosowaniu tego ograniczenia, dane mogą być wysłane z przeplotem.

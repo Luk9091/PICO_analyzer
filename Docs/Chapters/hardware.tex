@@ -7,19 +7,19 @@ podczas projektowania analizatora należą min.:
     \item Raspberry Pi Pico W - platforma firmy Raspberry PI.
     % układ RP2040 oraz układ CYW43439. 
         Płytka wyposażona jest w mikrokontroler z rodziny ARM Cortex M0+, zaprojektowany przez firmę Raspberry Pi Foundation.
-        Do komunikacji bezprzewodowej mikrokontroler wykorzystuje zewnętrzny chip firmy Inineon o nazwie CYW43439.
+        Do komunikacji bezprzewodowej mikrokontroler wykorzystuje zewnętrzny chip firmy Infineon o nazwie CYW43439.
         Układ ten pozwala na komunikację z wykorzystanie zarówno BLE jak i WIFI.\\
-        Jednym z peryferiów mikroprocesora RP2040, są dwa układy PIO.
-        Moduły te pozwalają na moduły te pozwalają na bardzo szybkie, niezależne od głównego programu zarządzanie układami IO.
-        A w połączeniu z układami DMA, możliwe jest próbkowanie i zapisywanie sygnałów wejściowych z częstotliwością pracy głównego rdzenia ($\approx 200MHz$).
+        Jednym z peryferiów mikrokontrolera RP2040, są dwa układy PIO.
+        Moduły te pozwalają na bardzo szybkie oraz niezależne od głównego programu zarządzanie układami IO,
+        co w połączeniu z układami DMA, umożliwia próbkowanie i zapisywanie sygnałów wejściowych z częstotliwością pracy głównego rdzenia ($\approx 200MHz$).
     \item ADC ADS1115 - 
         układ przetwornika analogowo-cyfrowego typu Sigma-Delta o rozdzielczości 16 bitów.
         Układ może działać z maksymalną prędkością 860 sampli,
         a dzięki wykorzystaniu wbudowanego multipleksera może przełączać się między 4 wejściami single ended lub 2 różnicowymi.
-        Przetwornik został wyposażony w prosty interfejs komunikacyjny I2C za pomocą, którego możliwa jest jego konfiguracja oraz przesył danych.
-    \item Stabilizator liniowy LDO na napięcie 3.3 V zapewniający stabilne
+        Przetwornik został wyposażony w prosty interfejs komunikacyjny I2C z pomocą, którego możliwa jest jego konfiguracja oraz przesył danych.
+    \item Stabilizator liniowy LDO(TPS79333DBVR) na napięcie 3.3 V zapewniający stabilne
     zasilanie przetwornika analogowo-cyfrowego.
     \item Zestaw filtrów antyaliasingowych.
-    \item Diody zabezpieczające - diody Zenera na napięcie 3.6V zabezpieczające stopień wejściowy analizatora
+    \item Diody zabezpieczające(MM5Z3V6T1G) - diody Zenera na napięcie 3.6V zabezpieczające stopień wejściowy analizatora
     przed przypadkowymi przepięciami.
 \end{enumerate}

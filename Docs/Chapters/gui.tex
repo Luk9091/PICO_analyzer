@@ -23,14 +23,14 @@
         \begin{enumerate}
             \item tryb pracy analizatora:
             \begin{itemize}
-                \item ,,Free run'' -- tryb pierścieniowy, po zapełnieniu całego bufora stare dane zostają nadpisane przez nowe,
-                \item ,,Counted''  -- w tym trybie układ zbiera dokładnie określoną liczbę próbek zapisaną w polu \textit{Buffer},
+                \item ,,Free run'' -- tryb pierścieniowy, po zapełnieniu całego bufora stare dane zostają nadpisane przez nowe
+                \item ,,Counted''  -- w tym trybie układ zbiera dokładnie określoną liczbę próbek zapisaną w polu \textit{Buffer}
             \end{itemize}
             \item źródło wyzwalania:
             \begin{itemize}
-                \item Trigger   -- dwa dodatkowe piny służące wyłącznie do wyzwalania,
-                \item GPIO      -- wyprowadzenia pomiarowe od 0 do 15,
-                \item Internal  -- wyzwalanie wewnętrznym zegarem Raspberry PI PICO,
+                \item Trigger   -- dwa dodatkowe piny służące wyłącznie do wyzwalania
+                \item GPIO      -- wyprowadzenia pomiarowe od 0 do 15
+                \item Internal  -- wyzwalanie wewnętrznym zegarem Raspberry PI PICO
             \end{itemize}
             \item częstotliwość próbkowania:
             \begin{itemize}
@@ -67,7 +67,8 @@
         następnie z listy rozsuwanej po prawej stonie wybrać port szeregowy,
         pod którym przedstawiło się urządzenie.
 
-        W momencie do podłączenie zapala się zielona dioda na PCB, informująca o zasilaniu układu oraz zaczyna migać dioda na płytce rozwojowej Raspberry PI Pico.
-        Mruganie tego LED'a informuje o gotowości do pracy.
-        Następnie po wybraniu trybu pracy i wciśnięciu przycisku \textit{RUN}, analizator rozpoczyna pracę, co sygnalizowane jest przez zatrzymanie się błyskającej diody.
+        W momencie podłączenia urządzenia do komputera zapala się zielona dioda na PCB informująca o zasilaniu układu a także
+        druga zielona dioda LED tym razem dostępna na Raspberry Pi Pico, której miganie symbolizuje poprawny start analizatora oraz gotowość do rozpoczęcia pomiarów.
+        Następnie po wybraniu trybu pracy i wciśnięciu przycisku \textit{RUN} w aplikacji graficznej, analizator rozpoczyna pracę,
+        co sygnalizowane jest przez zatrzymanie się błyskającej diody.
         
