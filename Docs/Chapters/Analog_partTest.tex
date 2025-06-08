@@ -54,9 +54,9 @@
     \left|X(f_1)\right|
     } \right)
     \]
-    Jeżeli więc zniekształcenia osiągały duże wartości(małe THD, czyli dużą zawartość
+    Jeżeli więc zniekształcenia osiągały duże wartości(duże THD, czyli dużą zawartość
     pozostałych harmonicznych względem podstawowej) stwierdzano, że dalsze zwiększanie częstotliwości nie ma sensu
-    i kończono pomiar na niej. Zebrane wyniki pomiarów przedstawiono poniżej.
+    i kończono pomiar. Zebrane wyniki pomiarów przedstawiono poniżej.
 
     \begin{table}[!ht]
         \centering
@@ -68,7 +68,7 @@
             \hline
             ADS1115 & 250 Hz & 180 Hz \\
             \hline
-            Pico ADC & 2.5 kHz & 250 Hz \\
+            Pico ADC & 2.5 kHz & 60 Hz \\
             \hline
         \end{tabular}
         \caption{Wyniki testów analizatora sygnałów analogowych}
@@ -107,4 +107,9 @@
     którego dobrze działająca implementacja okazała się bardzo pracochłonna i skomplikowana.
     
     Dlatego właśnie maksymalna częstotliwość Pico ADC pomimo znacznie większego
-    próbkowania ostatecznie okazała się niedużo większa niż znacznie wolniejszego ADS1115.  
+    próbkowania ostatecznie okazała się sporo mniejsza niż znacznie wolniejszego ADS1115.  
+
+    Warto również zauważyć, że częstotliwość została podana orientacyjnie ponieważ ze względu
+    na okresowy charakter pracy I2C można znaleźć częstotliwość gdzie sinus jest odwzorowywany bardzo dobrze.
+    Z przeprowadzonych testów częstotliwość ta wynosi:
+    \\$f_{3\mathrm{dB}} = 310 \cdot n, \quad n \in \mathbb{N}$
