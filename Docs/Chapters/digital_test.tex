@@ -14,7 +14,7 @@
     Odczytana częstotliwość na podstawie ilości próbek: $f_{read} = 1kHz$, co odpowiada zadanej częstotliwości wejściowej.
 
     Analizowanie wyższych częstotliwości w aktualnej wersji programu graficznego jest niemożliwe, ze względu na bug w kodzie aplikacji, która nie zmienia ustawień analizatora.
-    Natomiast przed rozpoczęciem pracy z aplikacją graficzną, analizator został przetestowany, sygnał cyfrowym przedstawionym poniżej:
+    Przed rozpoczęciem pracy nad aplikacją graficzną, analizator został przetestowany, sygnał cyfrowym przedstawionym poniżej:
     \begin{figure}[!ht]
         \centering
         \begin{tikzpicture}
@@ -34,7 +34,7 @@
         \end{tikzpicture}
     \end{figure}
 
-    Dla takiego sygnału udało się odebrać odebrać licznik binarny, którego złożenie przedstawiono na wykresie \ref{fig:sampling}.
+    Dla takiego sygnału udało się odebrać licznik binarny, którego złożenie przedstawiono na wykresie \ref{fig:sampling}.
     \newpage
     \begin{figure}[!ht]
         \centering
@@ -43,13 +43,13 @@
         \label{fig:sampling}
     \end{figure}
     \begin{itemize}
-        \item na pomarańczowo oznaczono różnicę między aktualną a poprzednią próbką,
-        \item niebieskim zaprezentowano odebraną próbkę.
+        \item kolorem pomarańczowo oznaczono różnicę między aktualną a poprzednią próbką,
+        \item kolorem niebieskim zaprezentowano odebraną próbkę.
     \end{itemize}
 
     \subsection{Zaobserwowane problemy z działaniem analizatora}
         Największym problemy działania analizatora jest utrata próbek podczas analizy bardzo szybkich sygnałów w trybie \textit{Free Run}.
-        Podczas pracy kołowej kołowej analizator nie jest w stanie wysyłać próbek tak szybko jak układ PIO i DMA zapisują nowe dane.
+        Podczas pracy kołowej analizator nie jest w stanie wysyłać próbek tak szybko jak układ PIO i DMA zapisują nowe dane.
         Rozwiązaniem tego problemu jest nie wykorzystywanie tego trybu do analizy ciągłych bardzo szybkich sygnałów.
 
 

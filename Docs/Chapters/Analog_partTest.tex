@@ -1,8 +1,8 @@
-\section{Analizator sygnałów analogowych - test zaprojektowanego systemu.}
+\section{Analizator sygnałów analogowych - test zaprojektowanego systemu}
     Kolejnym etapem projektowania układu do pomiaru sygnałów analogowych było przetestowanie 
     zaprojektowanego systemu.
 
-\subsection{Opis stanowiska pomiarowego.}
+\subsection{Opis stanowiska pomiarowego}
     Pomiary wykonano z użyciem generatora \textit{DDS FG-100 DDS FUNCTION GENERATOR}
     oraz przenośnego oscyloskopu \textit{Fnirsi 1c15} jako układu odniesienia z pomocą którego
     zadawano parametry generowanych sygnałów. Stanowisko pomiarowe przedstawiono poniżej.
@@ -75,7 +75,7 @@
         \label{tab:freq_test_results}
     \end{table}
 
-    \subsection{Zaobserwowane problemy z działaniem układu.}
+    \subsection{Zaobserwowane problemy z działaniem układu}
     Jak można było to już wcześniej zauważyć(rys.~\ref{fig:Analog_track_2})
     wykres amplitudowy z ADC Pico jest mocno zniekształcony, jeszcze lepiej
     widać to na poniższej ilustracji.
@@ -112,4 +112,6 @@
     Warto również zauważyć, że częstotliwość została podana orientacyjnie ponieważ ze względu
     na okresowy charakter pracy I2C można znaleźć częstotliwość gdzie sinus jest odwzorowywany bardzo dobrze.
     Z przeprowadzonych testów częstotliwość ta wynosi:
-    \\$f_{3\mathrm{dB}} = 310 \cdot n, \quad n \in \mathbb{N}$
+    \begin{align}
+        f_{aliasing} = 310 \cdot n && n \in \mathbb{N}
+    \end{align}
