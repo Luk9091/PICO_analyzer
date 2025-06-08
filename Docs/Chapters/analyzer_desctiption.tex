@@ -1,8 +1,8 @@
 \section{Analiza sygnałów logicznych}
     Analizator stanów cyfrowych w całości oparty jest na peryferiach wbudowanych w mikrokontroler.
     Jego najważniejszą część stanowi akcelerator IO, będący niewielką hardwarową maszyną stanów, 
-    która umożliwia niezależnie od rdzeni, wykonywać instrukcję sterujące portem wejścia-wyjścia,
-    co w połączeniu z układami DMA pozwala na pewną autonomię działania analizatora stanów logicznych.
+    która umożliwia niezależnie od rdzeni wykonywać instrukcje sterujące portem wejścia-wyjścia,
+    co w połączeniu z układami DMA, pozwala na pewną autonomię działania analizatora stanów logicznych.
 
 
 \subsection{Implementacja analizatora stanów}
@@ -10,23 +10,23 @@
 
     \input{Img/logic_stateMachine}
 
-    Układ może być wyzwalany zewnętrzem sygnałem, przychodzącym na jedno z wejść cyfrowych lub na specjalnie wyznaczone wejście wyzwalające opisane jako $trig\ 0$ lub $trig 1$.
+    Układ może być wyzwalany zewnętrzem sygnałem, przychodzącym na jedno z wejść cyfrowych lub na specjalnie wyznaczone wejście wyzwalające opisane jako $trig0$ lub $trig 1$.
     Alternatywnym sposobem wyzwalania próbkowania jest wykorzystanie wewnętrznego taktowania Raspberry PI PICO, dzięki czemu, można regularnie analizować stany z częstotliwością od $5kHz$ do maksymalnie $200MHz$.
 
     Dodatkową opcją, która może okazać się przydatna, jest pomiar czasu pomiędzy kolejnymi impulsami wyzwalającymi.
-    Wykorzystuje on jeden z kanałów PWM, jako licznik zliczający impulsy zegara - co pozwala mierzyć czas z maksymalną precyzją na poziomie $5ns$.
+    Wykorzystuje ona jeden z kanałów PWM, jako licznik zliczający impulsy zegara - co pozwala mierzyć czas z maksymalną precyzją na poziomie $5ns$.
     Mechanizm ten wykorzystuje priorytetyzację modułów DMA, przez co maksymalna częstotliwość próbkowania spada do $50MHz$.
 
 
 \subsection{Buforowanie w pamięci - synchronizacja DMA}
     Moduł analizatora wykorzystuje łącznie 4 z 12 dostępnych kanałów DMA, po dwa na zapisywanie próbek logicznych i dwa na zapisywanie czasu.
-    Każda z par połączona jest w topologii typu ,,\textit{Ping-Pong}", dzięki czemu, kiedy jeden kanał zapełni się, natychmiast uruchamiany jest jego odpowiednik.
+    Każda z par połączona jest w topologii typu ,,\textit{Ping-Pong}" dzięki czemu, kiedy jeden kanał zapełni się, natychmiast uruchamiany jest jego odpowiednik.
     Takie połączenie, umożliwia ciągłą (pierścieniową) praca układu próbkującego.
 
     Wszystkie cztery kanały wyzwalane są tym samym żądaniem ,,\textit{data request (DREQ)}".
-    Wadą takie rozwiązania jest synchronizacja procesu.
-    Ponieważ zgłoszenie ,,\textit{DREQ}" jest rozgłoszeniowe, co w domyślnej konfiguracji, Uniemożliwia jest określenie, która para zostanie wywołana jako pierwsza, przez co  może to powodować błędy zapisu czasu.
-    Rozwiązaniem jest jawne przypisanie wyższego priorytetu, dla pary obsługującej licznik.
+    Wadą takiego rozwiązania jest synchronizacja procesu.
+    Ponieważ zgłoszenie ,,\textit{DREQ}" jest rozgłoszeniowe, co w domyślnej konfiguracji, uniemożliwia określenie, która para zostanie wywołana jako pierwsza, przez co  może to powodować błędy zapisu czasu.
+    Rozwiązaniem jest jawne nadanie wyższego priorytetu, dla pary obsługującej licznik.
     Poniżej przedstawiono graf pracy układów DMA w wyżej opisanym trybie.
     \input{Img/dma_routine}
     

@@ -1,34 +1,33 @@
 \section{Opis sposobu zarządzanie zadaniami w systemie dwurdzeniowym analizatora}
 
 Analizator stanów logicznych ze względu na bardzo rozbudowany system kontrolno-pomiarowy
-został zaprojektowany tak aby podzielić konieczne do zrealizowania zadania na dwa dostępne w 
-RP2040 rdzenie. \\
-Rdzeń 0 jest głównym rdzeniem(masterem) który pełni nadrzędną rolę w sterowaniu całym urządzeniem,
-natomiast rdzeń 1 pełni rolę podrzędną(slave'a) odpowiedzialnego za komunikację bezprzewodową oraz akwizycje danych analogowych.
+został zaprojektowany tak aby podzielić konieczne do zrealizowania zadania na dwa dostępne rdzenie.
+
+Rdzeń 0 jest głównym rdzeniem (masterem), który pełni nadrzędną rolę w sterowaniu całym urządzeniem,
+natomiast rdzeń 1 pełni rolę podrzędną (slave'a) odpowiedzialnego za komunikację bezprzewodową oraz akwizycje danych analogowych.
 Dokładny opis zadań realizowanych przez poszczególne rdzenie przedstawiono poniżej.
 
 \begin{enumerate}
     \item Rdzeń 0\\
     Rdzeń 0 (podstawowy rdzeń mikrokontrolera rp2040) odpowiedzialny jest min. za:
     \begin{enumerate}[label=\arabic*.]
-        \item Oczekiwanie na sygnał wyzwalający pomiar (trigger).
-        \item Zapisanie czasu pomiędzy wystąpieniami sygnału trigger (opcjonalnie) .
-        \item Zbieranie danych z wejść cyfrowych z wykorzystaniem DMA.
-        \item Wysyłanie zebranych danych pomiarowych przez interfejs USB do komputera użytkownika.
+        \item oczekiwanie na sygnał wyzwalający pomiar (trigger),
+        \item zapisanie czasu pomiędzy wystąpieniami sygnału trigger (opcjonalnie),
+        \item zbieranie danych z wejść cyfrowych z wykorzystaniem DMA,
+        \item wysyłanie zebranych danych pomiarowych przez interfejs USB do komputera użytkownika.
     \end{enumerate}
 
-    \item Rdzeń 1\\
-    Rdzeń 1 odpowiedzialny jest za:
+    \item Rdzeń 1 -- odpowiedzialny jest za:
     \begin{enumerate}[label=\arabic*.]
-        \item Próbkowanie sygnału z kanału 0 przetwornika ADC ADS1115.
-        \item Próbkowanie sygnału z kanału 1 przetwornika ADC ADS1115.
-        \item Próbkowanie sygnału z kanału 3 wbudowanego przetwornika ADC RP2040.
-        \item Próbkowanie sygnału z kanału 4 wbudowanego przetwornika ADC RP2040.
-        \item Wysyłanie zebranych danych przez WIFI do komputera użytkownika.
-        \item Wysyłanie zebranych danych pomiarowych do rdzenia 0.
-        \item Wysyłanie odebranych danych sterujących do rdzenia 0 (jeżeli takie odebrano).
-        \item Odbieranie danych sterujących od aplikacji użytkownika.
-        \item Przydzielanie adresu IP użytkownikowi który połączy się z analizatorem.
+        \item próbkowanie sygnału z kanału 1 przetwornika ADC ADS1115,
+        \item próbkowanie sygnału z kanału 1 przetwornika ADC ADS1115,
+        \item próbkowanie sygnału z kanału 3 wbudowanego przetwornika ADC RP2040,
+        \item próbkowanie sygnału z kanału 4 wbudowanego przetwornika ADC RP2040,
+        \item wysyłanie zebranych danych przez WIFI do komputera użytkownika,
+        \item wysyłanie zebranych danych pomiarowych do rdzenia 0,
+        \item wysyłanie odebranych danych sterujących do rdzenia 0 (jeżeli takie odebrano),
+        \item odbieranie danych sterujących od aplikacji użytkownika,
+        \item przydzielanie adresu IP użytkownikowi który połączy się z analizatorem.
     \end{enumerate}
 
     \newpage
@@ -61,7 +60,7 @@ Dokładny opis zadań realizowanych przez poszczególne rdzenie przedstawiono po
             \item Czekaj na sygnał wyzwalający (trigger)
             \item Zapisz czas między wystąpieniami sygnału trigger (opcjonalnie) 
             \item Zbierz dane z wejść cyfrowych z wykorzystaniem DMA
-            \item Wysyślij zebrane dane przez interfejs USB do komputera użytkownika
+            \item Wyślij zebrane dane przez interfejs USB do komputera użytkownika
         \end{enumerate}
     };
 

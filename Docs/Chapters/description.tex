@@ -3,17 +3,17 @@
     System analizatora składa się z 2 części:
     \begin{itemize}
         \item Układu analizatora - dedykowane PCB zawierające min. mikrokontroler
-        Raspberry Pi Pico W, przetwornik ADC, układ filtracji sygnału analogowego(LPF)
+        Raspberry Pi Pico W, przetwornik ADC, układ filtracji sygnału analogowego (LPF)
         oraz interfejs wejściowy wraz z zabezpieczeniami chroniącymi układ przed przypadkowymi
         pomyłkami użytkownika.
         \item Aplikacji komputerowej - interfejs użytkownika odpowiadający za intuicyjną
         komunikację między użytkownikiem a urządzeniem. 
-        W celu zapewnienia responsywności, aplikacja powinna dzielić wyświetlanie oraz przetwarzanie danych na oddzielne wątki.
+        % W celu zapewnienia responsywności, aplikacja powinna dzielić wyświetlanie oraz przetwarzanie danych na oddzielne wątki.
     \end{itemize}
 
 \subsection{Przegląd dostępnych rozwiązań}
     \begin{enumerate}
-        \item Analog Discovery 3.
+        \item Analog Discovery 3 (AD3).
         \newline AD3 to przenośne, wielofunkcyjne narzędzie pomiarowe wyposażone min.:
         oscyloskop, generator sygnałów, analizator logiczny oraz multimetr.
         \begin{figure}[H]
@@ -25,9 +25,9 @@
 
     AD3 charakteryzuje się parametrami takimi jak:
     \begin{enumerate}[label=\arabic*.]
-        \item Oscyloskop: rozdzielczość ADC: 14 bitów, liczba kanałów: 2, prędkość próbkowania: do 200 MS/s
-        \item Analizator Stanów logicznych: liczba kanałów: 16, prędkość próbkowania: do 200 MS/s
-        \item Generator: rozdzielczość DAC: 14 bitów, maksymalna częstotliwość (dla sin(x)): do 20 MHz, 
+        \item Oscyloskop: rozdzielczość ADC 14 bitów, liczba kanałów 2, prędkość próbkowania do $200 MSap/s$
+        \item Analizator Stanów logicznych: liczba kanałów 16, prędkość próbkowania do $200 MSap/s$
+        \item Generator: rozdzielczość DAC 14 bitów, maksymalna częstotliwość (dla $sin(x)$) do 20 MHz, 
         liczba kanałów: 2 analogowe
         \item Cena ~1900zł (DigiKey)
     \end{enumerate}
@@ -45,10 +45,10 @@
 
     PicoScope 3404D charakteryzuje się parametrami takimi jak:
     \begin{enumerate}[label=\arabic*.]
-        \item Oscyloskop: 14-bit rozdzielczości, 4 kanały, do 1 GS/s próbkowania (do 10 GS/s z trybem ETS)
-        \item Analizator stanów logicznych: 16 kanałów, prędkość próbkowania: do 100 MS/s próbkowania
-        \item Generator: 14-bit rozdzielczości DAC, maksymalna częstotliwość(dla sin(x)): do 20 MHz 
-        \item Cena: ~6500 zł(Farnell)
+        \item Oscyloskop 14-bit rozdzielczości, 4 kanały, do $1 GSap/s$ próbkowania (do $10 GSap/s$ z trybem ETS)
+        \item Analizator stanów logicznych: 16 kanałów, prędkość próbkowania: do $100 MSap/s$ próbkowania
+        \item Generator 14-bit rozdzielczości DAC, maksymalna częstotliwość (dla $sin(x)$) do $20 MHz$ 
+        \item Cena: $6500 zł$ (Farnell)
     \end{enumerate}
 
     \end{enumerate}
@@ -58,15 +58,15 @@
 \subsection{Założenia sprzętowe}
     \begin{enumerate}
         \item Analizator stanów logicznych, jako układ pomiarowy nie powinien obciążać prądowo
-        urządzenia badanego dlatego system będzie pracował w trybie
+        urządzenia badanego, dlatego system będzie pracował w trybie
         wysokiej impedancji wejściowej.
-        \item Podstawowymi parametrami którymi powinien charakteryzować się analizator są:
+        \item Podstawowe parametry układu to:
         \begin{itemize}
-            \item Wysoką szybkością próbkowania sygnałów cyfrowych.
-            \item Odpowiednią rozdzielczością pomiarowego toru analogowego.
-            \item Stabilność pracy.
+            \item Wysoka szybkość próbkowania sygnałów cyfrowych.
+            \item Odpowiednia rozdzielczość pomiarowego toru analogowego.
+            \item Stabilna praca.
         \end{itemize}
-        \item Maksymalna częstotliwość próbkowania sygnałów cyfrowych powinna wynosić co najmniej $f_{\text{sample}} = 50MHz$.
+        \item Maksymalna częstotliwość próbkowania sygnałów cyfrowych powinna wynosić $f_{\text{sample}} = 50MHz$.
     \end{enumerate}
 
 \subsection{Założenia oprogramowania}
@@ -89,9 +89,9 @@
     \textbf{Krzysztof Płonka}
     \begin{enumerate}
         \item Napisanie biblioteki do obsługi czujnika ADC ADS1115.
-        \item Zapewnienie komunikacji bezprzewodowej między Pi Pico a aplikacją graficzną
-        \item Dodanie funkcjonalności obserwacji sygnałów analogowych.
-        (bibliotek gtk live-chart, integracja z SigRok lub biblioteka CAIRO)\footnote{Opcjonalnie.}.\\ 
+        \item Zapewnienie komunikacji bezprzewodowej między Pi Pico a aplikacją graficzną.
+        \item Dodanie funkcjonalności obserwacji sygnałów analogowych
+        (biblioteka gtk live-chart, integracja z SigRok lub biblioteka CAIRO)\footnote{Opcjonalnie.}.\\ 
     \end{enumerate}
 
     \textbf{Paweł Olbrych}

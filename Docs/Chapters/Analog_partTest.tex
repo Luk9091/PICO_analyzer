@@ -14,10 +14,10 @@
         \label{fig:stanowisko_pomiarowe}
     \end{figure} 
 
-    W celu przeprowadzeniu testów działania systemu, które na wczesnym etapie projektu
+    W celu przeprowadzenia testów działania systemu, które na wczesnym etapie projektu
     mogłyby się odbywać niezależnie od aplikacji graficznej, postanowiono napisać
     skrypt w języku Python, dzieki któremu możliwe było obserwowanie zebranych danych
-    wysyłanych przez WIFI do komputera. Widok aplikacji przedstawiono poniżej.
+    wysyłanych przez WiFi do komputera. Widok aplikacji przedstawiono poniżej.
     
     \begin{figure}[H]
         \centering
@@ -28,24 +28,24 @@
 
 \subsection{Testowanie działania analizatora sygnałów analogowych}
     Jednym z najważniejszych parametrów przy testowaniu układów takich jak oscyloskopy
-    czy ogólnie analizatory sygnałów analogowych jest min. maksymalna częstotliwość
-    sygnałów które wiernie mogą odwzorowywać. Częstotliwość ta wynika bezpośrednio z 
+    czy ogólnie analizatory sygnałów analogowych jest m. in. maksymalna częstotliwość
+    sygnałów, które wiernie mogą odwzorowywać. Częstotliwość ta wynika bezpośrednio z 
     twierdzenia o próbkowaniu Nyquista-Shannona:
-    \[
-    f_s \geq 2 f_{\max}
-    \]
+    \begin{equation*}
+        f_s \geq 2 f_{\max}
+    \end{equation*}
 
     W rzeczywistości jednak częstotliwość próbkowania powinna być większa niż 
     dwukrotność maksymalnej składowej częstotliwościowej sygnału, często podaje się ją
     jako:
-    \[
-    f_s \geq 2.5 f_{\max}
-    \]
+    \begin{equation*}
+        f_s \geq 2.5 f_{\max}
+    \end{equation*}
     lub nawet więcej.
 
     Podczas przeprowadzenia testów, kryterium badania jakości mierzonych sygnałów była wartość
-    THD(dla 4 harmonicznych), którą definiuje się następująco:
-    \[
+    THD (dla 4 harmonicznych), którą definiuje się następująco:
+    \begin{equation*}
     \mathrm{THD}_{dB} = 20 \log_{10} \left( \frac{
     \sqrt{
     \sum_{h=2}^{5} \left|X(h f_1)\right|^2
@@ -53,7 +53,7 @@
     }{
     \left|X(f_1)\right|
     } \right)
-    \]
+    \end{equation*}
     Jeżeli więc zniekształcenia osiągały duże wartości(duże THD, czyli dużą zawartość
     pozostałych harmonicznych względem podstawowej) stwierdzano, że dalsze zwiększanie częstotliwości nie ma sensu
     i kończono pomiar. Zebrane wyniki pomiarów przedstawiono poniżej.
@@ -66,9 +66,9 @@
             \makecell{\textbf{Teoretyczna maks.}\\\textbf{częstotliwość}} &
             \makecell{\textbf{Zmierzona maks.}\\\textbf{częstotliwość}} \\
             \hline
-            ADS1115 & 250 Hz & 180 Hz \\
+            ADS1115 & $250 Hz$ & $180 Hz$ \\
             \hline
-            Pico ADC & 2.5 kHz & 60 Hz \\
+            Pico ADC & $2.5 kHz$ & $60 Hz$ \\
             \hline
         \end{tabular}
         \caption{Wyniki testów analizatora sygnałów analogowych}
@@ -76,7 +76,7 @@
     \end{table}
 
     \subsection{Zaobserwowane problemy z działaniem układu}
-    Jak można było to już wcześniej zauważyć(rys.~\ref{fig:Analog_track_2})
+    Jak można było to już wcześniej zauważyć (rys.~\ref{fig:Analog_track_2})
     wykres amplitudowy z ADC Pico jest mocno zniekształcony, jeszcze lepiej
     widać to na poniższej ilustracji.
      
@@ -89,29 +89,30 @@
 
     Charakter wykresu nie jest spowodowany zbyt wysoką częstotliwością podawanego
     sygnału lecz skutkiem działania systemu. Duże zniekształcenia sygnału wynikają
-    z transmisji I2C która z racji na bardzo sprzętowy charakter, jeżeli wystąpi blokuje
-    cały rdzeń w skutek, czego to co zbiera ADC Pico jest mocno zniekształcone.
+    z transmisji $I^2C$, która z racji na bardzo sprzętowy charakter, jeżeli wystąpi blokuje
+    cały rdzeń w skutek tego zarejestrowany przebieg jest znacznie zniekształcony.
     Podczas projektowania układu podejmowano różne techniki niwelowania takiego zachowania tj.: 
     \begin{enumerate}
-        \item Praca z I2C na przerwaniach z wykorzystaniem maszyny stanów.
-        \item Wykorzystanie wbudowanej funkcjonalności ADS1115 która umożliwia zgłaszanie przez.
-        przetwornik zdarzenia zakończenia konwersji przez co nie trzeba na nią czekać tracąc czas
-        rdzenia.
+        \item Praca z $I^2C$, na przerwaniach z wykorzystaniem maszyny stanów.
+        \item Wykorzystanie wbudowanej funkcjonalności ADS1115, która umożliwia zgłaszanie przez
+        przetwornik zdarzenia zakończenia konwersji. 
+        Dzięki zastosowaniu przerwania od tego sygnału, procesor nie musi czekać na zakończenie próbkowania.
+        %  przez co nie trzeba na nią czekać tracąc czas rdzenia.
     \end{enumerate}
 
-    Innym pomysłem na rozwiązanie tego problemu było by zastosowanie innego przetwornika ADC wykorzystującego szybsze protokoły transmisji(np. SPI)
+    Innym pomysłem na rozwiązanie tego problemu było by zastosowanie innego przetwornika ADC wykorzystującego szybsze protokoły transmisji (np. SPI)
     lub inne topologie wewnętrznego ADC.
 
-    Niestety ostatecznie nie udało się doprowadzić żadnej z wyżej wymienionych opcji do stanu
-    który można by uznać za zadowalający, głównie ze względu na rosnącą złożoność sytemu kontrolno-pomiarowego
+    Niestety ostatecznie nie udało się doprowadzić żadnej z wyżej wymienionych opcji do stanu,
+    który można by uznać za zadowalający, głównie ze względu na rosnącą złożoność sytemu kontrolno-pomiarowego,
     którego dobrze działająca implementacja okazała się bardzo pracochłonna i skomplikowana.
     
     Dlatego właśnie maksymalna częstotliwość Pico ADC pomimo znacznie większego
     próbkowania ostatecznie okazała się sporo mniejsza niż znacznie wolniejszego ADS1115.  
 
     Warto również zauważyć, że częstotliwość została podana orientacyjnie ponieważ ze względu
-    na okresowy charakter pracy I2C można znaleźć częstotliwość gdzie sinus jest odwzorowywany bardzo dobrze.
+    na okresowy charakter pracy $I^2C$ można znaleźć częstotliwość gdzie sinus jest odwzorowywany bardzo dobrze.
     Z przeprowadzonych testów częstotliwość ta wynosi:
     \begin{align}
-        f_{aliasing} = 310 \cdot n && n \in \mathbb{N}
+        f_{aliasing} = 310 \cdot n,\ n \in \mathbb{N}
     \end{align}

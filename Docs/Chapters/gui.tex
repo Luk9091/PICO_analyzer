@@ -1,6 +1,6 @@
-\section{Interface graficzny}
-    Aplikacjach graficzna na komputery osobiste została napisana w języku \textit{C++} z wykorzystaniem biblioteki \textit{Qt}.
-    Poniżej (rys. \ref{fig:gui}) przedstawiono poglądowe zdjęcie aplikacji:
+\section{Interfejs graficzny}
+    Aplikacja graficzna na komputery osobiste została napisana w języku \textit{C++} z wykorzystaniem biblioteki \textit{Qt}.
+    Poniżej (rys. \ref{fig:gui}) przedstawiono poglądowe zdjęcie:
 
     \begin{figure}[!ht]
         \centering
@@ -19,23 +19,23 @@
 
 
     \subsection{Ustawienia analizatora}
-        Z pomocą interfejsu użytkownika może, zmieniać ustawienia analizatora stanów logicznych takie jak:
+        Z pomocą interfejsu użytkownika można zmieniać ustawienia analizatora stanów logicznych takie jak:
         \begin{enumerate}
-            \item tryb pracy analizatora:
+            \item Tryb pracy analizatora:
             \begin{itemize}
-                \item ,,Free run'' -- tryb pierścieniowy, po zapełnieniu całego bufora stare dane zostają nadpisane przez nowe
-                \item ,,Counted''  -- w tym trybie układ zbiera dokładnie określoną liczbę próbek zapisaną w polu \textit{Buffer}
+                \item ,,Free run'' -- tryb pierścieniowy, po zapełnieniu całego bufora stare dane zostają nadpisane przez nowe,
+                \item ,,Counted''  -- w tym trybie układ zbiera dokładnie określoną liczbę próbek zapisaną w polu \textit{Buffer}.
             \end{itemize}
-            \item źródło wyzwalania:
+            \item Źródło wyzwalania:
             \begin{itemize}
-                \item Trigger   -- dwa dodatkowe piny służące wyłącznie do wyzwalania
-                \item GPIO      -- wyprowadzenia pomiarowe od 0 do 15
-                \item Internal  -- wyzwalanie wewnętrznym zegarem Raspberry PI PICO
+                \item Trigger   -- dwa dodatkowe wyprowadzenia służące wyłącznie do wyzwalania,
+                \item GPIO      -- wyprowadzenia pomiarowe od 0 do 15,
+                \item Internal  -- wyzwalanie wewnętrznym zegarem Raspberry PI PICO.
             \end{itemize}
-            \item częstotliwość próbkowania:
+            \item Częstotliwość próbkowania:
             \begin{itemize}
-                \item w przypadku wyzwalania wewnętrznym zegarem to ustawienie odpowiada za częstotliwość wyzwalania
-                \item jeśli znacznik \textit{Timer} jest oznaczony, pole \textit{Sample freq} odpowiada za częstotliwość pomiaru czasu
+                \item w przypadku wyzwalania wewnętrznym zegarem to ustawienie odpowiada za częstotliwość wyzwalania,
+                \item jeśli znacznik \textit{Timer} jest oznaczony, pole \textit{Sample freq.} odpowiada za częstotliwość pomiaru czasu.
             \end{itemize}
         \end{enumerate}
 
@@ -51,7 +51,7 @@
             \label{fig:gui_addPlot}
         \end{figure}
 
-        Wykresy można także dynamicznie usuwać, po kliknięciu w niechciany prawym przyciskiem myszy pojawia się rozwijane menu z opcją \textit{Remove}.
+        Wykresy można także dynamicznie usuwać, po kliknięciu w niechciany wykres prawym przyciskiem myszy pojawia się rozwijane menu z opcją \textit{Remove}.
         Co zaprezentowano na rysunku poniżej.
 
         \begin{figure}[!ht]
